@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Envio de Documentos - UESP</title>
+    <title>Sistema de Envio de Documentos</title>
     <style>
         /* Estilos Globais e Responsividade */
         body { 
@@ -53,23 +53,21 @@
             box-sizing: border-box;
         }
 
-        h2 { color: #333; margin-top: 0; font-size: 20px; text-transform: uppercase; line-height: 1.3; }
+        h2 { color: #333; margin-top: 0; font-size: 22px; }
         p { color: #666; font-size: 14px; margin-bottom: 20px; }
         
         /* Formulários e Inputs */
         .form-group { text-align: left; margin-bottom: 15px; }
         label { font-size: 14px; color: #555; font-weight: bold; display: block; margin-bottom: 5px; }
-        
         input[type="text"], input[type="password"], select { 
             width: 100%; 
             padding: 12px; 
             border: 1px solid #ccc; 
             border-radius: 4px; 
             box-sizing: border-box; 
-            font-size: 16px; 
+            font-size: 16px; /* Evita zoom automático indesejado no iOS */
             background-color: #fff;
         }
-        
         input[type="file"] { 
             margin: 15px 0; 
             width: 100%; 
@@ -102,14 +100,14 @@
         /* Controle de Telas */
         .hidden { display: none; }
 
-        /* REGRAS PARA CELULARES / TELAS PEQUENAS */
+        /* REGRAS PARA TELEMÓVEIS / TELAS PEQUENAS */
         @media (max-width: 768px) {
             .container {
-                flex-direction: column; 
+                flex-direction: column; /* Joga o logo para cima e o card para baixo */
                 gap: 20px;
             }
             .logo-area {
-                max-width: 180px; 
+                max-width: 180px; /* Reduz o logo no telemóvel */
             }
             .card {
                 padding: 20px;
@@ -121,16 +119,16 @@
 
 <div class="container">
     
-    <!-- ÁREA DO LOGOTIPO OFICIAL UESP -->
+    <!-- ÁREA DO LOGOTIPO -->
     <div class="logo-area">
-        <img src="https://uesp.com.br/wp-content/uploads/2016/11/logo-uesp-1.png" alt="Logotipo UESP" id="imgLogo">
+        <img src="https://uesp.com.br/wp-content/uploads/2016/11/logo-uesp-1.png" alt="Logotipo da Empresa" id="imgLogo">
     </div>
 
-    <!-- TELA 1: LOGIN (LIMPA E HABILITADA POR PADRÃO) -->
+    <!-- TELA 1: LOGIN -->
     <div class="card" id="telaLogin">
         <h2>ACESSO AO PAINEL DE ENVIO</h2>
         <p>Insira suas credenciais pré-configuradas para continuar.</p>
-
+        
         <div class="form-group">
             <label for="loginUsuario">Usuário:</label>
             <input type="text" id="loginUsuario" placeholder="Digite seu usuário">
@@ -141,16 +139,16 @@
             <input type="password" id="loginSenha" placeholder="Digite sua senha">
         </div>
         
-        <button id="btnEntrar" onclick="efetuarLogin()">Entrar</button>
+        <button onclick="efetuarLogin()">Entrar</button>
         <div id="loginStatus" class="status-msg"></div>
     </div>
 
-    <!-- TELA 2: UPLOAD (APÓS O LOGIN COM A LISTA SUSPENSA) -->
+    <!-- TELA 2: UPLOAD (COM A LISTA SUSPENSA EXIBIDA APÓS O LOGIN) -->
     <div class="card hidden" id="telaUpload">
         <h2>SISTEMA DE ENVIO - DOCUMENTAÇÃO CARNAVAL 2027</h2>
-        <p>Olá, <strong id="nomeUsuarioLogado"></strong>! Selecione o setor e escolha o arquivo.</p>
+        <p>Olá, <strong id="nomeUsuarioLogado"></strong>! Escolha o arquivo para upload.</p>
         
-        <!-- LISTA SUSPENSA POSICIONADA APÓS LOGIN -->
+        <!-- LISTA SUSPENSA ADICIONADA SEGUINDO SUA SOLICITAÇÃO -->
         <div class="form-group">
             <label for="posicaoSelec">Acesso / Setor (Opcional):</label>
             <select id="posicaoSelec" onchange="gravarPosicao()">
@@ -168,7 +166,7 @@
         <button id="btnEnviar" onclick="enviarArquivo()">Enviar Arquivo</button>
         
         <div id="status" class="status-msg"></div>
-        <br>
+        
         <button class="btn-logout" onclick="efetuarLogout()">Sair da Conta</button>
     </div>
 
@@ -177,6 +175,7 @@
 <script>
     // ==========================================
     // BASE DE DADOS DE USUÁRIOS
+    // Formato: 'usuario': 'senha'
     // ==========================================
     const BASE_DE_DADOS = {
         'adm': '123',
@@ -188,10 +187,10 @@
     // URL do seu Google Apps Script integrada
     const URL_SCRIPT = 'https://script.google.com/macros/s/AKfycbxKI4igp3IGdtnFVv3JLAP3ZrqJnhwXDwWYQcpOy_WC7H9wiY7ReHpMf6_j9632w8_ffg/exec';
 
-    // Variável global para armazenar a opção selecionada
+    // Variável para armazenar o texto da opção selecionada
     let posicaoSelecionadaTexto = "";
 
-    // Grava o texto da opção selecionada na lista suspensa
+    // Grava o texto amigável do setor selecionado
     function gravarPosicao() {
         const select = document.getElementById('posicaoSelec');
         if (select.value !== "") {
@@ -213,6 +212,8 @@
             document.getElementById('telaLogin').classList.add('hidden');
             document.getElementById('telaUpload').classList.remove('hidden');
             
+            document.getElementById('loginUsuario').value = '';
+            document.getElementById('loginSenha').value = '';
             loginStatus.innerHTML = '';
         } else {
             loginStatus.innerHTML = '❌ Usuário ou senha incorretos.';
@@ -222,18 +223,15 @@
 
     // Função de Logout
     function efetuarLogout() {
-        document.getElementById('loginUsuario').value = '';
-        document.getElementById('loginSenha').value = '';
-        document.getElementById('posicaoSelec').value = '';
-        document.getElementById('arquivoInput').value = '';
-        document.getElementById('status').innerHTML = '';
-        posicaoSelecionadaTexto = "";
-
         document.getElementById('telaUpload').classList.add('hidden');
         document.getElementById('telaLogin').classList.remove('hidden');
+        document.getElementById('status').innerHTML = '';
+        document.getElementById('arquivoInput').value = '';
+        document.getElementById('posicaoSelec').value = '';
+        posicaoSelecionadaTexto = "";
     }
 
-    // Função para realizar o upload do arquivo para o Google Drive
+    // Função para realizar o upload do arquivo para o Drive
     function enviarArquivo() {
         const input = document.getElementById('arquivoInput');
         const status = document.getElementById('status');
@@ -245,7 +243,6 @@
             return;
         }
 
-        // CORREÇÃO: Captura o arquivo de forma correta (índice 0) para o FileReader
         const arquivo = input.files[0];
         
         botao.disabled = true;
@@ -255,10 +252,9 @@
         const leitor = new FileReader();
         leitor.readAsDataURL(arquivo);
         leitor.onload = function () {
-            // CORREÇÃO: Pega apenas a string base64 pura após a vírgula
-            const dadosBase64 = leitor.result.split(',')[1];
+            const dadosBase64 = leitor.result.split(',')[1]; // Ajuste fino para obter apenas o base64 puro
             
-            // Se um acesso/setor foi escolhido, anexa como prefixo no nome do arquivo
+            // Define o nome final anexando o setor como prefixo, se selecionado
             let nomeFinalArquivo = arquivo.name;
             if (posicaoSelecionadaTexto !== "") {
                 nomeFinalArquivo = posicaoSelecionadaTexto + "_" + arquivo.name;
@@ -277,3 +273,4 @@
             })
             .then(() => {
                 status.innerHTML = '✅ Arquivo enviado com sucesso!';
+                status.style.color = '#188038';
