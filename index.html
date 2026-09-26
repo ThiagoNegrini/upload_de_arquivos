@@ -59,17 +59,14 @@
         /* Formulários e Inputs */
         .form-group { text-align: left; margin-bottom: 15px; }
         label { font-size: 14px; color: #555; font-weight: bold; display: block; margin-bottom: 5px; }
-        
-        input[type="text"], input[type="password"], select { 
+        input[type="text"], input[type="password"] { 
             width: 100%; 
             padding: 12px; 
             border: 1px solid #ccc; 
             border-radius: 4px; 
             box-sizing: border-box; 
-            font-size: 16px; 
-            background-color: #fff;
+            font-size: 16px; /* Evita zoom automático indesejado no iOS */
         }
-        
         input[type="file"] { 
             margin: 15px 0; 
             width: 100%; 
@@ -94,7 +91,7 @@
         button:hover { background: #1557b0; }
         button:disabled { background: #ccc; cursor: not-allowed; }
         
-        .btn-logout { background: #d93025; color: white; border: none; font-size: 12px; padding: 6px 10px; width: auto; margin-top: 15px; border-radius: 4px; cursor: pointer; }
+        .btn-logout { background: #d93025; font-size: 12px; padding: 6px 10px; width: auto; margin-top: 15px; }
         .btn-logout:hover { background: #a51d12; }
         
         .status-msg { margin-top: 15px; font-size: 14px; font-weight: 500; }
@@ -105,11 +102,11 @@
         /* REGRAS PARA TELEMÓVEIS / TELAS PEQUENAS */
         @media (max-width: 768px) {
             .container {
-                flex-direction: column; 
+                flex-direction: column; /* Joga o logo para cima e o card para baixo */
                 gap: 20px;
             }
             .logo-area {
-                max-width: 180px; 
+                max-width: 180px; /* Reduz o logo no telemóvel */
             }
             .card {
                 padding: 20px;
@@ -121,30 +118,16 @@
 
 <div class="container">
     
-    <!-- ÁREA DO LOGOTIPO -->
+    <!-- ÁREA DO LOGOTIPO (Substitua o link src pela imagem do seu logo) -->
     <div class="logo-area">
-        <img src="https://wikimedia.org" alt="Logotipo da Empresa" id="imgLogo">
+        <img src="https://uesp.com.br/wp-content/uploads/2016/11/logo-uesp-1.png" alt="Logotipo da Empresa" id="imgLogo">
     </div>
 
-    <!-- TELA 1: LOGIN (HABILITADA POR PADRÃO) -->
+    <!-- TELA 1: LOGIN -->
     <div class="card" id="telaLogin">
-        <h2>Acesso ao Painel</h2>
-        <p>Preencha os dados e selecione a opção abaixo.</p>
+        <h2>ACESSO AO PAINEL DE ENVIO</h2>
+        <p>Insira suas credenciais pré-configuradas para continuar.</p>
         
-        <!-- LISTA SUSPENSA COM OS NOMES SOLICITADOS -->
-        <div class="form-group">
-            <label for="posicaoSelec">Posição / Setor (Opcional):</label>
-            <select id="posicaoSelec" onchange="gravarPosicao()">
-                <option value="">-- Selecione uma opção --</option>
-                <option value="especial_bairros">ESPECIAL DE BAIRROS</option>
-                <option value="acesso_1">ACESSO I</option>
-                <option value="acesso_2">ACESSO II</option>
-                <option value="acesso_3">ACESSO III</option>
-                <option value="blocos_especiais">BLOCOS ESPECIAIS</option>
-                <option value="acesso_blocos">ACESSO DE BLOCOS</option>
-            </select>
-        </div>
-
         <div class="form-group">
             <label for="loginUsuario">Usuário:</label>
             <input type="text" id="loginUsuario" placeholder="Digite seu usuário">
@@ -155,20 +138,20 @@
             <input type="password" id="loginSenha" placeholder="Digite sua senha">
         </div>
         
-        <button id="btnEntrar" onclick="efetuarLogin()">Entrar</button>
+        <button onclick="efetuarLogin()">Entrar</button>
         <div id="loginStatus" class="status-msg"></div>
     </div>
 
     <!-- TELA 2: UPLOAD (Inicia oculta) -->
     <div class="card hidden" id="telaUpload">
-        <h2>Enviar Documento</h2>
+        <h2>SISTEMA DE ENVIO - DOCUMENTAÇÃO CARNAVAL 2027</h2>
         <p>Olá, <strong id="nomeUsuarioLogado"></strong>! Escolha o arquivo para upload.</p>
         
         <input type="file" id="arquivoInput">
         <button id="btnEnviar" onclick="enviarArquivo()">Enviar Arquivo</button>
         
         <div id="status" class="status-msg"></div>
-        <br>
+        
         <button class="btn-logout" onclick="efetuarLogout()">Sair da Conta</button>
     </div>
 
@@ -187,20 +170,7 @@
     };
 
     // URL do seu Google Apps Script integrada
-    const URL_SCRIPT = 'https://google.com';
-
-    // Variável para armazenar a opção selecionada
-    let posicaoSelecionadaTexto = "";
-
-    // Grava o texto da opção selecionada
-    function gravarPosicao() {
-        const select = document.getElementById('posicaoSelec');
-        if (select.value !== "") {
-            posicaoSelecionadaTexto = select.options[select.selectedIndex].text;
-        } else {
-            posicaoSelecionadaTexto = "";
-        }
-    }
+    const URL_SCRIPT = 'https://script.google.com/macros/s/AKfycbxKI4igp3IGdtnFVv3JLAP3ZrqJnhwXDwWYQcpOy_WC7H9wiY7ReHpMf6_j9632w8_ffg/exec';
 
     // Função de Login
     function efetuarLogin() {
@@ -208,15 +178,14 @@
         const senhaInput = document.getElementById('loginSenha').value.trim();
         const loginStatus = document.getElementById('loginStatus');
 
-        // Validação contra a Base de Dados
         if (BASE_DE_DADOS[usuarioInput] && BASE_DE_DADOS[usuarioInput] === senhaInput) {
             document.getElementById('nomeUsuarioLogado').innerText = usuarioInput;
             
-            // Alterna a visibilidade das telas
             document.getElementById('telaLogin').classList.add('hidden');
             document.getElementById('telaUpload').classList.remove('hidden');
             
-            // Limpa mensagens de erro antigas
+            document.getElementById('loginUsuario').value = '';
+            document.getElementById('loginSenha').value = '';
             loginStatus.innerHTML = '';
         } else {
             loginStatus.innerHTML = '❌ Usuário ou senha incorretos.';
@@ -226,17 +195,10 @@
 
     // Função de Logout
     function efetuarLogout() {
-        // Limpa os campos do formulário
-        document.getElementById('loginUsuario').value = '';
-        document.getElementById('loginSenha').value = '';
-        document.getElementById('posicaoSelec').value = '';
-        document.getElementById('arquivoInput').value = '';
-        document.getElementById('status').innerHTML = '';
-        posicaoSelecionadaTexto = "";
-
-        // Alterna de volta para a tela de login
         document.getElementById('telaUpload').classList.add('hidden');
         document.getElementById('telaLogin').classList.remove('hidden');
+        document.getElementById('status').innerHTML = '';
+        document.getElementById('arquivoInput').value = '';
     }
 
     // Função para realizar o upload do arquivo para o Drive
@@ -251,7 +213,6 @@
             return;
         }
 
-        // CORREÇÃO AQUI: Captura o primeiro arquivo selecionado corretamente [0]
         const arquivo = input.files[0];
         
         botao.disabled = true;
@@ -261,18 +222,12 @@
         const leitor = new FileReader();
         leitor.readAsDataURL(arquivo);
         leitor.onload = function () {
-            const dadosBase64 = leitor.result.split(',');
+            const dadosBase64 = leitor.result.split(',')[1]; // Ajuste fino para obter apenas o base64 puro
             
-            // Se uma posição/setor foi escolhido, anexa ao nome do arquivo
-            let nomeFinalArquivo = arquivo.name;
-            if (posicaoSelecionadaTexto !== "") {
-                nomeFinalArquivo = posicaoSelecionadaTexto + "_" + arquivo.name;
-            }
-
             const parametros = {
-                data: dadosBase64[1], // Envia apenas a string Base64 limpa
+                data: dadosBase64,
                 mimeType: arquivo.type,
-                filename: nomeFinalArquivo
+                filename: arquivo.name
             };
 
             fetch(URL_SCRIPT, {
@@ -281,3 +236,21 @@
                 body: new URLSearchParams(parametros)
             })
             .then(() => {
+                status.innerHTML = '✅ Arquivo enviado com sucesso!';
+                status.style.color = '#188038';
+                input.value = '';
+            })
+            .catch(erro => {
+                status.innerHTML = '❌ Erro ao enviar o arquivo.';
+                status.style.color = '#d93025';
+                console.error(erro);
+            })
+            .finally(() => {
+                botao.disabled = false;
+            });
+        };
+    }
+</script>
+
+</body>
+</html>
