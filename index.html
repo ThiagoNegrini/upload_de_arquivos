@@ -59,14 +59,13 @@
         /* Formulários e Inputs */
         .form-group { text-align: left; margin-bottom: 15px; }
         label { font-size: 14px; color: #555; font-weight: bold; display: block; margin-bottom: 5px; }
-        input[type="text"], input[type="password"], select { 
+        input[type="text"], input[type="password"] { 
             width: 100%; 
             padding: 12px; 
             border: 1px solid #ccc; 
             border-radius: 4px; 
             box-sizing: border-box; 
             font-size: 16px; /* Evita zoom automático indesejado no iOS */
-            background-color: #fff;
         }
         input[type="file"] { 
             margin: 15px 0; 
@@ -92,7 +91,7 @@
         button:hover { background: #1557b0; }
         button:disabled { background: #ccc; cursor: not-allowed; }
         
-        .btn-logout { background: #d93025; color: white; border: none; font-size: 12px; padding: 6px 10px; width: auto; margin-top: 15px; border-radius: 4px; cursor: pointer; }
+        .btn-logout { background: #d93025; font-size: 12px; padding: 6px 10px; width: auto; margin-top: 15px; }
         .btn-logout:hover { background: #a51d12; }
         
         .status-msg { margin-top: 15px; font-size: 14px; font-weight: 500; }
@@ -119,7 +118,7 @@
 
 <div class="container">
     
-    <!-- ÁREA DO LOGOTIPO -->
+    <!-- ÁREA DO LOGOTIPO (Substitua o link src pela imagem do seu logo) -->
     <div class="logo-area">
         <img src="https://uesp.com.br/wp-content/uploads/2016/11/logo-uesp-1.png" alt="Logotipo da Empresa" id="imgLogo">
     </div>
@@ -143,25 +142,11 @@
         <div id="loginStatus" class="status-msg"></div>
     </div>
 
-    <!-- TELA 2: UPLOAD (COM A LISTA SUSPENSA EXIBIDA APÓS O LOGIN) -->
+    <!-- TELA 2: UPLOAD (Inicia oculta) -->
     <div class="card hidden" id="telaUpload">
         <h2>SISTEMA DE ENVIO - DOCUMENTAÇÃO CARNAVAL 2027</h2>
         <p>Olá, <strong id="nomeUsuarioLogado"></strong>! Escolha o arquivo para upload.</p>
         
-        <!-- LISTA SUSPENSA ADICIONADA SEGUINDO SUA SOLICITAÇÃO -->
-        <div class="form-group">
-            <label for="posicaoSelec">Acesso / Setor (Opcional):</label>
-            <select id="posicaoSelec" onchange="gravarPosicao()">
-                <option value="">-- Selecione uma opção --</option>
-                <option value="especial_bairros">ESPECIAL DE BAIRROS</option>
-                <option value="acesso_1">ACESSO I</option>
-                <option value="acesso_2">ACESSO II</option>
-                <option value="acesso_3">ACESSO III</option>
-                <option value="blocos_especiais">BLOCOS ESPECIAIS</option>
-                <option value="acesso_blocos">ACESSO DE BLOCOS</option>
-            </select>
-        </div>
-
         <input type="file" id="arquivoInput">
         <button id="btnEnviar" onclick="enviarArquivo()">Enviar Arquivo</button>
         
@@ -186,19 +171,6 @@
 
     // URL do seu Google Apps Script integrada
     const URL_SCRIPT = 'https://script.google.com/macros/s/AKfycbxKI4igp3IGdtnFVv3JLAP3ZrqJnhwXDwWYQcpOy_WC7H9wiY7ReHpMf6_j9632w8_ffg/exec';
-
-    // Variável para armazenar o texto da opção selecionada
-    let posicaoSelecionadaTexto = "";
-
-    // Grava o texto amigável do setor selecionado
-    function gravarPosicao() {
-        const select = document.getElementById('posicaoSelec');
-        if (select.value !== "") {
-            posicaoSelecionadaTexto = select.options[select.selectedIndex].text;
-        } else {
-            posicaoSelecionadaTexto = "";
-        }
-    }
 
     // Função de Login
     function efetuarLogin() {
@@ -227,8 +199,6 @@
         document.getElementById('telaLogin').classList.remove('hidden');
         document.getElementById('status').innerHTML = '';
         document.getElementById('arquivoInput').value = '';
-        document.getElementById('posicaoSelec').value = '';
-        posicaoSelecionadaTexto = "";
     }
 
     // Função para realizar o upload do arquivo para o Drive
@@ -254,16 +224,10 @@
         leitor.onload = function () {
             const dadosBase64 = leitor.result.split(',')[1]; // Ajuste fino para obter apenas o base64 puro
             
-            // Define o nome final anexando o setor como prefixo, se selecionado
-            let nomeFinalArquivo = arquivo.name;
-            if (posicaoSelecionadaTexto !== "") {
-                nomeFinalArquivo = posicaoSelecionadaTexto + "_" + arquivo.name;
-            }
-
             const parametros = {
                 data: dadosBase64,
                 mimeType: arquivo.type,
-                filename: nomeFinalArquivo
+                filename: arquivo.name
             };
 
             fetch(URL_SCRIPT, {
@@ -274,3 +238,19 @@
             .then(() => {
                 status.innerHTML = '✅ Arquivo enviado com sucesso!';
                 status.style.color = '#188038';
+                input.value = '';
+            })
+            .catch(erro => {
+                status.innerHTML = '❌ Erro ao enviar o arquivo.';
+                status.style.color = '#d93025';
+                console.error(erro);
+            })
+            .finally(() => {
+                botao.disabled = false;
+            });
+        };
+    }
+</script>
+
+</body>
+</html>
