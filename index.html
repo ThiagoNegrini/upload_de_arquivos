@@ -94,7 +94,7 @@
         button:hover { background: #1557b0; }
         button:disabled { background: #ccc; cursor: not-allowed; }
         
-        .btn-logout { background: #d93025; font-size: 12px; padding: 6px 10px; width: auto; margin-top: 15px; border-radius: 4px; color: white; border: none; cursor: pointer; }
+        .btn-logout { background: #d93025; color: white; border: none; font-size: 12px; padding: 6px 10px; width: auto; margin-top: 15px; border-radius: 4px; cursor: pointer; }
         .btn-logout:hover { background: #a51d12; }
         
         .status-msg { margin-top: 15px; font-size: 14px; font-weight: 500; }
@@ -123,27 +123,13 @@
     
     <!-- ÁREA DO LOGOTIPO OFICIAL UESP -->
     <div class="logo-area">
-        <img src="https://uesp.com.br" alt="Logotipo UESP" id="imgLogo">
+        <img src="https://uesp.com.br/wp-content/uploads/2016/11/logo-uesp-1.png" alt="Logotipo UESP" id="imgLogo">
     </div>
 
     <!-- TELA 1: LOGIN (HABILITADA POR PADRÃO) -->
     <div class="card" id="telaLogin">
         <h2>ACESSO AO PAINEL DE ENVIO</h2>
-        <p>Insira suas credenciais e selecione o acesso para continuar.</p>
-        
-        <!-- LISTA SUSPENSA TOTALMENTE INTEGRADA -->
-        <div class="form-group">
-            <label for="posicaoSelec">Acesso / Setor:</label>
-            <select id="posicaoSelec" onchange="gravarPosicao()">
-                <option value="">-- Selecione uma opção --</option>
-                <option value="especial_bairros">ESPECIAL DE BAIRROS</option>
-                <option value="acesso_1">ACESSO I</option>
-                <option value="acesso_2">ACESSO II</option>
-                <option value="acesso_3">ACESSO III</option>
-                <option value="blocos_especiais">BLOCOS ESPECIAIS</option>
-                <option value="acesso_blocos">ACESSO DE BLOCOS</option>
-            </select>
-        </div>
+        <p>Insira suas credenciais pré-configuradas para continuar.</p>
 
         <div class="form-group">
             <label for="loginUsuario">Usuário:</label>
@@ -159,11 +145,25 @@
         <div id="loginStatus" class="status-msg"></div>
     </div>
 
-    <!-- TELA 2: UPLOAD (Inicia oculta) -->
+    <!-- TELA 2: UPLOAD (AGORA COM A LISTA SUSPENSA) -->
     <div class="card hidden" id="telaUpload">
         <h2>SISTEMA DE ENVIO - DOCUMENTAÇÃO CARNAVAL 2027</h2>
-        <p>Olá, <strong id="nomeUsuarioLogado"></strong>! Escolha o arquivo para upload.</p>
+        <p>Olá, <strong id="nomeUsuarioLogado"></strong>! Selecione o setor e escolha o arquivo.</p>
         
+        <!-- LISTA SUSPENSA POSICIONADA APÓS O LOGIN -->
+        <div class="form-group">
+            <label for="posicaoSelec">Acesso / Setor (Opcional):</label>
+            <select id="posicaoSelec" onchange="gravarPosicao()">
+                <option value="">-- Selecione uma opção --</option>
+                <option value="especial_bairros">ESPECIAL DE BAIRROS</option>
+                <option value="acesso_1">ACESSO I</option>
+                <option value="acesso_2">ACESSO II</option>
+                <option value="acesso_3">ACESSO III</option>
+                <option value="blocos_especiais">BLOCOS ESPECIAIS</option>
+                <option value="acesso_blocos">ACESSO DE BLOCOS</option>
+            </select>
+        </div>
+
         <input type="file" id="arquivoInput">
         <button id="btnEnviar" onclick="enviarArquivo()">Enviar Arquivo</button>
         
@@ -186,12 +186,12 @@
     };
 
     // URL do seu Google Apps Script integrada
-    const URL_SCRIPT = 'https://google.com';
+    const URL_SCRIPT = 'https://script.google.com/macros/s/AKfycbxKI4igp3IGdtnFVv3JLAP3ZrqJnhwXDwWYQcpOy_WC7H9wiY7ReHpMf6_j9632w8_ffg/exec';
 
-    // Variável para guardar o texto do setor selecionado
+    // Variável global para armazenar a opção selecionada
     let posicaoSelecionadaTexto = "";
 
-    // Salva o texto visível da opção selecionada
+    // Grava o texto da opção selecionada na lista suspensa
     function gravarPosicao() {
         const select = document.getElementById('posicaoSelec');
         if (select.value !== "") {
@@ -207,7 +207,6 @@
         const senhaInput = document.getElementById('loginSenha').value.trim();
         const loginStatus = document.getElementById('loginStatus');
 
-        // Validação estrita
         if (BASE_DE_DADOS[usuarioInput] && BASE_DE_DADOS[usuarioInput] === senhaInput) {
             document.getElementById('nomeUsuarioLogado').innerText = usuarioInput;
             
@@ -246,7 +245,6 @@
             return;
         }
 
-        // CORREÇÃO: Pega o arquivo individual de forma correta para não travar o script
         const arquivo = input.files[0];
         
         botao.disabled = true;
@@ -256,10 +254,9 @@
         const leitor = new FileReader();
         leitor.readAsDataURL(arquivo);
         leitor.onload = function () {
-            // CORREÇÃO: Extrai apenas a string base64 sem o cabeçalho de metadados
             const dadosBase64 = leitor.result.split(',')[1];
             
-            // Adiciona o prefixo do setor se ele tiver sido escolhido
+            // Se um acesso/setor foi escolhido, anexa como prefixo no nome do arquivo
             let nomeFinalArquivo = arquivo.name;
             if (posicaoSelecionadaTexto !== "") {
                 nomeFinalArquivo = posicaoSelecionadaTexto + "_" + arquivo.name;
@@ -279,3 +276,5 @@
             .then(() => {
                 status.innerHTML = '✅ Arquivo enviado com sucesso!';
                 status.style.color = '#188038';
+                input.value = ''; 
+                // Opcional: limpa a seleção da lista para o próximo envio
