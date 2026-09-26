@@ -126,7 +126,7 @@
         <img src="https://uesp.com.br" alt="Logotipo UESP" id="imgLogo">
     </div>
 
-    <!-- TELA 1: LOGIN -->
+    <!-- TELA 1: LOGIN (HABILITADA POR PADRÃO) -->
     <div class="card" id="telaLogin">
         <h2>ACESSO AO PAINEL DE ENVIO</h2>
         <p>Insira suas credenciais e selecione o acesso para continuar.</p>
@@ -159,7 +159,7 @@
         <div id="loginStatus" class="status-msg"></div>
     </div>
 
-    <!-- TELA 2: UPLOAD -->
+    <!-- TELA 2: UPLOAD (Inicia oculta) -->
     <div class="card hidden" id="telaUpload">
         <h2>SISTEMA DE ENVIO - DOCUMENTAÇÃO CARNAVAL 2027</h2>
         <p>Olá, <strong id="nomeUsuarioLogado"></strong>! Escolha o arquivo para upload.</p>
@@ -191,7 +191,7 @@
     // Variável para guardar o texto do setor selecionado
     let posicaoSelecionadaTexto = "";
 
-    // Salva o texto visível da opção (ex: "ESPECIAL DE BAIRROS")
+    // Salva o texto visível da opção selecionada
     function gravarPosicao() {
         const select = document.getElementById('posicaoSelec');
         if (select.value !== "") {
@@ -207,6 +207,7 @@
         const senhaInput = document.getElementById('loginSenha').value.trim();
         const loginStatus = document.getElementById('loginStatus');
 
+        // Validação estrita
         if (BASE_DE_DADOS[usuarioInput] && BASE_DE_DADOS[usuarioInput] === senhaInput) {
             document.getElementById('nomeUsuarioLogado').innerText = usuarioInput;
             
@@ -245,6 +246,7 @@
             return;
         }
 
+        // CORREÇÃO: Pega o arquivo individual de forma correta para não travar o script
         const arquivo = input.files[0];
         
         botao.disabled = true;
@@ -254,6 +256,7 @@
         const leitor = new FileReader();
         leitor.readAsDataURL(arquivo);
         leitor.onload = function () {
+            // CORREÇÃO: Extrai apenas a string base64 sem o cabeçalho de metadados
             const dadosBase64 = leitor.result.split(',')[1];
             
             // Adiciona o prefixo do setor se ele tiver sido escolhido
@@ -276,8 +279,3 @@
             .then(() => {
                 status.innerHTML = '✅ Arquivo enviado com sucesso!';
                 status.style.color = '#188038';
-                input.value = ''; 
-            })
-            .catch(erro => {
-                status.innerHTML = '❌ Erro ao enviar o arquivo.';
-                status.style.color = '#d93025';
