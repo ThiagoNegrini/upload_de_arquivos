@@ -66,6 +66,7 @@
             border-radius: 4px; 
             box-sizing: border-box; 
             font-size: 16px; /* Evita zoom automático indesejado no iOS */
+            background-color: #fff;
         }
         input[type="file"] { 
             margin: 15px 0; 
@@ -91,7 +92,7 @@
         button:hover { background: #1557b0; }
         button:disabled { background: #ccc; cursor: not-allowed; }
         
-        .btn-logout { background: #d93025; font-size: 12px; padding: 6px 10px; width: auto; margin-top: 15px; }
+        .btn-logout { background: #d93025; color: white; border: none; font-size: 12px; padding: 6px 10px; width: auto; margin-top: 15px; border-radius: 4px; cursor: pointer; }
         .btn-logout:hover { background: #a51d12; }
         
         .status-msg { margin-top: 15px; font-size: 14px; font-weight: 500; }
@@ -102,11 +103,11 @@
         /* REGRAS PARA TELEMÓVEIS / TELAS PEQUENAS */
         @media (max-width: 768px) {
             .container {
-                flex-direction: column; /* Joga o logo para cima e o card para baixo */
+                flex-direction: column; 
                 gap: 20px;
             }
             .logo-area {
-                max-width: 180px; /* Reduz o logo no telemóvel */
+                max-width: 180px; 
             }
             .card {
                 padding: 20px;
@@ -118,7 +119,7 @@
 
 <div class="container">
     
-    <!-- ÁREA DO LOGOTIPO (Substitua o link src pela imagem do seu logo) -->
+    <!-- ÁREA DO LOGOTIPO -->
     <div class="logo-area">
         <img src="https://uesp.com.br/wp-content/uploads/2016/11/logo-uesp-1.png" alt="Logotipo da Empresa" id="imgLogo">
     </div>
@@ -142,11 +143,17 @@
         <div id="loginStatus" class="status-msg"></div>
     </div>
 
-    <!-- TELA 2: UPLOAD (Inicia oculta) -->
+    <!-- TELA 2: UPLOAD (APÓS O LOGIN COM NOVO CAMPO DE TEXTO) -->
     <div class="card hidden" id="telaUpload">
         <h2>SISTEMA DE ENVIO - DOCUMENTAÇÃO CARNAVAL 2027</h2>
-        <p>Olá, <strong id="nomeUsuarioLogado"></strong>! Escolha o arquivo para upload.</p>
+        <p>Olá, <strong id="nomeUsuarioLogado"></strong>! Preencha as informações do arquivo.</p>
         
+        <!-- CAMPO DE TEXTO PARA IDENTIFICAÇÃO / RENOMEAR O ARQUIVO -->
+        <div class="form-group">
+            <label for="nomeArquivoCustom">Nome do Arquivo / Identificação:</label>
+            <input type="text" id="nomeArquivoCustom" placeholder="Ex: Escola_Samba_Oficio_01">
+        </div>
+
         <input type="file" id="arquivoInput">
         <button id="btnEnviar" onclick="enviarArquivo()">Enviar Arquivo</button>
         
@@ -160,7 +167,6 @@
 <script>
     // ==========================================
     // BASE DE DADOS DE USUÁRIOS
-    // Formato: 'usuario': 'senha'
     // ==========================================
     const BASE_DE_DADOS = {
         'adm': '123',
@@ -199,6 +205,7 @@
         document.getElementById('telaLogin').classList.remove('hidden');
         document.getElementById('status').innerHTML = '';
         document.getElementById('arquivoInput').value = '';
+        document.getElementById('nomeArquivoCustom').value = '';
     }
 
     // Função para realizar o upload do arquivo para o Drive
@@ -206,6 +213,7 @@
         const input = document.getElementById('arquivoInput');
         const status = document.getElementById('status');
         const botao = document.getElementById('btnEnviar');
+        const nomeCustomInput = document.getElementById('nomeArquivoCustom').value.trim();
         
         if (input.files.length === 0) {
             status.innerHTML = '⚠️ Por favor, selecione um arquivo primeiro.';
@@ -222,12 +230,19 @@
         const leitor = new FileReader();
         leitor.readAsDataURL(arquivo);
         leitor.onload = function () {
-            const dadosBase64 = leitor.result.split(',')[1]; // Ajuste fino para obter apenas o base64 puro
+            const dadosBase64 = leitor.result.split(',')[1]; 
             
+            // Lógica para renomear mantendo a extensão original (ex: .pdf, .docx, .png)
+            let nomeFinalArquivo = arquivo.name;
+            if (nomeCustomInput !== "") {
+                const ext = arquivo.name.split('.').pop(); // Captura a extensão original
+                nomeFinalArquivo = nomeCustomInput + "." + ext;
+            }
+
             const parametros = {
                 data: dadosBase64,
                 mimeType: arquivo.type,
-                filename: arquivo.name
+                filename: nomeFinalArquivo
             };
 
             fetch(URL_SCRIPT, {
@@ -236,9 +251,10 @@
                 body: new URLSearchParams(parametros)
             })
             .then(() => {
-                status.innerHTML = '✅ Arquivo enviado com sucesso!';
+                status.innerHTML = '✅ Arquivo enviado e renomeado com sucesso!';
                 status.style.color = '#188038';
                 input.value = '';
+                document.getElementById('nomeArquivoCustom').value = ''; // Limpa o campo de nome
             })
             .catch(erro => {
                 status.innerHTML = '❌ Erro ao enviar o arquivo.';
