@@ -65,7 +65,7 @@
             border: 1px solid #ccc; 
             border-radius: 4px; 
             box-sizing: border-box; 
-            font-size: 16px; /* Evita zoom automático indesejado no iOS */
+            font-size: 16px; 
             background-color: #fff;
         }
         input[type="file"] { 
@@ -80,7 +80,7 @@
             background: #1a73e8; 
             color: white; 
             border: none; 
-            padding: 12px 15px; 
+            padding: 12px 15px; 2027
             border-radius: 4px; 
             cursor: pointer; 
             width: 100%; 
@@ -143,15 +143,21 @@
         <div id="loginStatus" class="status-msg"></div>
     </div>
 
-    <!-- TELA 2: UPLOAD (APÓS O LOGIN COM NOVO CAMPO DE TEXTO) -->
+    <!-- TELA 2: UPLOAD (APÓS O LOGIN COM AMBOS OS CAMPOS) -->
     <div class="card hidden" id="telaUpload">
         <h2>SISTEMA DE ENVIO - DOCUMENTAÇÃO CARNAVAL 2027</h2>
         <p>Olá, <strong id="nomeUsuarioLogado"></strong>! Preencha as informações do arquivo.</p>
         
-        <!-- CAMPO DE TEXTO PARA IDENTIFICAÇÃO / RENOMEAR O ARQUIVO -->
+        <!-- CAMPO 1: NOVO CAMPO PARA NOMEAR A PASTA NO DRIVE -->
+        <div class="form-group">
+            <label for="nomePastaCustom">Nome da Pasta no Drive:</label>
+            <input type="text" id="nomePastaCustom" placeholder="Ex: Nome_da_Agremiacao">
+        </div>
+
+        <!-- CAMPO 2: CAMPO DE NOME DO ARQUIVO -->
         <div class="form-group">
             <label for="nomeArquivoCustom">Nome do Arquivo / Identificação:</label>
-            <input type="text" id="nomeArquivoCustom" placeholder="Ex: Escola_Samba_Oficio_01">
+            <input type="text" id="nomeArquivoCustom" placeholder="Ex: Oficio_Diretoria_01">
         </div>
 
         <input type="file" id="arquivoInput">
@@ -165,9 +171,7 @@
 </div>
 
 <script>
-    // ==========================================
     // BASE DE DADOS DE USUÁRIOS
-    // ==========================================
     const BASE_DE_DADOS = {
         'adm': '123',
         'joao': 'senha987',
@@ -176,9 +180,8 @@
     };
 
     // URL do seu Google Apps Script integrada
-    const URL_SCRIPT = 'https://script.google.com/macros/s/AKfycbxKI4igp3IGdtnFVv3JLAP3ZrqJnhwXDwWYQcpOy_WC7H9wiY7ReHpMf6_j9632w8_ffg/exec';
+    const URL_SCRIPT = 'https://script.google.com/macros/s/AKfycbxMiKWCV0vkVmzAPkm-S2Y6nSzGGrb9NegXLiLa7rgpSmJOZz1RauIIN631IcRx4yntng/exec';
 
-    // Função de Login
     function efetuarLogin() {
         const usuarioInput = document.getElementById('loginUsuario').value.trim();
         const senhaInput = document.getElementById('loginSenha').value.trim();
@@ -186,10 +189,8 @@
 
         if (BASE_DE_DADOS[usuarioInput] && BASE_DE_DADOS[usuarioInput] === senhaInput) {
             document.getElementById('nomeUsuarioLogado').innerText = usuarioInput;
-            
             document.getElementById('telaLogin').classList.add('hidden');
             document.getElementById('telaUpload').classList.remove('hidden');
-            
             document.getElementById('loginUsuario').value = '';
             document.getElementById('loginSenha').value = '';
             loginStatus.innerHTML = '';
@@ -199,21 +200,21 @@
         }
     }
 
-    // Função de Logout
     function efetuarLogout() {
         document.getElementById('telaUpload').classList.add('hidden');
         document.getElementById('telaLogin').classList.remove('hidden');
         document.getElementById('status').innerHTML = '';
         document.getElementById('arquivoInput').value = '';
         document.getElementById('nomeArquivoCustom').value = '';
+        document.getElementById('nomePastaCustom').value = '';
     }
 
-    // Função para realizar o upload do arquivo para o Drive
     function enviarArquivo() {
         const input = document.getElementById('arquivoInput');
         const status = document.getElementById('status');
         const botao = document.getElementById('btnEnviar');
         const nomeCustomInput = document.getElementById('nomeArquivoCustom').value.trim();
+        const nomePastaInput = document.getElementById('nomePastaCustom').value.trim();
         
         if (input.files.length === 0) {
             status.innerHTML = '⚠️ Por favor, selecione um arquivo primeiro.';
@@ -222,9 +223,8 @@
         }
 
         const arquivo = input.files[0];
-        
         botao.disabled = true;
-        status.innerHTML = '⏳ Enviando arquivo, por favor aguarde...';
+        status.innerHTML = '⏳ Criando pasta e enviando arquivo...';
         status.style.color = '#1a73e8';
 
         const leitor = new FileReader();
@@ -232,32 +232,34 @@
         leitor.onload = function () {
             const dadosBase64 = leitor.result.split(',')[1]; 
             
-            // Lógica para renomear mantendo a extensão original (ex: .pdf, .docx, .png)
+            // Renomeia o arquivo mantendo a extensão
             let nomeFinalArquivo = arquivo.name;
             if (nomeCustomInput !== "") {
-                const ext = arquivo.name.split('.').pop(); // Captura a extensão original
+                const ext = arquivo.name.split('.').pop();
                 nomeFinalArquivo = nomeCustomInput + "." + ext;
             }
 
+            // Define os parâmetros incluindo o nome da pasta
             const parametros = {
                 data: dadosBase64,
                 mimeType: arquivo.type,
-                filename: nomeFinalArquivo
+                filename: nomeFinalArquivo,
+                nomePasta: nomePastaInput
             };
 
             fetch(URL_SCRIPT, {
                 method: 'POST',
-                mode: 'no-cors',
                 body: new URLSearchParams(parametros)
             })
             .then(() => {
-                status.innerHTML = '✅ Arquivo enviado e renomeado com sucesso!';
+                status.innerHTML = '✅ Arquivo salvo na pasta com sucesso!';
                 status.style.color = '#188038';
                 input.value = '';
-                document.getElementById('nomeArquivoCustom').value = ''; // Limpa o campo de nome
+                document.getElementById('nomeArquivoCustom').value = '';
+                document.getElementById('nomePastaCustom').value = '';
             })
             .catch(erro => {
-                status.innerHTML = '❌ Erro ao enviar o arquivo.';
+                status.innerHTML = '❌ Erro ao processar o upload.';
                 status.style.color = '#d93025';
                 console.error(erro);
             })
@@ -268,5 +270,5 @@
     }
 </script>
 
-</body>
+</body
 </html>
