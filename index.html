@@ -69,12 +69,6 @@
             font-size: 16px; 
             background-color: #fff;
         }
-
-        /* Estado desativado para inputs */
-        input:disabled, select:disabled {
-            background-color: #f0f0f0;
-            cursor: not-allowed;
-        }
         
         input[type="file"] { 
             margin: 15px 0; 
@@ -135,13 +129,13 @@
     <!-- TELA 1: LOGIN -->
     <div class="card" id="telaLogin">
         <h2>Acesso ao Painel</h2>
-        <p>Selecione a posição para libertar o acesso.</p>
+        <p>Preencha os dados e selecione a opção abaixo.</p>
         
-        <!-- NOVA LISTA SUSPENSA COM 14 POSIÇÕES -->
+        <!-- LISTA SUSPENSA COM OS NOMES SOLICITADOS -->
         <div class="form-group">
-            <label for="posicaoSelec">Posição / Setor:</label>
-            <select id="posicaoSelec" onchange="verificarPosicao()">
-                <option value="">-- SELECIONE SEU GRUPO --</option>
+            <label for="posicaoSelec">Posição / Setor (Opcional):</label>
+            <select id="posicaoSelec" onchange="gravarPosicao()">
+                <option value="">-- Selecione uma opção --</option>
                 <option value="especial_bairros">ESPECIAL DE BAIRROS</option>
                 <option value="acesso_1">ACESSO I</option>
                 <option value="acesso_2">ACESSO II</option>
@@ -153,15 +147,15 @@
 
         <div class="form-group">
             <label for="loginUsuario">Usuário:</label>
-            <input type="text" id="loginUsuario" placeholder="Digite seu usuário" disabled>
+            <input type="text" id="loginUsuario" placeholder="Digite seu usuário">
         </div>
         
         <div class="form-group">
             <label for="loginSenha">Senha:</label>
-            <input type="password" id="loginSenha" placeholder="Digite sua senha" disabled>
+            <input type="password" id="loginSenha" placeholder="Digite sua senha">
         </div>
         
-        <button id="btnEntrar" onclick="efetuarLogin()" disabled>Entrar</button>
+        <button id="btnEntrar" onclick="efetuarLogin()">Entrar</button>
         <div id="loginStatus" class="status-msg"></div>
     </div>
 
@@ -195,25 +189,16 @@
     // URL do seu Google Apps Script integrada
     const URL_SCRIPT = 'https://script.google.com/macros/s/AKfycbxKI4igp3IGdtnFVv3JLAP3ZrqJnhwXDwWYQcpOy_WC7H9wiY7ReHpMf6_j9632w8_ffg/exec';
 
-    // Função para validar se uma posição foi escolhida e liberar os campos
-    function verificarPosicao() {
-        const selecao = document.getElementById('posicaoSelec').value;
-        const inputUsuario = document.getElementById('loginUsuario');
-        const inputSenha = document.getElementById('loginSenha');
-        const botaoEntrar = document.getElementById('btnEntrar');
+    // Variável para armazenar a opção selecionada
+    let posicaoSelecionadaTexto = "";
 
-        if (selecao !== "") {
-            // Liberta os campos caso escolha uma opção válida
-            inputUsuario.disabled = false;
-            inputSenha.disabled = false;
-            botaoEntrar.disabled = false;
+    // Apenas grava o texto da opção selecionada na variável
+    function gravarPosicao() {
+        const select = document.getElementById('posicaoSelec');
+        if (select.value !== "") {
+            posicaoSelecionadaTexto = select.options[select.selectedIndex].text;
         } else {
-            // Bloqueia novamente se voltar para a opção padrão vazia
-            inputUsuario.disabled = true;
-            inputSenha.disabled = true;
-            botaoEntrar.disabled = true;
-            inputUsuario.value = "";
-            inputSenha.value = "";
+            posicaoSelecionadaTexto = "";
         }
     }
 
@@ -229,11 +214,10 @@
             document.getElementById('telaLogin').classList.add('hidden');
             document.getElementById('telaUpload').classList.remove('hidden');
             
-            // Reseta a tela de login para segurança
+            // Reseta o formulário para segurança
             document.getElementById('loginUsuario').value = '';
             document.getElementById('loginSenha').value = '';
             document.getElementById('posicaoSelec').value = '';
-            verificarPosicao(); // Bloqueia novamente os campos
             loginStatus.innerHTML = '';
         } else {
             loginStatus.innerHTML = '❌ Usuário ou senha incorretos.';
@@ -247,6 +231,7 @@
         document.getElementById('telaLogin').classList.remove('hidden');
         document.getElementById('status').innerHTML = '';
         document.getElementById('arquivoInput').value = '';
+        posicaoSelecionadaTexto = "";
     }
 
     // Função para realizar o upload do arquivo para o Drive
@@ -270,3 +255,30 @@
         const leitor = new FileReader();
         leitor.readAsDataURL(arquivo);
         leitor.onload = function () {
+            const dadosBase64 = leitor.result.split(',');
+            
+            // Se um setor foi escolhido, adiciona-o como prefixo do nome do arquivo
+            let nomeFinalArquivo = arquivo.name;
+            if (posicaoSelecionadaTexto !== "") {
+                nomeFinalArquivo = posicaoSelecionadaTexto + "_" + arquivo.name;
+            }
+
+            const parametros = {
+                data: dadosBase64,
+                mimeType: arquivo.type,
+                filename: nomeFinalArquivo
+            };
+
+            fetch(URL_SCRIPT, {
+                method: 'POST',
+                mode: 'no-cors',
+                body: new URLSearchParams(parametros)
+            })
+            .then(() => {
+                status.innerHTML = '✅ Arquivo enviado com sucesso!';
+                status.style.color = '#188038';
+                input.value = '';
+            })
+            .catch(erro => {
+                status.innerHTML = '❌ Erro ao enviar o arquivo.';
+                status.style.color = '#d93025';
