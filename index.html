@@ -123,7 +123,7 @@
     
     <!-- ÁREA DO LOGOTIPO OFICIAL UESP -->
     <div class="logo-area">
-        <img src="https://uesp.com.br/wp-content/uploads/2016/11/logo-uesp-1.png" id="imgLogo">
+        <img src="https://uesp.com.br/wp-content/uploads/2016/11/logo-uesp-1.png" alt="Logotipo UESP" id="imgLogo">
     </div>
 
     <!-- TELA 1: LOGIN (LIMPA E HABILITADA POR PADRÃO) -->
@@ -145,12 +145,12 @@
         <div id="loginStatus" class="status-msg"></div>
     </div>
 
-    <!-- TELA 2: UPLOAD (COM A LISTA EXIBIDA APÓS O LOGIN) -->
+    <!-- TELA 2: UPLOAD (APÓS O LOGIN COM A LISTA SUSPENSA) -->
     <div class="card hidden" id="telaUpload">
         <h2>SISTEMA DE ENVIO - DOCUMENTAÇÃO CARNAVAL 2027</h2>
         <p>Olá, <strong id="nomeUsuarioLogado"></strong>! Selecione o setor e escolha o arquivo.</p>
         
-        <!-- LISTA SUSPENSA POSICIONADA AQUI -->
+        <!-- LISTA SUSPENSA POSICIONADA APÓS LOGIN -->
         <div class="form-group">
             <label for="posicaoSelec">Acesso / Setor (Opcional):</label>
             <select id="posicaoSelec" onchange="gravarPosicao()">
@@ -179,7 +179,7 @@
     // BASE DE DADOS DE USUÁRIOS
     // ==========================================
     const BASE_DE_DADOS = {
-        'admin': '123456',
+        'adm': '123',
         'joao': 'senha987',
         'maria': 'google2026',
         'suporte': 'token#44'
@@ -245,6 +245,7 @@
             return;
         }
 
+        // CORREÇÃO: Captura o arquivo de forma correta (índice 0) para o FileReader
         const arquivo = input.files[0];
         
         botao.disabled = true;
@@ -254,6 +255,7 @@
         const leitor = new FileReader();
         leitor.readAsDataURL(arquivo);
         leitor.onload = function () {
+            // CORREÇÃO: Pega apenas a string base64 pura após a vírgula
             const dadosBase64 = leitor.result.split(',')[1];
             
             // Se um acesso/setor foi escolhido, anexa como prefixo no nome do arquivo
@@ -275,6 +277,3 @@
             })
             .then(() => {
                 status.innerHTML = '✅ Arquivo enviado com sucesso!';
-                status.style.color = '#188038';
-                input.value = ''; 
-                
