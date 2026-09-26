@@ -59,14 +59,23 @@
         /* Formulários e Inputs */
         .form-group { text-align: left; margin-bottom: 15px; }
         label { font-size: 14px; color: #555; font-weight: bold; display: block; margin-bottom: 5px; }
-        input[type="text"], input[type="password"] { 
+        
+        input[type="text"], input[type="password"], select { 
             width: 100%; 
             padding: 12px; 
             border: 1px solid #ccc; 
             border-radius: 4px; 
             box-sizing: border-box; 
-            font-size: 16px; /* Evita zoom automático indesejado no iOS */
+            font-size: 16px; 
+            background-color: #fff;
         }
+
+        /* Estado desativado para inputs */
+        input:disabled, select:disabled {
+            background-color: #f0f0f0;
+            cursor: not-allowed;
+        }
+        
         input[type="file"] { 
             margin: 15px 0; 
             width: 100%; 
@@ -102,11 +111,11 @@
         /* REGRAS PARA TELEMÓVEIS / TELAS PEQUENAS */
         @media (max-width: 768px) {
             .container {
-                flex-direction: column; /* Joga o logo para cima e o card para baixo */
+                flex-direction: column; 
                 gap: 20px;
             }
             .logo-area {
-                max-width: 180px; /* Reduz o logo no telemóvel */
+                max-width: 180px; 
             }
             .card {
                 padding: 20px;
@@ -118,33 +127,55 @@
 
 <div class="container">
     
-    <!-- ÁREA DO LOGOTIPO (Substitua o link src pela imagem do seu logo) -->
+    <!-- ÁREA DO LOGOTIPO -->
     <div class="logo-area">
-        <img src="https://uesp.com.br/wp-content/uploads/2016/11/logo-uesp-1.png" alt="Logotipo da Empresa" id="imgLogo">
+        <img src="https://uesp.com.br/wp-content/uploads/2016/11/logo-uesp-1.png" id="imgLogo">
     </div>
 
     <!-- TELA 1: LOGIN -->
     <div class="card" id="telaLogin">
-        <h2>ACESSO AO PAINEL DE ENVIO - TESTE</h2>
-        <p>Insira suas credenciais pré-configuradas para continuar.</p>
+        <h2>Acesso ao Painel</h2>
+        <p>Selecione a posição para libertar o acesso.</p>
         
+        <!-- NOVA LISTA SUSPENSA COM 14 POSIÇÕES -->
+        <div class="form-group">
+            <label for="posicaoSelec">Posição / Setor:</label>
+            <select id="posicaoSelec" onchange="verificarPosicao()">
+                <option value="">-- Selecione uma posição --</option>
+                <option value="1">Posição 1</option>
+                <option value="2">Posição 2</option>
+                <option value="3">Posição 3</option>
+                <option value="4">Posição 4</option>
+                <option value="5">Posição 5</option>
+                <option value="6">Posição 6</option>
+                <option value="7">Posição 7</option>
+                <option value="8">Posição 8</option>
+                <option value="9">Posição 9</option>
+                <option value="10">Posição 10</option>
+                <option value="11">Posição 11</option>
+                <option value="12">Posição 12</option>
+                <option value="13">Posição 13</option>
+                <option value="14">Posição 14</option>
+            </select>
+        </div>
+
         <div class="form-group">
             <label for="loginUsuario">Usuário:</label>
-            <input type="text" id="loginUsuario" placeholder="Digite seu usuário">
+            <input type="text" id="loginUsuario" placeholder="Digite seu usuário" disabled>
         </div>
         
         <div class="form-group">
             <label for="loginSenha">Senha:</label>
-            <input type="password" id="loginSenha" placeholder="Digite sua senha">
+            <input type="password" id="loginSenha" placeholder="Digite sua senha" disabled>
         </div>
         
-        <button onclick="efetuarLogin()">Entrar</button>
+        <button id="btnEntrar" onclick="efetuarLogin()" disabled>Entrar</button>
         <div id="loginStatus" class="status-msg"></div>
     </div>
 
     <!-- TELA 2: UPLOAD (Inicia oculta) -->
     <div class="card hidden" id="telaUpload">
-        <h2>SISTEMA DE ENVIO - DOCUMENTAÇÃO CARNAVAL 2027</h2>
+        <h2>Enviar Documento</h2>
         <p>Olá, <strong id="nomeUsuarioLogado"></strong>! Escolha o arquivo para upload.</p>
         
         <input type="file" id="arquivoInput">
@@ -172,6 +203,28 @@
     // URL do seu Google Apps Script integrada
     const URL_SCRIPT = 'https://script.google.com/macros/s/AKfycbxKI4igp3IGdtnFVv3JLAP3ZrqJnhwXDwWYQcpOy_WC7H9wiY7ReHpMf6_j9632w8_ffg/exec';
 
+    // Função para validar se uma posição foi escolhida e liberar os campos
+    function verificarPosicao() {
+        const selecao = document.getElementById('posicaoSelec').value;
+        const inputUsuario = document.getElementById('loginUsuario');
+        const inputSenha = document.getElementById('loginSenha');
+        const botaoEntrar = document.getElementById('btnEntrar');
+
+        if (selecao !== "") {
+            // Liberta os campos caso escolha uma opção válida
+            inputUsuario.disabled = false;
+            inputSenha.disabled = false;
+            botaoEntrar.disabled = false;
+        } else {
+            // Bloqueia novamente se voltar para a opção padrão vazia
+            inputUsuario.disabled = true;
+            inputSenha.disabled = true;
+            botaoEntrar.disabled = true;
+            inputUsuario.value = "";
+            inputSenha.value = "";
+        }
+    }
+
     // Função de Login
     function efetuarLogin() {
         const usuarioInput = document.getElementById('loginUsuario').value.trim();
@@ -184,8 +237,11 @@
             document.getElementById('telaLogin').classList.add('hidden');
             document.getElementById('telaUpload').classList.remove('hidden');
             
+            // Reseta a tela de login para segurança
             document.getElementById('loginUsuario').value = '';
             document.getElementById('loginSenha').value = '';
+            document.getElementById('posicaoSelec').value = '';
+            verificarPosicao(); // Bloqueia novamente os campos
             loginStatus.innerHTML = '';
         } else {
             loginStatus.innerHTML = '❌ Usuário ou senha incorretos.';
@@ -213,7 +269,7 @@
             return;
         }
 
-        const arquivo = input.files[0];
+        const arquivo = input.files;
         
         botao.disabled = true;
         status.innerHTML = '⏳ Enviando arquivo, por favor aguarde...';
@@ -222,35 +278,3 @@
         const leitor = new FileReader();
         leitor.readAsDataURL(arquivo);
         leitor.onload = function () {
-            const dadosBase64 = leitor.result.split(',')[1]; // Ajuste fino para obter apenas o base64 puro
-            
-            const parametros = {
-                data: dadosBase64,
-                mimeType: arquivo.type,
-                filename: arquivo.name
-            };
-
-            fetch(URL_SCRIPT, {
-                method: 'POST',
-                mode: 'no-cors',
-                body: new URLSearchParams(parametros)
-            })
-            .then(() => {
-                status.innerHTML = '✅ Arquivo enviado com sucesso!';
-                status.style.color = '#188038';
-                input.value = '';
-            })
-            .catch(erro => {
-                status.innerHTML = '❌ Erro ao enviar o arquivo.';
-                status.style.color = '#d93025';
-                console.error(erro);
-            })
-            .finally(() => {
-                botao.disabled = false;
-            });
-        };
-    }
-</script>
-
-</body>
-</html>
