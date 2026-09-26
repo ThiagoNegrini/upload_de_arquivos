@@ -94,7 +94,7 @@
         button:hover { background: #1557b0; }
         button:disabled { background: #ccc; cursor: not-allowed; }
         
-        .btn-logout { background: #d93025; font-size: 12px; padding: 6px 10px; width: auto; margin-top: 15px; }
+        .btn-logout { background: #d93025; color: white; border: none; font-size: 12px; padding: 6px 10px; width: auto; margin-top: 15px; border-radius: 4px; cursor: pointer; }
         .btn-logout:hover { background: #a51d12; }
         
         .status-msg { margin-top: 15px; font-size: 14px; font-weight: 500; }
@@ -126,7 +126,7 @@
         <img src="https://wikimedia.org" alt="Logotipo da Empresa" id="imgLogo">
     </div>
 
-    <!-- TELA 1: LOGIN -->
+    <!-- TELA 1: LOGIN (HABILITADA POR PADRÃO) -->
     <div class="card" id="telaLogin">
         <h2>Acesso ao Painel</h2>
         <p>Preencha os dados e selecione a opção abaixo.</p>
@@ -168,7 +168,7 @@
         <button id="btnEnviar" onclick="enviarArquivo()">Enviar Arquivo</button>
         
         <div id="status" class="status-msg"></div>
-        
+        <br>
         <button class="btn-logout" onclick="efetuarLogout()">Sair da Conta</button>
     </div>
 
@@ -192,7 +192,7 @@
     // Variável para armazenar a opção selecionada
     let posicaoSelecionadaTexto = "";
 
-    // Apenas grava o texto da opção selecionada na variável
+    // Grava o texto da opção selecionada
     function gravarPosicao() {
         const select = document.getElementById('posicaoSelec');
         if (select.value !== "") {
@@ -208,16 +208,15 @@
         const senhaInput = document.getElementById('loginSenha').value.trim();
         const loginStatus = document.getElementById('loginStatus');
 
+        // Validação contra a Base de Dados
         if (BASE_DE_DADOS[usuarioInput] && BASE_DE_DADOS[usuarioInput] === senhaInput) {
             document.getElementById('nomeUsuarioLogado').innerText = usuarioInput;
             
+            // Alterna a visibilidade das telas
             document.getElementById('telaLogin').classList.add('hidden');
             document.getElementById('telaUpload').classList.remove('hidden');
             
-            // Reseta o formulário para segurança
-            document.getElementById('loginUsuario').value = '';
-            document.getElementById('loginSenha').value = '';
-            document.getElementById('posicaoSelec').value = '';
+            // Limpa mensagens de erro antigas
             loginStatus.innerHTML = '';
         } else {
             loginStatus.innerHTML = '❌ Usuário ou senha incorretos.';
@@ -227,11 +226,17 @@
 
     // Função de Logout
     function efetuarLogout() {
+        // Limpa os campos do formulário
+        document.getElementById('loginUsuario').value = '';
+        document.getElementById('loginSenha').value = '';
+        document.getElementById('posicaoSelec').value = '';
+        document.getElementById('arquivoInput').value = '';
+        document.getElementById('status').innerHTML = '';
+        posicaoSelecionadaTexto = "";
+
+        // Alterna de volta para a tela de login
         document.getElementById('telaUpload').classList.add('hidden');
         document.getElementById('telaLogin').classList.remove('hidden');
-        document.getElementById('status').innerHTML = '';
-        document.getElementById('arquivoInput').value = '';
-        posicaoSelecionadaTexto = "";
     }
 
     // Função para realizar o upload do arquivo para o Drive
@@ -246,7 +251,8 @@
             return;
         }
 
-        const arquivo = input.files;
+        // CORREÇÃO AQUI: Captura o primeiro arquivo selecionado corretamente [0]
+        const arquivo = input.files[0];
         
         botao.disabled = true;
         status.innerHTML = '⏳ Enviando arquivo, por favor aguarde...';
@@ -257,14 +263,14 @@
         leitor.onload = function () {
             const dadosBase64 = leitor.result.split(',');
             
-            // Se um setor foi escolhido, adiciona-o como prefixo do nome do arquivo
+            // Se uma posição/setor foi escolhido, anexa ao nome do arquivo
             let nomeFinalArquivo = arquivo.name;
             if (posicaoSelecionadaTexto !== "") {
                 nomeFinalArquivo = posicaoSelecionadaTexto + "_" + arquivo.name;
             }
 
             const parametros = {
-                data: dadosBase64,
+                data: dadosBase64[1], // Envia apenas a string Base64 limpa
                 mimeType: arquivo.type,
                 filename: nomeFinalArquivo
             };
@@ -275,10 +281,3 @@
                 body: new URLSearchParams(parametros)
             })
             .then(() => {
-                status.innerHTML = '✅ Arquivo enviado com sucesso!';
-                status.style.color = '#188038';
-                input.value = '';
-            })
-            .catch(erro => {
-                status.innerHTML = '❌ Erro ao enviar o arquivo.';
-                status.style.color = '#d93025';
