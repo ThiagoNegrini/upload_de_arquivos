@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="pt-BR">
 
@@ -12,11 +13,24 @@
 
     <title>Sistema de Envio de Documentos</title>
 
+
     <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+
+        /* ==========================================
+           FUNDO PRINCIPAL COM DEGRADÊ
+        =========================================== */
 
         body {
 
-            font-family: Arial, sans-serif;
+            font-family:
+                Arial,
+                Helvetica,
+                sans-serif;
 
             display: flex;
 
@@ -26,16 +40,87 @@
 
             min-height: 100vh;
 
-            background-color: #f4f4f9;
-
             margin: 0;
 
-            padding: 20px;
+            padding: 30px;
 
-            box-sizing: border-box;
+            background:
+                linear-gradient(
+                    135deg,
+                    #071a52 0%,
+                    #0b3d91 35%,
+                    #1677c8 68%,
+                    #20c4d9 100%
+                );
+
+            background-attachment: fixed;
+
+            position: relative;
+
+            overflow-x: hidden;
 
         }
 
+
+        /* ==========================================
+           EFEITOS DECORATIVOS DO FUNDO
+        =========================================== */
+
+        body::before {
+
+            content: "";
+
+            position: fixed;
+
+            width: 420px;
+
+            height: 420px;
+
+            border-radius: 50%;
+
+            background:
+                rgba(255, 255, 255, 0.08);
+
+            top: -180px;
+
+            left: -150px;
+
+            filter: blur(5px);
+
+            pointer-events: none;
+
+        }
+
+
+        body::after {
+
+            content: "";
+
+            position: fixed;
+
+            width: 500px;
+
+            height: 500px;
+
+            border-radius: 50%;
+
+            background:
+                rgba(255, 255, 255, 0.07);
+
+            bottom: -240px;
+
+            right: -180px;
+
+            filter: blur(5px);
+
+            pointer-events: none;
+
+        }
+
+
+        /* ==========================================
+           CONTAINER
+        =========================================== */
 
         .container {
 
@@ -47,14 +132,22 @@
 
             justify-content: center;
 
-            gap: 50px;
+            gap: 55px;
 
-            max-width: 900px;
+            max-width: 1000px;
 
             width: 100%;
 
+            position: relative;
+
+            z-index: 2;
+
         }
 
+
+        /* ==========================================
+           ÁREA DO LOGO
+        =========================================== */
 
         .logo-area {
 
@@ -62,7 +155,13 @@
 
             text-align: center;
 
-            max-width: 300px;
+            max-width: 340px;
+
+            display: flex;
+
+            justify-content: center;
+
+            align-items: center;
 
         }
 
@@ -75,72 +174,224 @@
 
             object-fit: contain;
 
-        }
+            padding: 18px;
 
+            background:
+                rgba(255, 255, 255, 0.96);
 
-        .card {
+            border:
+                1px solid rgba(255, 255, 255, 0.70);
 
-            background: white;
+            border-radius: 22px;
 
-            padding: 30px;
+            box-shadow:
 
-            border-radius: 8px;
+                0 20px 45px
+                rgba(0, 0, 0, 0.22),
 
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-
-            width: 100%;
-
-            max-width: 360px;
-
-            text-align: center;
+                0 5px 15px
+                rgba(0, 0, 0, 0.12);
 
             box-sizing: border-box;
 
+            transition:
+                transform 0.3s ease,
+                box-shadow 0.3s ease,
+                border-color 0.3s ease;
+
         }
 
 
-        h2 {
+        .logo-area img:hover {
 
-            color: #333;
+            transform:
+                translateY(-5px)
+                scale(1.01);
+
+            border-color:
+                rgba(255, 255, 255, 0.95);
+
+            box-shadow:
+
+                0 25px 55px
+                rgba(0, 0, 0, 0.27),
+
+                0 8px 18px
+                rgba(0, 0, 0, 0.15);
+
+        }
+
+
+        /* ==========================================
+           CARTÕES
+        =========================================== */
+
+        .card {
+
+            background:
+                rgba(255, 255, 255, 0.97);
+
+            padding: 34px;
+
+            border-radius: 22px;
+
+            box-shadow:
+
+                0 25px 60px
+                rgba(0, 0, 0, 0.22),
+
+                0 8px 20px
+                rgba(0, 0, 0, 0.10);
+
+            width: 100%;
+
+            max-width: 390px;
+
+            text-align: center;
+
+            border:
+                1px solid
+                rgba(255, 255, 255, 0.75);
+
+            position: relative;
+
+            overflow: hidden;
+
+            animation:
+                aparecerCard 0.45s ease;
+
+        }
+
+
+        /* Linha superior degradê */
+
+        .card::before {
+
+            content: "";
+
+            position: absolute;
+
+            top: 0;
+
+            left: 0;
+
+            right: 0;
+
+            height: 5px;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    #071a52,
+                    #0b3d91,
+                    #1677c8,
+                    #20c4d9
+                );
+
+        }
+
+
+        @keyframes aparecerCard {
+
+            from {
+
+                opacity: 0;
+
+                transform:
+                    translateY(15px);
+
+            }
+
+            to {
+
+                opacity: 1;
+
+                transform:
+                    translateY(0);
+
+            }
+
+        }
+
+
+        /* ==========================================
+           TÍTULOS
+        =========================================== */
+
+        h2 {
 
             margin-top: 0;
 
-            font-size: 22px;
+            margin-bottom: 12px;
+
+            font-size: 23px;
+
+            font-weight: 800;
+
+            letter-spacing: 0.3px;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    #071a52,
+                    #0b3d91,
+                    #1677c8
+                );
+
+            -webkit-background-clip: text;
+
+            -webkit-text-fill-color:
+                transparent;
+
+            background-clip: text;
 
         }
 
 
         p {
 
-            color: #666;
+            color: #667085;
 
             font-size: 14px;
 
-            margin-bottom: 20px;
+            line-height: 1.6;
+
+            margin-bottom: 24px;
 
         }
 
+
+        p strong {
+
+            color: #0b3d91;
+
+        }
+
+
+        /* ==========================================
+           FORMULÁRIOS
+        =========================================== */
 
         .form-group {
 
             text-align: left;
 
-            margin-bottom: 15px;
+            margin-bottom: 17px;
 
         }
 
 
         label {
 
-            font-size: 14px;
+            font-size: 13px;
 
-            color: #555;
+            color: #344054;
 
-            font-weight: bold;
+            font-weight: 700;
 
             display: block;
 
-            margin-bottom: 5px;
+            margin-bottom: 7px;
 
         }
 
@@ -150,123 +401,307 @@
 
             width: 100%;
 
-            padding: 12px;
+            padding: 13px 14px;
 
-            border: 1px solid #ccc;
+            border:
+                1px solid #d0d5dd;
 
-            border-radius: 4px;
+            border-radius: 10px;
 
             box-sizing: border-box;
 
-            font-size: 16px;
+            font-size: 15px;
 
-            background-color: #fff;
+            background-color: #ffffff;
+
+            outline: none;
+
+            transition:
+                border-color 0.2s ease,
+                box-shadow 0.2s ease,
+                transform 0.2s ease;
 
         }
 
+
+        input[type="text"]:focus,
+        input[type="password"]:focus {
+
+            border-color:
+                #1677c8;
+
+            box-shadow:
+                0 0 0 4px
+                rgba(22, 119, 200, 0.12);
+
+            transform:
+                translateY(-1px);
+
+        }
+
+
+        input::placeholder {
+
+            color: #98a2b3;
+
+        }
+
+
+        /* ==========================================
+           CAMPO DE ARQUIVO
+        =========================================== */
 
         input[type="file"] {
 
-            margin: 15px 0;
+            margin: 12px 0 18px;
 
             width: 100%;
 
+            padding: 11px;
+
             box-sizing: border-box;
 
-            font-size: 14px;
+            font-size: 13px;
+
+            color: #475467;
+
+            background:
+                #f8fafc;
+
+            border:
+                1px dashed #b8c7d9;
+
+            border-radius: 10px;
+
+            cursor: pointer;
 
         }
 
 
+        input[type="file"]:hover {
+
+            border-color:
+                #1677c8;
+
+            background:
+                #f1f8ff;
+
+        }
+
+
+        /* ==========================================
+           BOTÕES
+        =========================================== */
+
         button {
 
-            background: #1a73e8;
+            background:
+                linear-gradient(
+                    135deg,
+                    #071a52 0%,
+                    #0b3d91 40%,
+                    #1677c8 75%,
+                    #20c4d9 100%
+                );
 
             color: white;
 
             border: none;
 
-            padding: 12px 15px;
+            padding: 13px 16px;
 
-            border-radius: 4px;
+            border-radius: 10px;
 
             cursor: pointer;
 
             width: 100%;
 
-            font-size: 16px;
+            font-size: 15px;
 
-            font-weight: bold;
+            font-weight: 700;
 
-            transition: background 0.2s;
+            letter-spacing: 0.2px;
+
+            transition:
+                transform 0.2s ease,
+                box-shadow 0.2s ease,
+                opacity 0.2s ease;
 
             margin-bottom: 10px;
+
+            box-shadow:
+                0 7px 18px
+                rgba(11, 61, 145, 0.25);
 
         }
 
 
         button:hover {
 
-            background: #1557b0;
+            transform:
+                translateY(-2px);
+
+            box-shadow:
+                0 11px 25px
+                rgba(11, 61, 145, 0.32);
+
+        }
+
+
+        button:active {
+
+            transform:
+                translateY(0);
 
         }
 
 
         button:disabled {
 
-            background: #ccc;
+            background:
+                linear-gradient(
+                    135deg,
+                    #98a2b3,
+                    #c0c7d0
+                );
 
             cursor: not-allowed;
+
+            box-shadow: none;
+
+            transform: none;
 
         }
 
 
+        /* ==========================================
+           BOTÃO SECUNDÁRIO
+        =========================================== */
+
         .btn-secundario {
 
-            background: #666;
+            background:
+                linear-gradient(
+                    135deg,
+                    #475467,
+                    #667085
+                );
 
         }
 
 
         .btn-secundario:hover {
 
-            background: #444;
+            background:
+                linear-gradient(
+                    135deg,
+                    #344054,
+                    #475467
+                );
 
         }
 
 
+        /* ==========================================
+           BOTÃO LOGOUT
+        =========================================== */
+
         .btn-logout {
 
-            background: #d93025;
+            background:
+                linear-gradient(
+                    135deg,
+                    #b42318,
+                    #d92d20
+                );
 
             font-size: 12px;
 
-            padding: 6px 10px;
+            padding:
+                8px 14px;
 
             width: auto;
 
-            margin-top: 15px;
+            margin-top: 18px;
+
+            margin-bottom: 0;
+
+            box-shadow:
+                0 5px 12px
+                rgba(217, 45, 32, 0.20);
 
         }
 
 
         .btn-logout:hover {
 
-            background: #a51d12;
+            background:
+                linear-gradient(
+                    135deg,
+                    #912018,
+                    #b42318
+                );
 
         }
 
+
+        /* ==========================================
+           MENSAGENS DE STATUS
+        =========================================== */
 
         .status-msg {
 
             margin-top: 15px;
 
-            font-size: 14px;
+            min-height: 20px;
 
-            font-weight: 500;
+            font-size: 13px;
+
+            font-weight: 600;
+
+            line-height: 1.5;
 
         }
 
+
+        /* ==========================================
+           LINKS
+        =========================================== */
+
+        .link {
+
+            color:
+                #0b5cad;
+
+            cursor: pointer;
+
+            font-size: 13px;
+
+            margin-top: 14px;
+
+            display: block;
+
+            font-weight: 600;
+
+            transition:
+                color 0.2s ease;
+
+        }
+
+
+        .link:hover {
+
+            color:
+                #20a8c7;
+
+            text-decoration: none;
+
+        }
+
+
+        /* ==========================================
+           OCULTAR
+        =========================================== */
 
         .hidden {
 
@@ -275,35 +710,62 @@
         }
 
 
-        .link {
-
-            color: #1a73e8;
-
-            cursor: pointer;
-
-            font-size: 14px;
-
-            margin-top: 10px;
-
-            display: block;
-
-        }
-
-
-        .link:hover {
-
-            text-decoration: underline;
-
-        }
-
+        /* ==========================================
+           RESPONSIVIDADE
+        =========================================== */
 
         @media (max-width: 768px) {
+
+            body {
+
+                padding: 20px;
+
+            }
+
 
             .container {
 
                 flex-direction: column;
 
-                gap: 20px;
+                gap: 25px;
+
+            }
+
+
+            .logo-area {
+
+                max-width: 220px;
+
+            }
+
+
+            .logo-area img {
+
+                padding: 14px;
+
+                border-radius: 18px;
+
+            }
+
+
+            .card {
+
+                max-width: 420px;
+
+                padding: 28px 22px;
+
+                border-radius: 18px;
+
+            }
+
+        }
+
+
+        @media (max-width: 480px) {
+
+            body {
+
+                padding: 15px;
 
             }
 
@@ -317,7 +779,14 @@
 
             .card {
 
-                padding: 20px;
+                padding: 26px 18px;
+
+            }
+
+
+            h2 {
+
+                font-size: 20px;
 
             }
 
@@ -353,11 +822,15 @@
          LOGIN
     =========================================== -->
 
-    <div class="card" id="telaLogin">
+    <div
+        class="card"
+        id="telaLogin"
+    >
 
         <h2>
             ACESSO AO PAINEL DE ENVIO
         </h2>
+
 
         <p>
             Entre com seu usuário e senha.
@@ -430,6 +903,7 @@
         <h2>
             CRIAR CADASTRO
         </h2>
+
 
         <p>
             Preencha seus dados para criar seu acesso.
@@ -518,6 +992,7 @@
             SISTEMA DE ENVIO
         </h2>
 
+
         <p>
 
             Olá,
@@ -530,9 +1005,7 @@
         </p>
 
 
-        <!-- ==========================================
-             NOME DA PASTA
-        =========================================== -->
+        <!-- NOME DA PASTA -->
 
         <div class="form-group">
 
@@ -549,9 +1022,7 @@
         </div>
 
 
-        <!-- ==========================================
-             NOME DO ARQUIVO
-        =========================================== -->
+        <!-- NOME DO ARQUIVO -->
 
         <div class="form-group">
 
@@ -568,15 +1039,15 @@
         </div>
 
 
-        <!-- ==========================================
-             SELEÇÃO DO ARQUIVO
-        =========================================== -->
+        <!-- ARQUIVO -->
 
         <input
             type="file"
             id="arquivoInput"
         >
 
+
+        <!-- BOTÃO ENVIAR -->
 
         <button
             id="btnEnviar"
@@ -586,11 +1057,15 @@
         </button>
 
 
+        <!-- STATUS -->
+
         <div
             id="status"
             class="status-msg"
         ></div>
 
+
+        <!-- LOGOUT -->
 
         <button
             class="btn-logout"
@@ -600,7 +1075,6 @@
         </button>
 
     </div>
-
 
 </div>
 
@@ -613,12 +1087,10 @@
 // ==========================================
 
 const URL_SCRIPT =
-    'https://script.google.com/macros/s/AKfycbzfKJyqzB4YmBaeH6_lQ-SY--3NNGGhT06n_6wLkvZ53oWxwtxlpzPuufg635CXYEwFcA/exec';
+    'https://script.google.com/macros/s/AKfycbztOK3_JuX4AsIP1sXft-TpDCvQch6g106rZ1vMHVO2jPp3c_C-KXDMV2QiBpYRpACNrg/exec';
 
 
-// ==========================================
-// USUÁRIO ATUALMENTE LOGADO
-// ==========================================
+// Usuário atualmente logado
 
 let usuarioLogado = '';
 
@@ -724,7 +1196,7 @@ async function cadastrarUsuario() {
         '⏳ Criando cadastro...';
 
     status.style.color =
-        '#1a73e8';
+        '#1677c8';
 
 
     try {
@@ -873,7 +1345,7 @@ async function efetuarLogin() {
         '⏳ Verificando acesso...';
 
     status.style.color =
-        '#1a73e8';
+        '#1677c8';
 
 
     try {
@@ -921,7 +1393,8 @@ async function efetuarLogin() {
             document
                 .getElementById('nomeUsuarioLogado')
                 .innerText =
-                resultado.nome || resultado.usuario;
+                resultado.nome ||
+                resultado.usuario;
 
 
             document
@@ -1005,12 +1478,12 @@ function efetuarLogout() {
 
 
     document
-        .getElementById('nomePasta')
+        .getElementById('nomeArquivoCustom')
         .value = '';
 
 
     document
-        .getElementById('nomeArquivoCustom')
+        .getElementById('nomePasta')
         .value = '';
 
 }
@@ -1034,7 +1507,7 @@ function enviarArquivo() {
         document.getElementById('btnEnviar');
 
 
-    const nomePasta =
+    const nomePastaInput =
         document
             .getElementById('nomePasta')
             .value
@@ -1048,9 +1521,9 @@ function enviarArquivo() {
             .trim();
 
 
-    // ==========================================
-    // VERIFICAR LOGIN
-    // ==========================================
+    // ------------------------------------------
+    // VALIDAR LOGIN
+    // ------------------------------------------
 
     if (!usuarioLogado) {
 
@@ -1065,11 +1538,11 @@ function enviarArquivo() {
     }
 
 
-    // ==========================================
-    // VERIFICAR NOME DA PASTA
-    // ==========================================
+    // ------------------------------------------
+    // VALIDAR PASTA
+    // ------------------------------------------
 
-    if (!nomePasta) {
+    if (!nomePastaInput) {
 
         status.innerHTML =
             '⚠️ Informe o nome da pasta.';
@@ -1077,14 +1550,18 @@ function enviarArquivo() {
         status.style.color =
             '#d93025';
 
+        document
+            .getElementById('nomePasta')
+            .focus();
+
         return;
 
     }
 
 
-    // ==========================================
-    // VERIFICAR ARQUIVO
-    // ==========================================
+    // ------------------------------------------
+    // VALIDAR ARQUIVO
+    // ------------------------------------------
 
     if (input.files.length === 0) {
 
@@ -1109,8 +1586,9 @@ function enviarArquivo() {
     status.innerHTML =
         '⏳ Enviando arquivo, por favor aguarde...';
 
+
     status.style.color =
-        '#1a73e8';
+        '#1677c8';
 
 
     const leitor =
@@ -1128,9 +1606,9 @@ function enviarArquivo() {
                 leitor.result.split(',')[1];
 
 
-            // ==========================================
-            // NOME FINAL DO ARQUIVO
-            // ==========================================
+            // --------------------------------------
+            // DEFINIR NOME FINAL DO ARQUIVO
+            // --------------------------------------
 
             let nomeFinalArquivo =
                 arquivo.name;
@@ -1155,31 +1633,36 @@ function enviarArquivo() {
             }
 
 
-            // ==========================================
-            // PREPARAR DADOS PARA O SERVIDOR
-            // ==========================================
+            // --------------------------------------
+            // PREPARAR DADOS
+            // --------------------------------------
 
             const parametros =
                 new URLSearchParams({
 
                     acao: 'upload',
 
-                    usuario: usuarioLogado,
+                    usuario:
+                        usuarioLogado,
 
-                    pasta: nomePasta,
+                    pasta:
+                        nomePastaInput,
 
-                    data: dadosBase64,
+                    data:
+                        dadosBase64,
 
-                    mimeType: arquivo.type,
+                    mimeType:
+                        arquivo.type,
 
-                    filename: nomeFinalArquivo
+                    filename:
+                        nomeFinalArquivo
 
                 });
 
 
-            // ==========================================
+            // --------------------------------------
             // ENVIAR PARA GOOGLE APPS SCRIPT
-            // ==========================================
+            // --------------------------------------
 
             const resposta =
                 await fetch(
@@ -1203,9 +1686,9 @@ function enviarArquivo() {
                 await resposta.json();
 
 
-            // ==========================================
-            // RESULTADO
-            // ==========================================
+            // --------------------------------------
+            // SUCESSO
+            // --------------------------------------
 
             if (resultado.sucesso) {
 
@@ -1220,11 +1703,6 @@ function enviarArquivo() {
 
 
                 document
-                    .getElementById('nomePasta')
-                    .value = '';
-
-
-                document
                     .getElementById('nomeArquivoCustom')
                     .value = '';
 
@@ -1232,7 +1710,8 @@ function enviarArquivo() {
             } else {
 
                 status.innerHTML =
-                    '❌ ' + resultado.mensagem;
+                    '❌ ' +
+                    resultado.mensagem;
 
                 status.style.color =
                     '#d93025';
@@ -1243,6 +1722,7 @@ function enviarArquivo() {
         } catch (erro) {
 
             console.error(erro);
+
 
             status.innerHTML =
                 '❌ Erro ao enviar o arquivo.';
@@ -1266,3 +1746,4 @@ function enviarArquivo() {
 </body>
 
 </html>
+```
