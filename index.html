@@ -1,276 +1,1154 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
     <title>Sistema de Envio de Documentos</title>
+
     <style>
-        /* Estilos Globais e Responsividade */
-        body { 
-            font-family: Arial, sans-serif; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            min-height: 100vh; 
-            background-color: #f4f4f9; 
-            margin: 0; 
-            padding: 20px;
-            box-sizing: border-box;
-        }
 
-        /* Container Principal Split (Logo + Card) */
-        .container {
+        body {
+
+            font-family: Arial, sans-serif;
+
             display: flex;
-            flex-direction: row;
-            align-items: center;
+
             justify-content: center;
-            gap: 50px;
-            max-width: 900px;
-            width: 100%;
-        }
 
-        /* Área do Logotipo */
-        .logo-area {
-            flex: 1;
-            text-align: center;
-            max-width: 300px;
-        }
-        .logo-area img {
-            max-width: 100%;
-            height: auto;
-            object-fit: contain;
-        }
+            align-items: center;
 
-        /* Card do Formulário */
-        .card { 
-            background: white; 
-            padding: 30px; 
-            border-radius: 8px; 
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1); 
-            width: 100%;
-            max-width: 360px; 
-            text-align: center; 
+            min-height: 100vh;
+
+            background-color: #f4f4f9;
+
+            margin: 0;
+
+            padding: 20px;
+
             box-sizing: border-box;
+
         }
 
-        h2 { color: #333; margin-top: 0; font-size: 22px; }
-        p { color: #666; font-size: 14px; margin-bottom: 20px; }
-        
-        /* Formulários e Inputs */
-        .form-group { text-align: left; margin-bottom: 15px; }
-        label { font-size: 14px; color: #555; font-weight: bold; display: block; margin-bottom: 5px; }
-        input[type="text"], input[type="password"] { 
-            width: 100%; 
-            padding: 12px; 
-            border: 1px solid #ccc; 
-            border-radius: 4px; 
-            box-sizing: border-box; 
-            font-size: 16px; 
-            background-color: #fff;
+
+        .container {
+
+            display: flex;
+
+            flex-direction: row;
+
+            align-items: center;
+
+            justify-content: center;
+
+            gap: 50px;
+
+            max-width: 900px;
+
+            width: 100%;
+
         }
-        input[type="file"] { 
-            margin: 15px 0; 
-            width: 100%; 
-            box-sizing: border-box; 
+
+
+        .logo-area {
+
+            flex: 1;
+
+            text-align: center;
+
+            max-width: 300px;
+
+        }
+
+
+        .logo-area img {
+
+            max-width: 100%;
+
+            height: auto;
+
+            object-fit: contain;
+
+        }
+
+
+        .card {
+
+            background: white;
+
+            padding: 30px;
+
+            border-radius: 8px;
+
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+
+            width: 100%;
+
+            max-width: 360px;
+
+            text-align: center;
+
+            box-sizing: border-box;
+
+        }
+
+
+        h2 {
+
+            color: #333;
+
+            margin-top: 0;
+
+            font-size: 22px;
+
+        }
+
+
+        p {
+
+            color: #666;
+
             font-size: 14px;
-        }
-        
-        /* Botões */
-        button { 
-            background: #1a73e8; 
-            color: white; 
-            border: none; 
-            padding: 12px 15px; 2027
-            border-radius: 4px; 
-            cursor: pointer; 
-            width: 100%; 
-            font-size: 16px; 
-            font-weight: bold; 
-            transition: background 0.2s; 
-            margin-bottom: 10px; 
-        }
-        button:hover { background: #1557b0; }
-        button:disabled { background: #ccc; cursor: not-allowed; }
-        
-        .btn-logout { background: #d93025; color: white; border: none; font-size: 12px; padding: 6px 10px; width: auto; margin-top: 15px; border-radius: 4px; cursor: pointer; }
-        .btn-logout:hover { background: #a51d12; }
-        
-        .status-msg { margin-top: 15px; font-size: 14px; font-weight: 500; }
-        
-        /* Controle de Telas */
-        .hidden { display: none; }
 
-        /* REGRAS PARA TELEMÓVEIS / TELAS PEQUENAS */
-        @media (max-width: 768px) {
-            .container {
-                flex-direction: column; 
-                gap: 20px;
-            }
-            .logo-area {
-                max-width: 180px; 
-            }
-            .card {
-                padding: 20px;
-            }
+            margin-bottom: 20px;
+
         }
+
+
+        .form-group {
+
+            text-align: left;
+
+            margin-bottom: 15px;
+
+        }
+
+
+        label {
+
+            font-size: 14px;
+
+            color: #555;
+
+            font-weight: bold;
+
+            display: block;
+
+            margin-bottom: 5px;
+
+        }
+
+
+        input[type="text"],
+        input[type="password"] {
+
+            width: 100%;
+
+            padding: 12px;
+
+            border: 1px solid #ccc;
+
+            border-radius: 4px;
+
+            box-sizing: border-box;
+
+            font-size: 16px;
+
+            background-color: #fff;
+
+        }
+
+
+        input[type="file"] {
+
+            margin: 15px 0;
+
+            width: 100%;
+
+            box-sizing: border-box;
+
+            font-size: 14px;
+
+        }
+
+
+        button {
+
+            background: #1a73e8;
+
+            color: white;
+
+            border: none;
+
+            padding: 12px 15px;
+
+            border-radius: 4px;
+
+            cursor: pointer;
+
+            width: 100%;
+
+            font-size: 16px;
+
+            font-weight: bold;
+
+            transition: background 0.2s;
+
+            margin-bottom: 10px;
+
+        }
+
+
+        button:hover {
+
+            background: #1557b0;
+
+        }
+
+
+        button:disabled {
+
+            background: #ccc;
+
+            cursor: not-allowed;
+
+        }
+
+
+        .btn-secundario {
+
+            background: #666;
+
+        }
+
+
+        .btn-secundario:hover {
+
+            background: #444;
+
+        }
+
+
+        .btn-logout {
+
+            background: #d93025;
+
+            font-size: 12px;
+
+            padding: 6px 10px;
+
+            width: auto;
+
+            margin-top: 15px;
+
+        }
+
+
+        .btn-logout:hover {
+
+            background: #a51d12;
+
+        }
+
+
+        .status-msg {
+
+            margin-top: 15px;
+
+            font-size: 14px;
+
+            font-weight: 500;
+
+        }
+
+
+        .hidden {
+
+            display: none;
+
+        }
+
+
+        .link {
+
+            color: #1a73e8;
+
+            cursor: pointer;
+
+            font-size: 14px;
+
+            margin-top: 10px;
+
+            display: block;
+
+        }
+
+
+        .link:hover {
+
+            text-decoration: underline;
+
+        }
+
+
+        @media (max-width: 768px) {
+
+            .container {
+
+                flex-direction: column;
+
+                gap: 20px;
+
+            }
+
+
+            .logo-area {
+
+                max-width: 180px;
+
+            }
+
+
+            .card {
+
+                padding: 20px;
+
+            }
+
+        }
+
     </style>
+
 </head>
+
+
 <body>
 
+
 <div class="container">
-    
-    <!-- ÁREA DO LOGOTIPO -->
+
+
+    <!-- LOGO -->
+
     <div class="logo-area">
-        <img src="https://github.com/ThiagoNegrini/upload_de_arquivos/blob/main/LOGO_SITE.PNG?raw=true" alt="Logotipo da Empresa" id="imgLogo">
+
+        <img
+            src="https://github.com/ThiagoNegrini/upload_de_arquivos/blob/main/LOGO_SITE.PNG?raw=true"
+            alt="Logotipo da Empresa"
+            id="imgLogo"
+        >
+
     </div>
 
-    <!-- TELA 1: LOGIN -->
+
+    <!-- ==========================================
+         LOGIN
+    =========================================== -->
+
     <div class="card" id="telaLogin">
-        <h2>ACESSO AO PAINEL DE ENVIO</h2>
-        <p>Insira suas credenciais pré-configuradas para continuar.</p>
-        
+
+        <h2>
+            ACESSO AO PAINEL DE ENVIO
+        </h2>
+
+        <p>
+            Entre com seu usuário e senha.
+        </p>
+
+
         <div class="form-group">
-            <label for="loginUsuario">Usuário:</label>
-            <input type="text" id="loginUsuario" placeholder="Digite seu usuário">
+
+            <label for="loginUsuario">
+                Usuário:
+            </label>
+
+            <input
+                type="text"
+                id="loginUsuario"
+                placeholder="Digite seu usuário"
+            >
+
         </div>
-        
+
+
         <div class="form-group">
-            <label for="loginSenha">Senha:</label>
-            <input type="password" id="loginSenha" placeholder="Digite sua senha">
+
+            <label for="loginSenha">
+                Senha:
+            </label>
+
+            <input
+                type="password"
+                id="loginSenha"
+                placeholder="Digite sua senha"
+            >
+
         </div>
-        
-        <button onclick="efetuarLogin()">Entrar</button>
-        <div id="loginStatus" class="status-msg"></div>
+
+
+        <button
+            id="btnLogin"
+            onclick="efetuarLogin()"
+        >
+            Entrar
+        </button>
+
+
+        <div
+            id="loginStatus"
+            class="status-msg"
+        ></div>
+
+
+        <span
+            class="link"
+            onclick="mostrarCadastro()"
+        >
+            Ainda não possui cadastro? Criar conta
+        </span>
+
     </div>
 
-    <!-- TELA 2: UPLOAD (APÓS O LOGIN COM AMBOS OS CAMPOS) -->
-    <div class="card hidden" id="telaUpload">
-        <h2>SISTEMA DE ENVIO - DOCUMENTAÇÃO CARNAVAL 2027</h2>
-        <p>Olá, <strong id="nomeUsuarioLogado"></strong>! Preencha as informações do arquivo.</p>
-        
-        <!-- CAMPO 1: NOVO CAMPO PARA NOMEAR A PASTA NO DRIVE -->
+
+    <!-- ==========================================
+         CADASTRO
+    =========================================== -->
+
+    <div
+        class="card hidden"
+        id="telaCadastro"
+    >
+
+        <h2>
+            CRIAR CADASTRO
+        </h2>
+
+        <p>
+            Preencha seus dados para criar seu acesso.
+        </p>
+
+
         <div class="form-group">
-            <label for="nomePastaCustom">Nome da Pasta no Drive:</label>
-            <input type="text" id="nomePastaCustom" placeholder="Ex: Nome_da_Agremiacao">
+
+            <label for="cadastroNome">
+                Nome:
+            </label>
+
+            <input
+                type="text"
+                id="cadastroNome"
+                placeholder="Seu nome"
+            >
+
         </div>
 
-        <!-- CAMPO 2: CAMPO DE NOME DO ARQUIVO -->
+
         <div class="form-group">
-            <label for="nomeArquivoCustom">Nome do Arquivo / Identificação:</label>
-            <input type="text" id="nomeArquivoCustom" placeholder="Ex: Oficio_Diretoria_01">
+
+            <label for="cadastroUsuario">
+                Usuário:
+            </label>
+
+            <input
+                type="text"
+                id="cadastroUsuario"
+                placeholder="Escolha um usuário"
+            >
+
         </div>
 
-        <input type="file" id="arquivoInput">
-        <button id="btnEnviar" onclick="enviarArquivo()">Enviar Arquivo</button>
-        
-        <div id="status" class="status-msg"></div>
-        
-        <button class="btn-logout" onclick="efetuarLogout()">Sair da Conta</button>
+
+        <div class="form-group">
+
+            <label for="cadastroSenha">
+                Senha:
+            </label>
+
+            <input
+                type="password"
+                id="cadastroSenha"
+                placeholder="Mínimo de 6 caracteres"
+            >
+
+        </div>
+
+
+        <button
+            id="btnCadastro"
+            onclick="cadastrarUsuario()"
+        >
+            Criar Cadastro
+        </button>
+
+
+        <div
+            id="cadastroStatus"
+            class="status-msg"
+        ></div>
+
+
+        <span
+            class="link"
+            onclick="mostrarLogin()"
+        >
+            Já possui cadastro? Entrar
+        </span>
+
+    </div>
+
+
+    <!-- ==========================================
+         UPLOAD
+    =========================================== -->
+
+    <div
+        class="card hidden"
+        id="telaUpload"
+    >
+
+        <h2>
+            SISTEMA DE ENVIO
+        </h2>
+
+        <p>
+
+            Olá,
+            <strong id="nomeUsuarioLogado"></strong>!
+
+            <br>
+
+            DOCUMENTAÇÃO CARNAVAL 2027
+
+        </p>
+
+
+        <div class="form-group">
+
+            <label for="nomeArquivoCustom">
+                Nome do Arquivo / Identificação:
+            </label>
+
+            <input
+                type="text"
+                id="nomeArquivoCustom"
+                placeholder="Ex: Escola_Samba_Oficio_01"
+            >
+
+        </div>
+
+
+        <input
+            type="file"
+            id="arquivoInput"
+        >
+
+
+        <button
+            id="btnEnviar"
+            onclick="enviarArquivo()"
+        >
+            Enviar Arquivo
+        </button>
+
+
+        <div
+            id="status"
+            class="status-msg"
+        ></div>
+
+
+        <button
+            class="btn-logout"
+            onclick="efetuarLogout()"
+        >
+            Sair da Conta
+        </button>
+
     </div>
 
 </div>
 
+
 <script>
-    // BASE DE DADOS DE USUÁRIOS
-    const BASE_DE_DADOS = {
-        'g_esp': '@123',
-        'ac_1': '147@',
-        'ac_2': '258@',
-        'ac_3': '369@',
-	'ac_bl': '@246',
-	'bl_esp': '963@'
-    };
 
-    // URL do seu Google Apps Script integrada
-    const URL_SCRIPT = 'https://script.google.com/macros/s/AKfycbxMiKWCV0vkVmzAPkm-S2Y6nSzGGrb9NegXLiLa7rgpSmJOZz1RauIIN631IcRx4yntng/exec';
 
-    function efetuarLogin() {
-        const usuarioInput = document.getElementById('loginUsuario').value.trim();
-        const senhaInput = document.getElementById('loginSenha').value.trim();
-        const loginStatus = document.getElementById('loginStatus');
+// ==========================================
+// CONFIGURAÇÃO
+// ==========================================
 
-        if (BASE_DE_DADOS[usuarioInput] && BASE_DE_DADOS[usuarioInput] === senhaInput) {
-            document.getElementById('nomeUsuarioLogado').innerText = usuarioInput;
-            document.getElementById('telaLogin').classList.add('hidden');
-            document.getElementById('telaUpload').classList.remove('hidden');
-            document.getElementById('loginUsuario').value = '';
-            document.getElementById('loginSenha').value = '';
-            loginStatus.innerHTML = '';
+const URL_SCRIPT =
+    'https://script.google.com/macros/s/AKfycbwBOuAfSHu2MmSLBrlMaerEb-gm9yz-yHU8bnlMeGW65AtXFr4C1MPKqRGRnewtCnlm7A/exec';
+
+
+// Usuário atualmente logado
+
+let usuarioLogado = '';
+
+
+// ==========================================
+// MOSTRAR LOGIN
+// ==========================================
+
+function mostrarLogin() {
+
+    document
+        .getElementById('telaCadastro')
+        .classList.add('hidden');
+
+    document
+        .getElementById('telaLogin')
+        .classList.remove('hidden');
+
+}
+
+
+// ==========================================
+// MOSTRAR CADASTRO
+// ==========================================
+
+function mostrarCadastro() {
+
+    document
+        .getElementById('telaLogin')
+        .classList.add('hidden');
+
+    document
+        .getElementById('telaCadastro')
+        .classList.remove('hidden');
+
+}
+
+
+// ==========================================
+// CADASTRO
+// ==========================================
+
+async function cadastrarUsuario() {
+
+    const nome =
+        document
+            .getElementById('cadastroNome')
+            .value
+            .trim();
+
+    const usuario =
+        document
+            .getElementById('cadastroUsuario')
+            .value
+            .trim();
+
+    const senha =
+        document
+            .getElementById('cadastroSenha')
+            .value
+            .trim();
+
+    const status =
+        document.getElementById('cadastroStatus');
+
+    const botao =
+        document.getElementById('btnCadastro');
+
+
+    if (!nome || !usuario || !senha) {
+
+        status.innerHTML =
+            '⚠️ Preencha todos os campos.';
+
+        status.style.color =
+            '#d93025';
+
+        return;
+
+    }
+
+
+    if (senha.length < 6) {
+
+        status.innerHTML =
+            '⚠️ A senha deve possuir pelo menos 6 caracteres.';
+
+        status.style.color =
+            '#d93025';
+
+        return;
+
+    }
+
+
+    botao.disabled = true;
+
+    status.innerHTML =
+        '⏳ Criando cadastro...';
+
+    status.style.color =
+        '#1a73e8';
+
+
+    try {
+
+        const parametros =
+            new URLSearchParams({
+
+                acao: 'cadastro',
+
+                nome: nome,
+
+                usuario: usuario,
+
+                senha: senha
+
+            });
+
+
+        const resposta =
+            await fetch(
+
+                URL_SCRIPT,
+
+                {
+
+                    method: 'POST',
+
+                    mode: 'cors',
+
+                    body: parametros
+
+                }
+
+            );
+
+
+        const resultado =
+            await resposta.json();
+
+
+        if (resultado.sucesso) {
+
+            status.innerHTML =
+                '✅ Cadastro realizado com sucesso!';
+
+            status.style.color =
+                '#188038';
+
+
+            document
+                .getElementById('cadastroNome')
+                .value = '';
+
+            document
+                .getElementById('cadastroUsuario')
+                .value = '';
+
+            document
+                .getElementById('cadastroSenha')
+                .value = '';
+
+
+            setTimeout(
+
+                mostrarLogin,
+
+                1500
+
+            );
+
         } else {
-            loginStatus.innerHTML = '❌ Usuário ou senha incorretos.';
-            loginStatus.style.color = '#d93025';
-        }
-    }
 
-    function efetuarLogout() {
-        document.getElementById('telaUpload').classList.add('hidden');
-        document.getElementById('telaLogin').classList.remove('hidden');
-        document.getElementById('status').innerHTML = '';
-        document.getElementById('arquivoInput').value = '';
-        document.getElementById('nomeArquivoCustom').value = '';
-        document.getElementById('nomePastaCustom').value = '';
-    }
+            status.innerHTML =
+                '❌ ' + resultado.mensagem;
 
-    function enviarArquivo() {
-        const input = document.getElementById('arquivoInput');
-        const status = document.getElementById('status');
-        const botao = document.getElementById('btnEnviar');
-        const nomeCustomInput = document.getElementById('nomeArquivoCustom').value.trim();
-        const nomePastaInput = document.getElementById('nomePastaCustom').value.trim();
-        
-        if (input.files.length === 0) {
-            status.innerHTML = '⚠️ Por favor, selecione um arquivo primeiro.';
-            status.style.color = '#d93025';
-            return;
+            status.style.color =
+                '#d93025';
+
         }
 
-        const arquivo = input.files[0];
-        botao.disabled = true;
-        status.innerHTML = '⏳ Criando pasta e enviando arquivo...';
-        status.style.color = '#1a73e8';
+    } catch (erro) {
 
-        const leitor = new FileReader();
-        leitor.readAsDataURL(arquivo);
-        leitor.onload = function () {
-            const dadosBase64 = leitor.result.split(',')[1]; 
-            
-            // Renomeia o arquivo mantendo a extensão
-            let nomeFinalArquivo = arquivo.name;
-            if (nomeCustomInput !== "") {
-                const ext = arquivo.name.split('.').pop();
-                nomeFinalArquivo = nomeCustomInput + "." + ext;
+        console.error(erro);
+
+        status.innerHTML =
+            '❌ Erro de comunicação com o servidor.';
+
+        status.style.color =
+            '#d93025';
+
+    } finally {
+
+        botao.disabled = false;
+
+    }
+
+}
+
+
+// ==========================================
+// LOGIN
+// ==========================================
+
+async function efetuarLogin() {
+
+    const usuario =
+        document
+            .getElementById('loginUsuario')
+            .value
+            .trim();
+
+    const senha =
+        document
+            .getElementById('loginSenha')
+            .value
+            .trim();
+
+    const status =
+        document.getElementById('loginStatus');
+
+    const botao =
+        document.getElementById('btnLogin');
+
+
+    if (!usuario || !senha) {
+
+        status.innerHTML =
+            '⚠️ Informe usuário e senha.';
+
+        status.style.color =
+            '#d93025';
+
+        return;
+
+    }
+
+
+    botao.disabled = true;
+
+    status.innerHTML =
+        '⏳ Verificando acesso...';
+
+    status.style.color =
+        '#1a73e8';
+
+
+    try {
+
+        const parametros =
+            new URLSearchParams({
+
+                acao: 'login',
+
+                usuario: usuario,
+
+                senha: senha
+
+            });
+
+
+        const resposta =
+            await fetch(
+
+                URL_SCRIPT,
+
+                {
+
+                    method: 'POST',
+
+                    mode: 'cors',
+
+                    body: parametros
+
+                }
+
+            );
+
+
+        const resultado =
+            await resposta.json();
+
+
+        if (resultado.sucesso) {
+
+            usuarioLogado =
+                resultado.usuario;
+
+
+            document
+                .getElementById('nomeUsuarioLogado')
+                .innerText =
+                resultado.nome || resultado.usuario;
+
+
+            document
+                .getElementById('telaLogin')
+                .classList.add('hidden');
+
+
+            document
+                .getElementById('telaUpload')
+                .classList.remove('hidden');
+
+
+            document
+                .getElementById('loginUsuario')
+                .value = '';
+
+            document
+                .getElementById('loginSenha')
+                .value = '';
+
+            status.innerHTML = '';
+
+        } else {
+
+            status.innerHTML =
+                '❌ ' + resultado.mensagem;
+
+            status.style.color =
+                '#d93025';
+
+        }
+
+    } catch (erro) {
+
+        console.error(erro);
+
+        status.innerHTML =
+            '❌ Erro de comunicação com o servidor.';
+
+        status.style.color =
+            '#d93025';
+
+    } finally {
+
+        botao.disabled = false;
+
+    }
+
+}
+
+
+// ==========================================
+// LOGOUT
+// ==========================================
+
+function efetuarLogout() {
+
+    usuarioLogado = '';
+
+    document
+        .getElementById('telaUpload')
+        .classList.add('hidden');
+
+    document
+        .getElementById('telaLogin')
+        .classList.remove('hidden');
+
+
+    document
+        .getElementById('status')
+        .innerHTML = '';
+
+
+    document
+        .getElementById('arquivoInput')
+        .value = '';
+
+
+    document
+        .getElementById('nomeArquivoCustom')
+        .value = '';
+
+}
+
+
+// ==========================================
+// UPLOAD
+// ==========================================
+
+function enviarArquivo() {
+
+    const input =
+        document.getElementById('arquivoInput');
+
+    const status =
+        document.getElementById('status');
+
+    const botao =
+        document.getElementById('btnEnviar');
+
+    const nomeCustomInput =
+        document
+            .getElementById('nomeArquivoCustom')
+            .value
+            .trim();
+
+
+    if (!usuarioLogado) {
+
+        status.innerHTML =
+            '❌ Sessão expirada. Faça login novamente.';
+
+        status.style.color =
+            '#d93025';
+
+        return;
+
+    }
+
+
+    if (input.files.length === 0) {
+
+        status.innerHTML =
+            '⚠️ Por favor, selecione um arquivo primeiro.';
+
+        status.style.color =
+            '#d93025';
+
+        return;
+
+    }
+
+
+    const arquivo =
+        input.files[0];
+
+
+    botao.disabled = true;
+
+    status.innerHTML =
+        '⏳ Enviando arquivo, por favor aguarde...';
+
+    status.style.color =
+        '#1a73e8';
+
+
+    const leitor =
+        new FileReader();
+
+
+    leitor.readAsDataURL(arquivo);
+
+
+    leitor.onload = async function() {
+
+        try {
+
+            const dadosBase64 =
+                leitor.result.split(',')[1];
+
+
+            let nomeFinalArquivo =
+                arquivo.name;
+
+
+            if (nomeCustomInput !== '') {
+
+                const partes =
+                    arquivo.name.split('.');
+
+                const ext =
+                    partes.length > 1
+                        ? partes.pop()
+                        : '';
+
+
+                nomeFinalArquivo =
+                    nomeCustomInput +
+                    (ext ? '.' + ext : '');
+
             }
 
-            // Define os parâmetros incluindo o nome da pasta
-            const parametros = {
-                data: dadosBase64,
-                mimeType: arquivo.type,
-                filename: nomeFinalArquivo,
-                nomePasta: nomePastaInput
-            };
 
-            fetch(URL_SCRIPT, {
-                method: 'POST',
-                body: new URLSearchParams(parametros)
-            })
-            .then(() => {
-                status.innerHTML = '✅ Arquivo salvo na pasta com sucesso!';
-                status.style.color = '#188038';
+            const parametros =
+                new URLSearchParams({
+
+                    acao: 'upload',
+
+                    usuario: usuarioLogado,
+
+                    data: dadosBase64,
+
+                    mimeType: arquivo.type,
+
+                    filename: nomeFinalArquivo
+
+                });
+
+
+            const resposta =
+                await fetch(
+
+                    URL_SCRIPT,
+
+                    {
+
+                        method: 'POST',
+
+                        mode: 'cors',
+
+                        body: parametros
+
+                    }
+
+                );
+
+
+            const resultado =
+                await resposta.json();
+
+
+            if (resultado.sucesso) {
+
+                status.innerHTML =
+                    '✅ Arquivo enviado com sucesso!';
+
+                status.style.color =
+                    '#188038';
+
+
                 input.value = '';
-                document.getElementById('nomeArquivoCustom').value = '';
-                document.getElementById('nomePastaCustom').value = '';
-            })
-            .catch(erro => {
-                status.innerHTML = '❌ Erro ao processar o upload.';
-                status.style.color = '#d93025';
-                console.error(erro);
-            })
-            .finally(() => {
-                botao.disabled = false;
-            });
-        };
-    }
+
+                document
+                    .getElementById('nomeArquivoCustom')
+                    .value = '';
+
+            } else {
+
+                status.innerHTML =
+                    '❌ ' + resultado.mensagem;
+
+                status.style.color =
+                    '#d93025';
+
+            }
+
+        } catch (erro) {
+
+            console.error(erro);
+
+            status.innerHTML =
+                '❌ Erro ao enviar o arquivo.';
+
+            status.style.color =
+                '#d93025';
+
+        } finally {
+
+            botao.disabled = false;
+
+        }
+
+    };
+
+}
+
 </script>
 
-</body
+</body>
+
 </html>
