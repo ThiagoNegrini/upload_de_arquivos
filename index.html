@@ -29,24 +29,16 @@
             width: 100%;
         }
 
-        /* Área do Logotipo com Moldura */
+        /* Área do Logotipo */
         .logo-area {
             flex: 1;
             text-align: center;
-            max-width: 320px;
-            background: white;
-            padding: 15px;
-            border: 1px solid #e0e0e0;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
-            box-sizing: border-box;
+            max-width: 300px;
         }
         .logo-area img {
             max-width: 100%;
             height: auto;
             object-fit: contain;
-            display: block;
-            margin: 0 auto;
         }
 
         /* Card do Formulário */
@@ -83,43 +75,12 @@
             font-size: 14px;
         }
         
-        /* Área de Pré-visualização / Miniatura */
-        .preview-container {
-            margin: 15px 0;
-            padding: 10px;
-            border: 2px dashed #ccc;
-            border-radius: 6px;
-            background-color: #fafafa;
-            display: none; /* Inicia oculto */
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-        }
-        .preview-image {
-            max-width: 120px;
-            max-height: 120px;
-            border-radius: 4px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-            object-fit: cover;
-        }
-        .preview-icon {
-            font-size: 48px;
-            margin-bottom: 5px;
-        }
-        .preview-filename {
-            font-size: 12px;
-            color: #555;
-            margin-top: 5px;
-            word-break: break-all;
-            font-weight: bold;
-        }
-        
         /* Botões */
         button { 
             background: #1a73e8; 
             color: white; 
             border: none; 
-            padding: 12px 15px; 
+            padding: 12px 15px; 2027
             border-radius: 4px; 
             cursor: pointer; 
             width: 100%; 
@@ -146,8 +107,7 @@
                 gap: 20px;
             }
             .logo-area {
-                max-width: 220px; 
-                padding: 10px;
+                max-width: 180px; 
             }
             .card {
                 padding: 20px;
@@ -161,7 +121,7 @@
     
     <!-- ÁREA DO LOGOTIPO -->
     <div class="logo-area">
-        <img src="https://raw.githubusercontent.com/ThiagoNegrini/upload_de_arquivos/refs/heads/main/LOGO_SITE.PNG" alt="Logotipo UESP" id="imgLogo">
+        <img src="https://github.com/ThiagoNegrini/upload_de_arquivos/blob/main/LOGO_SITE.PNG?raw=true" alt="Logotipo da Empresa" id="imgLogo">
     </div>
 
     <!-- TELA 1: LOGIN -->
@@ -183,30 +143,24 @@
         <div id="loginStatus" class="status-msg"></div>
     </div>
 
-    <!-- TELA 2: UPLOAD (APÓS O LOGIN) -->
+    <!-- TELA 2: UPLOAD (APÓS O LOGIN COM AMBOS OS CAMPOS) -->
     <div class="card hidden" id="telaUpload">
         <h2>SISTEMA DE ENVIO - DOCUMENTAÇÃO CARNAVAL 2027</h2>
         <p>Olá, <strong id="nomeUsuarioLogado"></strong>! Preencha as informações do arquivo.</p>
         
+        <!-- CAMPO 1: NOVO CAMPO PARA NOMEAR A PASTA NO DRIVE -->
         <div class="form-group">
             <label for="nomePastaCustom">Nome da Pasta no Drive:</label>
             <input type="text" id="nomePastaCustom" placeholder="Ex: Nome_da_Agremiacao">
         </div>
 
+        <!-- CAMPO 2: CAMPO DE NOME DO ARQUIVO -->
         <div class="form-group">
             <label for="nomeArquivoCustom">Nome do Arquivo / Identificação:</label>
             <input type="text" id="nomeArquivoCustom" placeholder="Ex: Oficio_Diretoria_01">
         </div>
 
-        <!-- SELETOR DE ARQUIVOS (Dispara o preview ao mudar) -->
-        <input type="file" id="arquivoInput" onchange="mostrarPreview()">
-
-        <!-- ÁREA REPLETA PARA MINIATURA DA PRÉ-VISUALIZAÇÃO -->
-        <div id="previewContainer" class="preview-container">
-            <div id="previewConteudo"></div>
-            <div id="previewFilename" class="preview-filename"></div>
-        </div>
-
+        <input type="file" id="arquivoInput">
         <button id="btnEnviar" onclick="enviarArquivo()">Enviar Arquivo</button>
         
         <div id="status" class="status-msg"></div>
@@ -219,12 +173,12 @@
 <script>
     // BASE DE DADOS DE USUÁRIOS
     const BASE_DE_DADOS = {
-       'g_esp': '@123',
+        'g_esp': '@123',
         'ac_1': '147@',
         'ac_2': '258@',
         'ac_3': '369@',
-	    'ac_bl': '@246',
-	    'bl_esp': '963@'
+	'ac_bl': '@246',
+	'bl_esp': '963@'
     };
 
     // URL do seu Google Apps Script integrada
@@ -255,34 +209,68 @@
         document.getElementById('arquivoInput').value = '';
         document.getElementById('nomeArquivoCustom').value = '';
         document.getElementById('nomePastaCustom').value = '';
-        limparPreview();
     }
 
-    // GERA A MINIATURA DINÂMICA NA TELA
-    function mostrarPreview() {
+    function enviarArquivo() {
         const input = document.getElementById('arquivoInput');
-        const container = document.getElementById('previewContainer');
-        const conteudo = document.getElementById('previewConteudo');
-        const filename = document.getElementById('previewFilename');
-
+        const status = document.getElementById('status');
+        const botao = document.getElementById('btnEnviar');
+        const nomeCustomInput = document.getElementById('nomeArquivoCustom').value.trim();
+        const nomePastaInput = document.getElementById('nomePastaCustom').value.trim();
+        
         if (input.files.length === 0) {
-            limparPreview();
+            status.innerHTML = '⚠️ Por favor, selecione um arquivo primeiro.';
+            status.style.color = '#d93025';
             return;
         }
 
         const arquivo = input.files[0];
-        filename.innerText = arquivo.name;
-        container.style.display = 'flex';
+        botao.disabled = true;
+        status.innerHTML = '⏳ Criando pasta e enviando arquivo...';
+        status.style.color = '#1a73e8';
 
-        // Se for uma imagem, carrega a miniatura da foto
-        if (arquivo.type.startsWith('image/')) {
-            const leitorPreview = new FileReader();
-            leitorPreview.onload = function (e) {
-                conteudo.innerHTML = `<img src="${e.target.result}" class="preview-image" alt="Miniatura">`;
+        const leitor = new FileReader();
+        leitor.readAsDataURL(arquivo);
+        leitor.onload = function () {
+            const dadosBase64 = leitor.result.split(',')[1]; 
+            
+            // Renomeia o arquivo mantendo a extensão
+            let nomeFinalArquivo = arquivo.name;
+            if (nomeCustomInput !== "") {
+                const ext = arquivo.name.split('.').pop();
+                nomeFinalArquivo = nomeCustomInput + "." + ext;
+            }
+
+            // Define os parâmetros incluindo o nome da pasta
+            const parametros = {
+                data: dadosBase64,
+                mimeType: arquivo.type,
+                filename: nomeFinalArquivo,
+                nomePasta: nomePastaInput
             };
-            leitorPreview.readAsDataURL(arquivo);
-        } else {
-            // Se for outro documento (PDF, Word, Excel, etc.), coloca um ícone amigável
-            let icone = '📄'; 
-f (arquivo.type === 'application/pdf') icone = '📕';else if (arquivo.name.endsWith('.doc') || arquivo.name.endsWith('.docx')) icone = '📘';else if (arquivo.name.endsWith('.xls') || arquivo.name.endsWith('.xlsx') || arquivo.name.endsWith('.csv')) icone = '📗';else if (arquivo.name.endsWith('.zip') || arquivo.name.endsWith('.rar')) icone = '📦';conteudo.innerHTML = <div class="preview-icon">${icone}</div>;}}function limparPreview() {document.getElementById('previewContainer').style.display = 'none';document.getElementById('previewConteudo').innerHTML = '';document.getElementById('previewFilename').innerText = '';}function enviarArquivo() {const input = document.getElementById('arquivoInput');const status = document.getElementById('status');const botao = document.getElementById('btnEnviar');const nomeCustomInput = document.getElementById('nomeArquivoCustom').value.trim();const nomePastaInput = document.getElementById('nomePastaCustom').value.trim();if (input.files.length === 0) {status.innerHTML = '⚠️ Por favor, selecione um arquivo primeiro.';status.style.color = '#d93025';return;}const arquivo = input.files[0];botao.disabled = true;status.innerHTML = '⏳ Criando pasta e enviando arquivo...';status.style.color = '#1a73e8';const leitor = new FileReader();leitor.readAsDataURL(arquivo);leitor.onload = function () {const dadosBase64 = leitor.result.split(',')[1];let nomeFinalArquivo = arquivo.name;if (nomeCustomInput !== "") {const ext = arquivo.name.split('.').pop();nomeFinalArquivo = nomeCustomInput + "." + ext;}const parametros = {data: dadosBase64,mimeType: arquivo.type,filename: nomeFinalArquivo,nomePasta: nomePastaInput};fetch(URL_SCRIPT, {method: 'POST',body: new URLSearchParams(parametros)}).then(() => {status.innerHTML = '✅ Arquivo salvo na pasta com sucesso!';status.style.color = '#188038';input.value = '';document.getElementById('nomeArquivoCustom').value = '';document.getElementById('nomePastaCustom').value = '';limparPreview(); // Limpa a miniatura após o envio bem-sucedido}).catch(erro => {status.innerHTML = '❌ Erro ao processar o upload.';status.style.color = '#d93025';console.error(erro);}).finally(() => {botao.disabled = false;});};}
-			
+
+            fetch(URL_SCRIPT, {
+                method: 'POST',
+                body: new URLSearchParams(parametros)
+            })
+            .then(() => {
+                status.innerHTML = '✅ Arquivo salvo na pasta com sucesso!';
+                status.style.color = '#188038';
+                input.value = '';
+                document.getElementById('nomeArquivoCustom').value = '';
+                document.getElementById('nomePastaCustom').value = '';
+            })
+            .catch(erro => {
+                status.innerHTML = '❌ Erro ao processar o upload.';
+                status.style.color = '#d93025';
+                console.error(erro);
+            })
+            .finally(() => {
+                botao.disabled = false;
+            });
+        };
+    }
+</script>
+
+</body
+</html>
