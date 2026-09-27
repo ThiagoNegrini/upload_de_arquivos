@@ -29,16 +29,24 @@
             width: 100%;
         }
 
-        /* Área do Logotipo */
+        /* Área do Logotipo com a nova Moldura */
         .logo-area {
             flex: 1;
             text-align: center;
-            max-width: 300px;
+            max-width: 320px;
+            background: white;
+            padding: 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+            box-sizing: border-box;
         }
         .logo-area img {
             max-width: 100%;
             height: auto;
             object-fit: contain;
+            display: block;
+            margin: 0 auto;
         }
 
         /* Card do Formulário */
@@ -80,7 +88,7 @@
             background: #1a73e8; 
             color: white; 
             border: none; 
-            padding: 12px 15px; 2027
+            padding: 12px 15px; 
             border-radius: 4px; 
             cursor: pointer; 
             width: 100%; 
@@ -107,7 +115,8 @@
                 gap: 20px;
             }
             .logo-area {
-                max-width: 180px; 
+                max-width: 220px; /* Ajuste para o celular com a moldura */
+                padding: 10px;
             }
             .card {
                 padding: 20px;
@@ -119,9 +128,9 @@
 
 <div class="container">
     
-    <!-- ÁREA DO LOGOTIPO -->
+    <!-- ÁREA DO LOGOTIPO COM MOLDURA APLICADA NO CSS -->
     <div class="logo-area">
-        <img src="https://github.com/ThiagoNegrini/upload_de_arquivos/blob/main/LOGO_SITE.PNG?raw=true" alt="Logotipo da Empresa" id="imgLogo">
+        <img src="https://github.com/ThiagoNegrini/upload_de_arquivos/blob/main/LOGO_SITE.PNG?raw=true" alt="Logotipo UESP" id="imgLogo">
     </div>
 
     <!-- TELA 1: LOGIN -->
@@ -143,18 +152,18 @@
         <div id="loginStatus" class="status-msg"></div>
     </div>
 
-    <!-- TELA 2: UPLOAD (APÓS O LOGIN COM AMBOS OS CAMPOS) -->
+    <!-- TELA 2: UPLOAD (APÓS O LOGIN) -->
     <div class="card hidden" id="telaUpload">
         <h2>SISTEMA DE ENVIO - DOCUMENTAÇÃO CARNAVAL 2027</h2>
         <p>Olá, <strong id="nomeUsuarioLogado"></strong>! Preencha as informações do arquivo.</p>
         
-        <!-- CAMPO 1: NOVO CAMPO PARA NOMEAR A PASTA NO DRIVE -->
+        <!-- CAMPO 1: CRIA A PASTA NO GOOGLE DRIVE -->
         <div class="form-group">
             <label for="nomePastaCustom">Nome da Pasta no Drive:</label>
             <input type="text" id="nomePastaCustom" placeholder="Ex: Nome_da_Agremiacao">
         </div>
 
-        <!-- CAMPO 2: CAMPO DE NOME DO ARQUIVO -->
+        <!-- CAMPO 2: ADICIONA NOME PERSONALIZADO AO ARQUIVO -->
         <div class="form-group">
             <label for="nomeArquivoCustom">Nome do Arquivo / Identificação:</label>
             <input type="text" id="nomeArquivoCustom" placeholder="Ex: Oficio_Diretoria_01">
@@ -232,14 +241,12 @@
         leitor.onload = function () {
             const dadosBase64 = leitor.result.split(',')[1]; 
             
-            // Renomeia o arquivo mantendo a extensão
             let nomeFinalArquivo = arquivo.name;
             if (nomeCustomInput !== "") {
                 const ext = arquivo.name.split('.').pop();
                 nomeFinalArquivo = nomeCustomInput + "." + ext;
             }
 
-            // Define os parâmetros incluindo o nome da pasta
             const parametros = {
                 data: dadosBase64,
                 mimeType: arquivo.type,
@@ -270,5 +277,5 @@
     }
 </script>
 
-</body
+</body>
 </html>
