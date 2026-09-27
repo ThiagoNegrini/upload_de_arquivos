@@ -334,7 +334,9 @@
 <div class="container">
 
 
-    <!-- LOGO -->
+    <!-- ==========================================
+         LOGO
+    =========================================== -->
 
     <div class="logo-area">
 
@@ -528,6 +530,29 @@
         </p>
 
 
+        <!-- ==========================================
+             NOME DA PASTA
+        =========================================== -->
+
+        <div class="form-group">
+
+            <label for="nomePasta">
+                Nome da Pasta:
+            </label>
+
+            <input
+                type="text"
+                id="nomePasta"
+                placeholder="Ex: Escola de Samba Unidos"
+            >
+
+        </div>
+
+
+        <!-- ==========================================
+             NOME DO ARQUIVO
+        =========================================== -->
+
         <div class="form-group">
 
             <label for="nomeArquivoCustom">
@@ -542,6 +567,10 @@
 
         </div>
 
+
+        <!-- ==========================================
+             SELEÇÃO DO ARQUIVO
+        =========================================== -->
 
         <input
             type="file"
@@ -572,6 +601,7 @@
 
     </div>
 
+
 </div>
 
 
@@ -586,7 +616,9 @@ const URL_SCRIPT =
     'https://script.google.com/macros/s/AKfycbztOK3_JuX4AsIP1sXft-TpDCvQch6g106rZ1vMHVO2jPp3c_C-KXDMV2QiBpYRpACNrg/exec';
 
 
-// Usuário atualmente logado
+// ==========================================
+// USUÁRIO ATUALMENTE LOGADO
+// ==========================================
 
 let usuarioLogado = '';
 
@@ -637,11 +669,13 @@ async function cadastrarUsuario() {
             .value
             .trim();
 
+
     const usuario =
         document
             .getElementById('cadastroUsuario')
             .value
             .trim();
+
 
     const senha =
         document
@@ -649,8 +683,10 @@ async function cadastrarUsuario() {
             .value
             .trim();
 
+
     const status =
         document.getElementById('cadastroStatus');
+
 
     const botao =
         document.getElementById('btnCadastro');
@@ -742,9 +778,11 @@ async function cadastrarUsuario() {
                 .getElementById('cadastroNome')
                 .value = '';
 
+
             document
                 .getElementById('cadastroUsuario')
                 .value = '';
+
 
             document
                 .getElementById('cadastroSenha')
@@ -800,14 +838,17 @@ async function efetuarLogin() {
             .value
             .trim();
 
+
     const senha =
         document
             .getElementById('loginSenha')
             .value
             .trim();
 
+
     const status =
         document.getElementById('loginStatus');
+
 
     const botao =
         document.getElementById('btnLogin');
@@ -897,9 +938,11 @@ async function efetuarLogin() {
                 .getElementById('loginUsuario')
                 .value = '';
 
+
             document
                 .getElementById('loginSenha')
                 .value = '';
+
 
             status.innerHTML = '';
 
@@ -940,9 +983,11 @@ function efetuarLogout() {
 
     usuarioLogado = '';
 
+
     document
         .getElementById('telaUpload')
         .classList.add('hidden');
+
 
     document
         .getElementById('telaLogin')
@@ -956,6 +1001,11 @@ function efetuarLogout() {
 
     document
         .getElementById('arquivoInput')
+        .value = '';
+
+
+    document
+        .getElementById('nomePasta')
         .value = '';
 
 
@@ -975,11 +1025,21 @@ function enviarArquivo() {
     const input =
         document.getElementById('arquivoInput');
 
+
     const status =
         document.getElementById('status');
 
+
     const botao =
         document.getElementById('btnEnviar');
+
+
+    const nomePasta =
+        document
+            .getElementById('nomePasta')
+            .value
+            .trim();
+
 
     const nomeCustomInput =
         document
@@ -987,6 +1047,10 @@ function enviarArquivo() {
             .value
             .trim();
 
+
+    // ==========================================
+    // VERIFICAR LOGIN
+    // ==========================================
 
     if (!usuarioLogado) {
 
@@ -1000,6 +1064,27 @@ function enviarArquivo() {
 
     }
 
+
+    // ==========================================
+    // VERIFICAR NOME DA PASTA
+    // ==========================================
+
+    if (!nomePasta) {
+
+        status.innerHTML =
+            '⚠️ Informe o nome da pasta.';
+
+        status.style.color =
+            '#d93025';
+
+        return;
+
+    }
+
+
+    // ==========================================
+    // VERIFICAR ARQUIVO
+    // ==========================================
 
     if (input.files.length === 0) {
 
@@ -1019,6 +1104,7 @@ function enviarArquivo() {
 
 
     botao.disabled = true;
+
 
     status.innerHTML =
         '⏳ Enviando arquivo, por favor aguarde...';
@@ -1042,6 +1128,10 @@ function enviarArquivo() {
                 leitor.result.split(',')[1];
 
 
+            // ==========================================
+            // NOME FINAL DO ARQUIVO
+            // ==========================================
+
             let nomeFinalArquivo =
                 arquivo.name;
 
@@ -1050,6 +1140,7 @@ function enviarArquivo() {
 
                 const partes =
                     arquivo.name.split('.');
+
 
                 const ext =
                     partes.length > 1
@@ -1064,12 +1155,18 @@ function enviarArquivo() {
             }
 
 
+            // ==========================================
+            // PREPARAR DADOS PARA O SERVIDOR
+            // ==========================================
+
             const parametros =
                 new URLSearchParams({
 
                     acao: 'upload',
 
                     usuario: usuarioLogado,
+
+                    pasta: nomePasta,
 
                     data: dadosBase64,
 
@@ -1079,6 +1176,10 @@ function enviarArquivo() {
 
                 });
 
+
+            // ==========================================
+            // ENVIAR PARA GOOGLE APPS SCRIPT
+            // ==========================================
 
             const resposta =
                 await fetch(
@@ -1102,6 +1203,10 @@ function enviarArquivo() {
                 await resposta.json();
 
 
+            // ==========================================
+            // RESULTADO
+            // ==========================================
+
             if (resultado.sucesso) {
 
                 status.innerHTML =
@@ -1113,9 +1218,16 @@ function enviarArquivo() {
 
                 input.value = '';
 
+
+                document
+                    .getElementById('nomePasta')
+                    .value = '';
+
+
                 document
                     .getElementById('nomeArquivoCustom')
                     .value = '';
+
 
             } else {
 
@@ -1126,6 +1238,7 @@ function enviarArquivo() {
                     '#d93025';
 
             }
+
 
         } catch (erro) {
 
@@ -1148,6 +1261,7 @@ function enviarArquivo() {
 }
 
 </script>
+
 
 </body>
 
