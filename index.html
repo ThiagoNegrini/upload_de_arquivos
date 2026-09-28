@@ -719,6 +719,95 @@
 
 
         /* ==========================================
+           CONTADOR DE PRAZO - GRUPO ESPECIAL DE BAIRROS
+        =========================================== */
+
+        .contador-prazo {
+
+            display: none;
+
+            margin:
+                -5px 0 18px;
+
+            padding:
+                13px 15px;
+
+            border:
+                1px solid #f5c26b;
+
+            border-radius:
+                10px;
+
+            background:
+                #fff8e8;
+
+            color:
+                #8a4b08;
+
+            font-size:
+                13px;
+
+            font-weight:
+                700;
+
+            line-height:
+                1.5;
+
+            text-align:
+                center;
+
+        }
+
+
+        .contador-prazo .contador-titulo {
+
+            display: block;
+
+            margin-bottom: 4px;
+
+            font-size:
+                12px;
+
+            text-transform:
+                uppercase;
+
+            letter-spacing:
+                0.3px;
+
+        }
+
+
+        .contador-prazo .contador-tempo {
+
+            display: block;
+
+            color:
+                #b42318;
+
+            font-size:
+                18px;
+
+            font-weight:
+                800;
+
+        }
+
+
+        .contador-prazo.expirado {
+
+            border-color:
+                #f04438;
+
+            background:
+                #fff1f0;
+
+            color:
+                #b42318;
+
+        }
+
+
+        /* ==========================================
            LINKS
         =========================================== */
 
@@ -1150,6 +1239,32 @@
                 <option value="ACESSO DE BLOCOS">ACESSO DE BLOCOS</option>
                 <option value="BLOCOS ESPECIAIS">BLOCOS ESPECIAIS</option>
             </select>
+
+        </div>
+
+
+        <!-- CONTADOR DE PRAZO - APENAS GRUPO ESPECIAL DE BAIRROS -->
+
+        <div
+            id="contadorPrazo"
+            class="contador-prazo"
+            aria-live="polite"
+        >
+
+            <span class="contador-titulo">
+                Prazo de envio do Grupo Especial de Bairros
+            </span>
+
+            <span
+                id="contadorTempo"
+                class="contador-tempo"
+            >
+                Calculando...
+            </span>
+
+            <span>
+                Prazo final: 12/10/2026 às 23:59:59
+            </span>
 
         </div>
 
@@ -2183,6 +2298,210 @@ function lerArquivoBase64(
 
 
 // ==========================================
+// CONTADOR DE PRAZO
+// ==========================================
+
+const DATA_EXPIRACAO_GRUPO_ESPECIAL =
+    new Date(
+        '2026-10-12T23:59:59'
+    );
+
+
+let intervaloContadorPrazo = null;
+
+
+function atualizarContadorPrazo() {
+
+    const select =
+        document.getElementById(
+            'categoriaPasta'
+        );
+
+    const contador =
+        document.getElementById(
+            'contadorPrazo'
+        );
+
+    const tempo =
+        document.getElementById(
+            'contadorTempo'
+        );
+
+
+    if (
+        !select ||
+        !contador ||
+        !tempo
+    ) {
+
+        return;
+
+    }
+
+
+    if (
+        select.value !==
+        'GRUPO ESPECIAL DE BAIRROS'
+    ) {
+
+        contador.style.display =
+            'none';
+
+        contador.classList.remove(
+            'expirado'
+        );
+
+        return;
+
+    }
+
+
+    contador.style.display =
+        'block';
+
+
+    const agora =
+        new Date();
+
+
+    const diferenca =
+        DATA_EXPIRACAO_GRUPO_ESPECIAL.getTime() -
+        agora.getTime();
+
+
+    if (diferenca <= 0) {
+
+        tempo.textContent =
+            'PRAZO EXPIRADO';
+
+        contador.classList.add(
+            'expirado'
+        );
+
+        return;
+
+    }
+
+
+    contador.classList.remove(
+        'expirado'
+    );
+
+
+    const dias =
+        Math.floor(
+            diferenca /
+            (1000 * 60 * 60 * 24)
+        );
+
+
+    const horas =
+        Math.floor(
+            (
+                diferenca %
+                (1000 * 60 * 60 * 24)
+            ) /
+            (1000 * 60 * 60)
+        );
+
+
+    const minutos =
+        Math.floor(
+            (
+                diferenca %
+                (1000 * 60 * 60)
+            ) /
+            (1000 * 60)
+        );
+
+
+    const segundos =
+        Math.floor(
+            (
+                diferenca %
+                (1000 * 60)
+            ) /
+            1000
+        );
+
+
+    tempo.textContent =
+        String(dias).padStart(2, '0') +
+        ' dias, ' +
+        String(horas).padStart(2, '0') +
+        ' horas, ' +
+        String(minutos).padStart(2, '0') +
+        ' minutos e ' +
+        String(segundos).padStart(2, '0') +
+        ' segundos';
+
+}
+
+
+function iniciarContadorPrazo() {
+
+    const select =
+        document.getElementById(
+            'categoriaPasta'
+        );
+
+
+    if (!select) {
+
+        return;
+
+    }
+
+
+    select.addEventListener(
+        'change',
+        function() {
+            if (
+                select.value ===
+                'GRUPO ESPECIAL DE BAIRROS' &&
+                new Date().getTime() >=
+                DATA_EXPIRACAO_GRUPO_ESPECIAL.getTime()
+            ) {
+                alert(
+                    'O prazo para envio de documentos do Grupo Especial de Bairros está expirado.'
+                );
+                select.value = '';
+                atualizarContadorPrazo();
+                return;
+            }
+
+            atualizarContadorPrazo();
+        }
+    );
+
+
+    atualizarContadorPrazo();
+
+
+    if (
+        intervaloContadorPrazo
+    ) {
+
+        clearInterval(
+            intervaloContadorPrazo
+        );
+
+    }
+
+
+    intervaloContadorPrazo =
+        setInterval(
+            atualizarContadorPrazo,
+            1000
+        );
+
+}
+
+
+iniciarContadorPrazo();
+
+
+// ==========================================
 // ENVIAR ARQUIVOS
 // ==========================================
 
@@ -2228,6 +2547,19 @@ async function enviarArquivo() {
 
         return;
 
+    }
+
+
+    if (
+        categoria === 'GRUPO ESPECIAL DE BAIRROS' &&
+        new Date().getTime() >= DATA_EXPIRACAO_GRUPO_ESPECIAL.getTime()
+    ) {
+        status.innerHTML =
+            '❌ O prazo para envio de documentos do Grupo Especial de Bairros está expirado.';
+        status.style.color = '#d93025';
+        document.getElementById('categoriaPasta').value = '';
+        atualizarContadorPrazo();
+        return;
     }
 
 
@@ -2415,6 +2747,9 @@ async function enviarArquivo() {
                 'categoriaPasta'
             )
             .value = '';
+
+
+        atualizarContadorPrazo();
 
 
         document
