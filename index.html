@@ -1,250 +1,1789 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sistema de Envio de Documentos</title>
-<style>
-*{box-sizing:border-box}
-html,body{margin:0;padding:0;min-height:100%}
-body{font-family:Arial,Helvetica,sans-serif;min-height:100vh;display:flex;justify-content:center;align-items:center;padding:30px;background:linear-gradient(120deg,#102b68 0%,#123f91 30%,#146fc1 65%,#25bfd3 100%);background-attachment:fixed}
-.container{width:100%;max-width:1000px;display:flex;justify-content:center;align-items:center;gap:55px}
-.logo-area{flex:1;max-width:340px;display:flex;justify-content:center;align-items:center}
-.logo-area img{display:block;max-width:100%;height:auto;object-fit:contain;padding:18px;background:rgba(255,255,255,.97);border:1px solid rgba(255,255,255,.9);border-radius:22px;box-shadow:0 20px 45px rgba(0,0,0,.2)}
-.card{width:100%;max-width:390px;padding:34px;background:rgba(255,255,255,.97);border-radius:22px;box-shadow:0 22px 50px rgba(0,0,0,.2);text-align:center;position:relative;overflow:hidden}
-.card:before{content:"";position:absolute;top:0;left:0;width:100%;height:5px;background:linear-gradient(90deg,#102b68,#123f91,#146fc1,#25bfd3)}
-h2{margin:0 0 12px;font-size:23px;line-height:1.25;font-weight:800;color:#102b68}
-p{color:#667085;font-size:14px;line-height:1.5;margin-bottom:24px}
-p strong{color:#123f91}
-.form-group{text-align:left;margin-bottom:17px}
-label{display:block;margin-bottom:7px;font-size:13px;font-weight:700;color:#344054}
-input[type=text],input[type=password]{width:100%;padding:13px 14px;border:1px solid #d0d5dd;border-radius:10px;background:#fff;color:#101828;font-size:15px;outline:none}
-input[type=text]:focus,input[type=password]:focus{border-color:#146fc1;box-shadow:0 0 0 4px rgba(20,111,193,.12)}
-input[type=file]{display:block;width:100%;margin:10px 0 18px;padding:10px;border:1px dashed #b8c7d9;border-radius:10px;background:#f8fafc;color:#475467;font-size:13px;cursor:pointer}
-button{width:100%;padding:13px 16px;margin-bottom:10px;border:0;border-radius:10px;background:linear-gradient(100deg,#102b68,#123f91 35%,#146fc1 70%,#25bfd3);color:#fff;font-size:15px;font-weight:700;cursor:pointer;box-shadow:0 7px 18px rgba(18,63,145,.25)}
-button:disabled{background:#aab3bf;cursor:not-allowed;box-shadow:none}
-.btn-logout{width:auto;margin-top:18px;margin-bottom:0;padding:8px 16px;background:linear-gradient(135deg,#b42318,#d92d20);font-size:12px}
-.status-msg{min-height:20px;margin-top:15px;font-size:13px;font-weight:600;line-height:1.5}
-.link{display:block;margin-top:14px;color:#0b5cad;font-size:13px;font-weight:600;cursor:pointer}
-.hidden{display:none}
-.lista-arquivos{text-align:left;margin:-5px 0 18px;font-size:13px;color:#344054;max-height:220px;overflow:auto}
-.arquivo-item{background:#f8fafc;border:1px solid #d0d5dd;border-radius:8px;padding:8px 10px;margin-bottom:6px;word-break:break-word}
-.arquivo-item strong{color:#123f91}
-.aviso{font-size:12px;color:#667085;text-align:left;margin-top:6px}
-@media(max-width:768px){body{padding:20px}.container{flex-direction:column;gap:25px}.logo-area{max-width:230px}.card{max-width:420px;padding:28px 22px}}
-@media(max-width:480px){body{padding:15px}.logo-area{max-width:190px}.card{padding:27px 18px}h2{font-size:20px}}
-</style>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Sistema de Envio de Documentos</title>
+
+
+    <style>
+
+        /* ==========================================
+           CONFIGURAÇÃO GERAL
+        =========================================== */
+
+        * {
+            box-sizing: border-box;
+        }
+
+
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100%;
+        }
+
+
+        /* ==========================================
+           FUNDO COM DEGRADÊ
+        =========================================== */
+
+        body {
+
+            font-family:
+                Arial,
+                Helvetica,
+                sans-serif;
+
+            min-height: 100vh;
+
+            display: flex;
+
+            justify-content: center;
+
+            align-items: center;
+
+            padding: 30px;
+
+            background:
+                linear-gradient(
+                    120deg,
+                    #102b68 0%,
+                    #123f91 30%,
+                    #146fc1 65%,
+                    #25bfd3 100%
+                );
+
+            background-attachment: fixed;
+
+        }
+
+
+        /* ==========================================
+           CONTAINER PRINCIPAL
+        =========================================== */
+
+        .container {
+
+            width: 100%;
+
+            max-width: 1000px;
+
+            display: flex;
+
+            flex-direction: row;
+
+            justify-content: center;
+
+            align-items: center;
+
+            gap: 55px;
+
+        }
+
+
+        /* ==========================================
+           LOGO
+        =========================================== */
+
+        .logo-area {
+
+            flex: 1;
+
+            max-width: 340px;
+
+            display: flex;
+
+            justify-content: center;
+
+            align-items: center;
+
+        }
+
+
+        .logo-area img {
+
+            display: block;
+
+            max-width: 100%;
+
+            height: auto;
+
+            object-fit: contain;
+
+            padding: 18px;
+
+            background:
+                rgba(255, 255, 255, 0.97);
+
+            border:
+                1px solid
+                rgba(255, 255, 255, 0.90);
+
+            border-radius: 22px;
+
+            box-shadow:
+                0 20px 45px
+                rgba(0, 0, 0, 0.20);
+
+            transition:
+                transform 0.25s ease,
+                box-shadow 0.25s ease;
+
+        }
+
+
+        .logo-area img:hover {
+
+            transform:
+                translateY(-4px);
+
+            box-shadow:
+                0 25px 55px
+                rgba(0, 0, 0, 0.25);
+
+        }
+
+
+        /* ==========================================
+           CARTÃO
+        =========================================== */
+
+        .card {
+
+            width: 100%;
+
+            max-width: 390px;
+
+            padding: 34px;
+
+            background:
+                rgba(255, 255, 255, 0.97);
+
+            border-radius: 22px;
+
+            box-shadow:
+                0 22px 50px
+                rgba(0, 0, 0, 0.20);
+
+            text-align: center;
+
+            position: relative;
+
+            overflow: hidden;
+
+            animation:
+                aparecer 0.4s ease;
+
+        }
+
+
+        /* Linha superior do cartão */
+
+        .card::before {
+
+            content: "";
+
+            position: absolute;
+
+            top: 0;
+
+            left: 0;
+
+            width: 100%;
+
+            height: 5px;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    #102b68,
+                    #123f91,
+                    #146fc1,
+                    #25bfd3
+                );
+
+        }
+
+
+        @keyframes aparecer {
+
+            from {
+
+                opacity: 0;
+
+                transform:
+                    translateY(12px);
+
+            }
+
+            to {
+
+                opacity: 1;
+
+                transform:
+                    translateY(0);
+
+            }
+
+        }
+
+
+        /* ==========================================
+           TÍTULOS
+        =========================================== */
+
+        h2 {
+
+            margin-top: 0;
+
+            margin-bottom: 12px;
+
+            font-size: 23px;
+
+            line-height: 1.25;
+
+            font-weight: 800;
+
+            color: #102b68;
+
+        }
+
+
+        p {
+
+            color: #667085;
+
+            font-size: 14px;
+
+            line-height: 1.5;
+
+            margin-bottom: 24px;
+
+        }
+
+
+        p strong {
+
+            color: #123f91;
+
+        }
+
+
+        /* ==========================================
+           FORMULÁRIOS
+        =========================================== */
+
+        .form-group {
+
+            text-align: left;
+
+            margin-bottom: 17px;
+
+        }
+
+
+        label {
+
+            display: block;
+
+            margin-bottom: 7px;
+
+            font-size: 13px;
+
+            font-weight: 700;
+
+            color: #344054;
+
+        }
+
+
+        input[type="text"],
+        input[type="password"] {
+
+            width: 100%;
+
+            padding: 13px 14px;
+
+            border:
+                1px solid #d0d5dd;
+
+            border-radius: 10px;
+
+            background: #ffffff;
+
+            color: #101828;
+
+            font-size: 15px;
+
+            outline: none;
+
+            transition:
+                border-color 0.2s ease,
+                box-shadow 0.2s ease;
+
+        }
+
+
+        input[type="text"]:focus,
+        input[type="password"]:focus {
+
+            border-color:
+                #146fc1;
+
+            box-shadow:
+                0 0 0 4px
+                rgba(20, 111, 193, 0.12);
+
+        }
+
+
+        input::placeholder {
+
+            color: #98a2b3;
+
+        }
+
+
+        /* ==========================================
+           CAMPO DE ARQUIVO
+        =========================================== */
+
+        input[type="file"] {
+
+            display: block;
+
+            width: 100%;
+
+            margin:
+                10px 0 18px;
+
+            padding: 10px;
+
+            border:
+                1px dashed #b8c7d9;
+
+            border-radius: 10px;
+
+            background:
+                #f8fafc;
+
+            color: #475467;
+
+            font-size: 13px;
+
+            cursor: pointer;
+
+        }
+
+
+        input[type="file"]:hover {
+
+            border-color:
+                #146fc1;
+
+            background:
+                #f1f8ff;
+
+        }
+
+
+        /* ==========================================
+           LISTA DE ARQUIVOS
+        =========================================== */
+
+        .lista-arquivos {
+            text-align: left;
+            margin: -5px 0 18px;
+            font-size: 13px;
+            color: #344054;
+        }
+
+        .arquivo-item {
+            background: #f8fafc;
+            border: 1px solid #d0d5dd;
+            border-radius: 8px;
+            padding: 8px 10px;
+            margin-bottom: 6px;
+            word-break: break-word;
+        }
+
+        .arquivo-item strong {
+            color: #123f91;
+        }
+
+        /* ==========================================
+           BOTÕES
+        =========================================== */
+
+        button {
+
+            width: 100%;
+
+            padding: 13px 16px;
+
+            margin-bottom: 10px;
+
+            border: none;
+
+            border-radius: 10px;
+
+            background:
+                linear-gradient(
+                    100deg,
+                    #102b68 0%,
+                    #123f91 35%,
+                    #146fc1 70%,
+                    #25bfd3 100%
+                );
+
+            color: #ffffff;
+
+            font-size: 15px;
+
+            font-weight: 700;
+
+            cursor: pointer;
+
+            box-shadow:
+                0 7px 18px
+                rgba(18, 63, 145, 0.25);
+
+            transition:
+                transform 0.2s ease,
+                box-shadow 0.2s ease;
+
+        }
+
+
+        button:hover {
+
+            transform:
+                translateY(-2px);
+
+            box-shadow:
+                0 11px 25px
+                rgba(18, 63, 145, 0.32);
+
+        }
+
+
+        button:active {
+
+            transform:
+                translateY(0);
+
+        }
+
+
+        button:disabled {
+
+            background:
+                #aab3bf;
+
+            cursor:
+                not-allowed;
+
+            box-shadow:
+                none;
+
+            transform:
+                none;
+
+        }
+
+
+        /* ==========================================
+           BOTÃO SAIR
+        =========================================== */
+
+        .btn-logout {
+
+            width: auto;
+
+            margin-top: 18px;
+
+            margin-bottom: 0;
+
+            padding:
+                8px 16px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #b42318,
+                    #d92d20
+                );
+
+            font-size: 12px;
+
+            box-shadow:
+                0 5px 12px
+                rgba(217, 45, 32, 0.20);
+
+        }
+
+
+        .btn-logout:hover {
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #912018,
+                    #b42318
+                );
+
+        }
+
+
+        /* ==========================================
+           STATUS
+        =========================================== */
+
+        .status-msg {
+
+            min-height: 20px;
+
+            margin-top: 15px;
+
+            font-size: 13px;
+
+            font-weight: 600;
+
+            line-height: 1.5;
+
+        }
+
+
+        /* ==========================================
+           LINKS
+        =========================================== */
+
+        .link {
+
+            display: block;
+
+            margin-top: 14px;
+
+            color:
+                #0b5cad;
+
+            font-size: 13px;
+
+            font-weight: 600;
+
+            cursor: pointer;
+
+            transition:
+                color 0.2s ease;
+
+        }
+
+
+        .link:hover {
+
+            color:
+                #159db8;
+
+        }
+
+
+        /* ==========================================
+           ELEMENTO OCULTO
+        =========================================== */
+
+        .hidden {
+
+            display: none;
+
+        }
+
+
+        /* ==========================================
+           CELULAR / TABLET
+        =========================================== */
+
+        @media (max-width: 768px) {
+
+            body {
+
+                padding: 20px;
+
+            }
+
+
+            .container {
+
+                flex-direction: column;
+
+                gap: 25px;
+
+            }
+
+
+            .logo-area {
+
+                max-width: 230px;
+
+            }
+
+
+            .logo-area img {
+
+                padding: 14px;
+
+                border-radius: 18px;
+
+            }
+
+
+            .card {
+
+                max-width: 420px;
+
+                padding: 28px 22px;
+
+                border-radius: 18px;
+
+            }
+
+        }
+
+
+        @media (max-width: 480px) {
+
+            body {
+
+                padding: 15px;
+
+            }
+
+
+            .logo-area {
+
+                max-width: 190px;
+
+            }
+
+
+            .card {
+
+                padding:
+                    27px 18px;
+
+            }
+
+
+            h2 {
+
+                font-size: 20px;
+
+            }
+
+        }
+
+    </style>
+
 </head>
+
+
 <body>
+
+
 <div class="container">
-<div class="logo-area">
-<img src="https://github.com/ThiagoNegrini/upload_de_arquivos/blob/main/LOGO_SITE.PNG?raw=true" alt="Logotipo da Empresa">
+
+
+    <!-- ==========================================
+         LOGO
+    =========================================== -->
+
+    <div class="logo-area">
+
+        <img
+            src="https://github.com/ThiagoNegrini/upload_de_arquivos/blob/main/LOGO_SITE.PNG?raw=true"
+            alt="Logotipo da Empresa"
+            id="imgLogo"
+        >
+
+    </div>
+
+
+    <!-- ==========================================
+         LOGIN
+    =========================================== -->
+
+    <div
+        class="card"
+        id="telaLogin"
+    >
+
+        <h2>
+            ACESSO AO PAINEL DE ENVIO
+        </h2>
+
+
+        <p>
+            Entre com seu usuário e senha.
+        </p>
+
+
+        <div class="form-group">
+
+            <label for="loginUsuario">
+                Usuário:
+            </label>
+
+            <input
+                type="text"
+                id="loginUsuario"
+                placeholder="Digite seu usuário"
+            >
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label for="loginSenha">
+                Senha:
+            </label>
+
+            <input
+                type="password"
+                id="loginSenha"
+                placeholder="Digite sua senha"
+            >
+
+        </div>
+
+
+        <button
+            id="btnLogin"
+            onclick="efetuarLogin()"
+        >
+            Entrar
+        </button>
+
+
+        <div
+            id="loginStatus"
+            class="status-msg"
+        ></div>
+
+
+        <span
+            class="link"
+            onclick="mostrarCadastro()"
+        >
+            Ainda não possui cadastro? Criar conta
+        </span>
+
+    </div>
+
+
+    <!-- ==========================================
+         CADASTRO
+    =========================================== -->
+
+    <div
+        class="card hidden"
+        id="telaCadastro"
+    >
+
+        <h2>
+            CRIAR CADASTRO
+        </h2>
+
+
+        <p>
+            Preencha seus dados para criar seu acesso.
+        </p>
+
+
+        <div class="form-group">
+
+            <label for="cadastroNome">
+                Nome:
+            </label>
+
+            <input
+                type="text"
+                id="cadastroNome"
+                placeholder="Seu nome"
+            >
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label for="cadastroUsuario">
+                Usuário:
+            </label>
+
+            <input
+                type="text"
+                id="cadastroUsuario"
+                placeholder="Escolha um usuário"
+            >
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label for="cadastroSenha">
+                Senha:
+            </label>
+
+            <input
+                type="password"
+                id="cadastroSenha"
+                placeholder="Mínimo de 6 caracteres"
+            >
+
+        </div>
+
+
+        <button
+            id="btnCadastro"
+            onclick="cadastrarUsuario()"
+        >
+            Criar Cadastro
+        </button>
+
+
+        <div
+            id="cadastroStatus"
+            class="status-msg"
+        ></div>
+
+
+        <span
+            class="link"
+            onclick="mostrarLogin()"
+        >
+            Já possui cadastro? Entrar
+        </span>
+
+    </div>
+
+
+    <!-- ==========================================
+         UPLOAD
+    =========================================== -->
+
+    <div
+        class="card hidden"
+        id="telaUpload"
+    >
+
+        <h2>
+            SISTEMA DE ENVIO
+        </h2>
+
+
+        <p>
+
+            Olá,
+            <strong id="nomeUsuarioLogado"></strong>!
+
+            <br>
+
+            DOCUMENTAÇÃO CARNAVAL 2027
+
+        </p>
+
+
+        <!-- NOME DA PASTA -->
+
+        <div class="form-group">
+
+            <label for="nomePasta">
+                Nome da Pasta:
+            </label>
+
+            <input
+                type="text"
+                id="nomePasta"
+                placeholder="Ex: Escola de Samba Unidos"
+            >
+
+        </div>
+
+
+        <!-- NOME DO ARQUIVO -->
+
+        <div class="form-group">
+
+            <label for="nomeArquivoCustom">
+                Nome do Arquivo / Identificação:
+            </label>
+
+            <input
+                type="text"
+                id="nomeArquivoCustom"
+                placeholder="Ex: Escola_Samba_Oficio_01"
+            >
+
+        </div>
+
+
+        <!-- ARQUIVO -->
+
+        <input
+            type="file"
+            id="arquivoInput"
+            multiple
+            onchange="mostrarArquivosSelecionados()"
+        >
+
+        <div id="listaArquivos" class="lista-arquivos"></div>
+
+
+        <!-- ENVIAR -->
+
+        <button
+            id="btnEnviar"
+            onclick="enviarArquivo()"
+        >
+            Enviar Arquivo
+        </button>
+
+
+        <div
+            id="status"
+            class="status-msg"
+        ></div>
+
+
+        <!-- SAIR -->
+
+        <button
+            class="btn-logout"
+            onclick="efetuarLogout()"
+        >
+            Sair da Conta
+        </button>
+
+    </div>
+
 </div>
 
-<div class="card" id="telaLogin">
-<h2>ACESSO AO PAINEL DE ENVIO</h2>
-<p>Entre com seu usuário e senha.</p>
-<div class="form-group"><label for="loginUsuario">Usuário:</label><input type="text" id="loginUsuario" placeholder="Digite seu usuário"></div>
-<div class="form-group"><label for="loginSenha">Senha:</label><input type="password" id="loginSenha" placeholder="Digite sua senha"></div>
-<button id="btnLogin" onclick="efetuarLogin()">Entrar</button>
-<div id="loginStatus" class="status-msg"></div>
-<span class="link" onclick="mostrarCadastro()">Ainda não possui cadastro? Criar conta</span>
-</div>
-
-<div class="card hidden" id="telaCadastro">
-<h2>CRIAR CADASTRO</h2>
-<p>Preencha seus dados para criar seu acesso.</p>
-<div class="form-group"><label for="cadastroNome">Nome:</label><input type="text" id="cadastroNome" placeholder="Seu nome"></div>
-<div class="form-group"><label for="cadastroUsuario">Usuário:</label><input type="text" id="cadastroUsuario" placeholder="Escolha um usuário"></div>
-<div class="form-group"><label for="cadastroSenha">Senha:</label><input type="password" id="cadastroSenha" placeholder="Mínimo de 6 caracteres"></div>
-<button id="btnCadastro" onclick="cadastrarUsuario()">Criar Cadastro</button>
-<div id="cadastroStatus" class="status-msg"></div>
-<span class="link" onclick="mostrarLogin()">Já possui cadastro? Entrar</span>
-</div>
-
-<div class="card hidden" id="telaUpload">
-<h2>SISTEMA DE ENVIO</h2>
-<p>Olá, <strong id="nomeUsuarioLogado"></strong>!<br>DOCUMENTAÇÃO CARNAVAL 2027</p>
-
-<div class="form-group">
-<label for="nomePasta">Nome da Pasta:</label>
-<input type="text" id="nomePasta" placeholder="Ex: Escola de Samba Unidos">
-</div>
-
-<div class="form-group">
-<label for="nomeArquivoCustom">Nome do PDF / Identificação:</label>
-<input type="text" id="nomeArquivoCustom" placeholder="Ex: Escola_Samba_Documentacao_01">
-</div>
-
-<input type="file" id="arquivoInput" multiple onchange="mostrarArquivosSelecionados()">
-<div id="listaArquivos" class="lista-arquivos"></div>
-<div class="aviso">Os arquivos serão convertidos para PDF e reunidos em um único PDF, na ordem selecionada.</div>
-
-<button id="btnEnviar" onclick="enviarArquivosComoPDF()">Converter e Enviar PDF</button>
-<div id="status" class="status-msg"></div>
-<button class="btn-logout" onclick="efetuarLogout()">Sair da Conta</button>
-</div>
-</div>
 
 <script>
-const URL_SCRIPT='https://script.google.com/macros/s/AKfycbwaBnO2g3f_DIKmQwA_b_-al5aUWbNJJvtAbpUE79yvya8A-5k_-pL5xCvbLYSM7uaO4Q/exec';
-let usuarioLogado='';
 
-function mostrarLogin(){
- document.getElementById('telaCadastro').classList.add('hidden');
- document.getElementById('telaUpload').classList.add('hidden');
- document.getElementById('telaLogin').classList.remove('hidden');
-}
-function mostrarCadastro(){
- document.getElementById('telaLogin').classList.add('hidden');
- document.getElementById('telaUpload').classList.add('hidden');
- document.getElementById('telaCadastro').classList.remove('hidden');
-}
 
-async function post(parametros){
- const resposta=await fetch(URL_SCRIPT,{method:'POST',mode:'cors',body:parametros});
- const texto=await resposta.text();
- try{return JSON.parse(texto)}catch(e){throw new Error(texto||'Resposta inválida do servidor.')}
-}
+// ==========================================
+// CONFIGURAÇÃO
+// ==========================================
 
-async function cadastrarUsuario(){
- const nome=document.getElementById('cadastroNome').value.trim();
- const usuario=document.getElementById('cadastroUsuario').value.trim();
- const senha=document.getElementById('cadastroSenha').value.trim();
- const status=document.getElementById('cadastroStatus');
- const botao=document.getElementById('btnCadastro');
- if(!nome||!usuario||!senha){status.innerHTML='⚠️ Preencha todos os campos.';status.style.color='#d93025';return}
- if(senha.length<6){status.innerHTML='⚠️ A senha deve possuir pelo menos 6 caracteres.';status.style.color='#d93025';return}
- botao.disabled=true;status.innerHTML='⏳ Criando cadastro...';status.style.color='#146fc1';
- try{
-  const r=await post(new URLSearchParams({acao:'cadastro',nome,usuario,senha}));
-  if(r.sucesso){
-   status.innerHTML='✅ Cadastro realizado com sucesso!';status.style.color='#188038';
-   document.getElementById('cadastroNome').value='';
-   document.getElementById('cadastroUsuario').value='';
-   document.getElementById('cadastroSenha').value='';
-   setTimeout(mostrarLogin,1200);
-  }else{status.innerHTML='❌ '+r.mensagem;status.style.color='#d93025'}
- }catch(e){console.error(e);status.innerHTML='❌ '+e.message;status.style.color='#d93025'}
- finally{botao.disabled=false}
+const URL_SCRIPT =
+    'https://script.google.com/macros/s/AKfycbw4Wbes3yYsHN3ZLB3Pjj7nxZK8qLry2cFzIK0AFk9xKGkRXQq59HySdI9vJ0yxomXgsA/exec';
+
+
+let usuarioLogado = '';
+
+
+// ==========================================
+// MOSTRAR LOGIN
+// ==========================================
+
+function mostrarLogin() {
+
+    document
+        .getElementById('telaCadastro')
+        .classList.add('hidden');
+
+    document
+        .getElementById('telaUpload')
+        .classList.add('hidden');
+
+    document
+        .getElementById('telaLogin')
+        .classList.remove('hidden');
+
 }
 
-async function efetuarLogin(){
- const usuario=document.getElementById('loginUsuario').value.trim();
- const senha=document.getElementById('loginSenha').value.trim();
- const status=document.getElementById('loginStatus');
- const botao=document.getElementById('btnLogin');
- if(!usuario||!senha){status.innerHTML='⚠️ Informe usuário e senha.';status.style.color='#d93025';return}
- botao.disabled=true;status.innerHTML='⏳ Verificando acesso...';status.style.color='#146fc1';
- try{
-  const r=await post(new URLSearchParams({acao:'login',usuario,senha}));
-  if(r.sucesso){
-   usuarioLogado=r.usuario;
-   document.getElementById('nomeUsuarioLogado').innerText=r.nome||r.usuario;
-   document.getElementById('telaLogin').classList.add('hidden');
-   document.getElementById('telaUpload').classList.remove('hidden');
-   document.getElementById('loginUsuario').value='';
-   document.getElementById('loginSenha').value='';
-   status.innerHTML='';
-  }else{status.innerHTML='❌ '+r.mensagem;status.style.color='#d93025'}
- }catch(e){console.error(e);status.innerHTML='❌ '+e.message;status.style.color='#d93025'}
- finally{botao.disabled=false}
+
+// ==========================================
+// MOSTRAR CADASTRO
+// ==========================================
+
+function mostrarCadastro() {
+
+    document
+        .getElementById('telaLogin')
+        .classList.add('hidden');
+
+    document
+        .getElementById('telaUpload')
+        .classList.add('hidden');
+
+    document
+        .getElementById('telaCadastro')
+        .classList.remove('hidden');
+
 }
 
-function efetuarLogout(){
- usuarioLogado='';
- document.getElementById('telaUpload').classList.add('hidden');
- document.getElementById('telaLogin').classList.remove('hidden');
- document.getElementById('status').innerHTML='';
- document.getElementById('arquivoInput').value='';
- document.getElementById('nomePasta').value='';
- document.getElementById('nomeArquivoCustom').value='';
- document.getElementById('listaArquivos').innerHTML='';
+
+// ==========================================
+// CADASTRO
+// ==========================================
+
+async function cadastrarUsuario() {
+
+    const nome =
+        document
+            .getElementById('cadastroNome')
+            .value
+            .trim();
+
+
+    const usuario =
+        document
+            .getElementById('cadastroUsuario')
+            .value
+            .trim();
+
+
+    const senha =
+        document
+            .getElementById('cadastroSenha')
+            .value
+            .trim();
+
+
+    const status =
+        document.getElementById(
+            'cadastroStatus'
+        );
+
+
+    const botao =
+        document.getElementById(
+            'btnCadastro'
+        );
+
+
+    if (!nome || !usuario || !senha) {
+
+        status.innerHTML =
+            '⚠️ Preencha todos os campos.';
+
+        status.style.color =
+            '#d93025';
+
+        return;
+
+    }
+
+
+    if (senha.length < 6) {
+
+        status.innerHTML =
+            '⚠️ A senha deve possuir pelo menos 6 caracteres.';
+
+        status.style.color =
+            '#d93025';
+
+        return;
+
+    }
+
+
+    botao.disabled = true;
+
+    status.innerHTML =
+        '⏳ Criando cadastro...';
+
+    status.style.color =
+        '#146fc1';
+
+
+    try {
+
+        const parametros =
+            new URLSearchParams({
+
+                acao: 'cadastro',
+
+                nome: nome,
+
+                usuario: usuario,
+
+                senha: senha
+
+            });
+
+
+        const resposta =
+            await fetch(
+
+                URL_SCRIPT,
+
+                {
+                    method: 'POST',
+                    mode: 'cors',
+                    body: parametros
+                }
+
+            );
+
+
+        const resultado =
+            await resposta.json();
+
+
+        if (resultado.sucesso) {
+
+            status.innerHTML =
+                '✅ Cadastro realizado com sucesso!';
+
+            status.style.color =
+                '#188038';
+
+
+            document
+                .getElementById(
+                    'cadastroNome'
+                )
+                .value = '';
+
+
+            document
+                .getElementById(
+                    'cadastroUsuario'
+                )
+                .value = '';
+
+
+            document
+                .getElementById(
+                    'cadastroSenha'
+                )
+                .value = '';
+
+
+            setTimeout(
+                mostrarLogin,
+                1500
+            );
+
+        } else {
+
+            status.innerHTML =
+                '❌ ' +
+                resultado.mensagem;
+
+            status.style.color =
+                '#d93025';
+
+        }
+
+
+    } catch (erro) {
+
+        console.error(erro);
+
+        status.innerHTML =
+            '❌ Erro de comunicação com o servidor.';
+
+        status.style.color =
+            '#d93025';
+
+    } finally {
+
+        botao.disabled = false;
+
+    }
+
 }
 
-function mostrarArquivosSelecionados(){
- const input=document.getElementById('arquivoInput');
- const lista=document.getElementById('listaArquivos');
- lista.innerHTML='';
- Array.from(input.files).forEach((arquivo,i)=>{
-  const item=document.createElement('div');
-  item.className='arquivo-item';
-  item.innerHTML='<strong>'+(i+1)+'.</strong> '+escapeHtml(arquivo.name)+' ('+formatarTamanho(arquivo.size)+')';
-  lista.appendChild(item);
- });
+
+// ==========================================
+// LOGIN
+// ==========================================
+
+async function efetuarLogin() {
+
+    const usuario =
+        document
+            .getElementById(
+                'loginUsuario'
+            )
+            .value
+            .trim();
+
+
+    const senha =
+        document
+            .getElementById(
+                'loginSenha'
+            )
+            .value
+            .trim();
+
+
+    const status =
+        document.getElementById(
+            'loginStatus'
+        );
+
+
+    const botao =
+        document.getElementById(
+            'btnLogin'
+        );
+
+
+    if (!usuario || !senha) {
+
+        status.innerHTML =
+            '⚠️ Informe usuário e senha.';
+
+        status.style.color =
+            '#d93025';
+
+        return;
+
+    }
+
+
+    botao.disabled = true;
+
+    status.innerHTML =
+        '⏳ Verificando acesso...';
+
+    status.style.color =
+        '#146fc1';
+
+
+    try {
+
+        const parametros =
+            new URLSearchParams({
+
+                acao: 'login',
+
+                usuario: usuario,
+
+                senha: senha
+
+            });
+
+
+        const resposta =
+            await fetch(
+
+                URL_SCRIPT,
+
+                {
+                    method: 'POST',
+                    mode: 'cors',
+                    body: parametros
+                }
+
+            );
+
+
+        const resultado =
+            await resposta.json();
+
+
+        if (resultado.sucesso) {
+
+            usuarioLogado =
+                resultado.usuario;
+
+
+            document
+                .getElementById(
+                    'nomeUsuarioLogado'
+                )
+                .innerText =
+                resultado.nome ||
+                resultado.usuario;
+
+
+            document
+                .getElementById(
+                    'telaLogin'
+                )
+                .classList.add('hidden');
+
+
+            document
+                .getElementById(
+                    'telaUpload'
+                )
+                .classList.remove('hidden');
+
+
+            document
+                .getElementById(
+                    'loginUsuario'
+                )
+                .value = '';
+
+
+            document
+                .getElementById(
+                    'loginSenha'
+                )
+                .value = '';
+
+
+            status.innerHTML = '';
+
+        } else {
+
+            status.innerHTML =
+                '❌ ' +
+                resultado.mensagem;
+
+            status.style.color =
+                '#d93025';
+
+        }
+
+
+    } catch (erro) {
+
+        console.error(erro);
+
+        status.innerHTML =
+            '❌ Erro de comunicação com o servidor.';
+
+        status.style.color =
+            '#d93025';
+
+    } finally {
+
+        botao.disabled = false;
+
+    }
+
 }
-function escapeHtml(s){return s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]))}
-function formatarTamanho(bytes){
- if(bytes<1024)return bytes+' B';
- if(bytes<1024*1024)return(bytes/1024).toFixed(1)+' KB';
- return(bytes/(1024*1024)).toFixed(1)+' MB';
+
+
+// ==========================================
+// LOGOUT
+// ==========================================
+
+function efetuarLogout() {
+
+    usuarioLogado = '';
+
+
+    document
+        .getElementById(
+            'telaUpload'
+        )
+        .classList.add('hidden');
+
+
+    document
+        .getElementById(
+            'telaLogin'
+        )
+        .classList.remove('hidden');
+
+
+    document
+        .getElementById(
+            'status'
+        )
+        .innerHTML = '';
+
+
+    document
+        .getElementById(
+            'arquivoInput'
+        )
+        .value = '';
+
+
+    document
+        .getElementById(
+            'nomePasta'
+        )
+        .value = '';
+
+
+    document
+        .getElementById(
+            'nomeArquivoCustom'
+        )
+        .value = '';
+
 }
 
-function blobParaBase64(blob){
- return new Promise((resolve,reject)=>{
-  const leitor=new FileReader();
-  leitor.onload=()=>resolve(leitor.result.split(',')[1]);
-  leitor.onerror=()=>reject(leitor.error);
-  leitor.readAsDataURL(blob);
- });
+
+// ==========================================
+// UPLOAD
+// ==========================================
+
+function mostrarArquivosSelecionados() {
+
+    const input = document.getElementById('arquivoInput');
+    const lista = document.getElementById('listaArquivos');
+
+    lista.innerHTML = '';
+
+    if (input.files.length === 0) {
+        return;
+    }
+
+    Array.from(input.files).forEach((arquivo, indice) => {
+
+        const item = document.createElement('div');
+        item.className = 'arquivo-item';
+
+        item.innerHTML =
+            '<strong>' + (indice + 1) + '.</strong> ' +
+            arquivo.name +
+            ' (' + formatarTamanho(arquivo.size) + ')';
+
+        lista.appendChild(item);
+    });
 }
 
-async function enviarArquivosComoPDF(){
- const input=document.getElementById('arquivoInput');
- const status=document.getElementById('status');
- const botao=document.getElementById('btnEnviar');
- const pasta=document.getElementById('nomePasta').value.trim();
- let nomePDF=document.getElementById('nomeArquivoCustom').value.trim();
 
- if(!usuarioLogado){status.innerHTML='❌ Sessão expirada. Faça login novamente.';status.style.color='#d93025';return}
- if(!pasta){status.innerHTML='⚠️ Informe o nome da pasta.';status.style.color='#d93025';document.getElementById('nomePasta').focus();return}
- if(input.files.length===0){status.innerHTML='⚠️ Selecione pelo menos um arquivo.';status.style.color='#d93025';return}
+function formatarTamanho(bytes) {
 
- nomePDF=(nomePDF||'arquivos_unificados').replace(/[\\/:*?"<>|]/g,'_').trim();
- if(!nomePDF.toLowerCase().endsWith('.pdf'))nomePDF+='.pdf';
+    if (bytes < 1024) {
+        return bytes + ' B';
+    }
 
- botao.disabled=true;
- try{
-  status.innerHTML='⏳ Iniciando lote...';status.style.color='#146fc1';
-  const inicio=await post(new URLSearchParams({acao:'iniciarLote',usuario:usuarioLogado,pasta,filename:nomePDF,total:String(input.files.length)}));
-  if(!inicio.sucesso)throw new Error(inicio.mensagem||'Não foi possível iniciar o lote.');
+    if (bytes < 1024 * 1024) {
+        return (bytes / 1024).toFixed(1) + ' KB';
+    }
 
-  const lote=inicio.loteId;
-  const arquivos=Array.from(input.files);
+    return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+}
 
-  for(let i=0;i<arquivos.length;i++){
-   const arquivo=arquivos[i];
-   status.innerHTML='⏳ Enviando arquivo '+(i+1)+' de '+arquivos.length+': '+escapeHtml(arquivo.name);
-   const base64=await blobParaBase64(arquivo);
-   const r=await post(new URLSearchParams({
-    acao:'enviarParte',
-    loteId:lote,
-    usuario:usuarioLogado,
-    indice:String(i),
-    filename:arquivo.name,
-    mimeType:arquivo.type||'application/octet-stream',
-    data:base64
-   }));
-   if(!r.sucesso)throw new Error(r.mensagem||('Erro no arquivo '+arquivo.name));
-  }
 
-  status.innerHTML='⏳ Convertendo arquivos para PDF e juntando tudo...';
-  const final=await post(new URLSearchParams({acao:'finalizarLote',loteId:lote,usuario:usuarioLogado}));
-  if(!final.sucesso)throw new Error(final.mensagem||'Não foi possível finalizar o PDF.');
+async function enviarRequisicao(parametros) {
 
-  status.innerHTML='✅ PDF único criado e enviado com sucesso: '+escapeHtml(final.filename);
-  status.style.color='#188038';
-  input.value='';
-  document.getElementById('listaArquivos').innerHTML='';
-  document.getElementById('nomeArquivoCustom').value='';
- }catch(e){
-  console.error(e);
-  status.innerHTML='❌ '+escapeHtml(e.message||String(e));
-  status.style.color='#d93025';
- }finally{
-  botao.disabled=false;
- }
+    const resposta = await fetch(
+        URL_SCRIPT,
+        {
+            method: 'POST',
+            mode: 'cors',
+            body: parametros
+        }
+    );
+
+    if (!resposta.ok) {
+        throw new Error(
+            'Servidor retornou HTTP ' + resposta.status
+        );
+    }
+
+    const texto = await resposta.text();
+
+    try {
+        return JSON.parse(texto);
+    } catch (erro) {
+        console.error('Resposta do servidor:', texto);
+        throw new Error(
+            'O servidor não retornou JSON válido.'
+        );
+    }
+}
+
+
+async function consultarStatusLote(loteId) {
+
+    const url =
+        URL_SCRIPT +
+        '?acao=statusLote&loteId=' +
+        encodeURIComponent(loteId);
+
+    const resposta = await fetch(url, {
+        method: 'GET',
+        mode: 'cors'
+    });
+
+    if (!resposta.ok) {
+        throw new Error(
+            'Servidor retornou HTTP ' + resposta.status
+        );
+    }
+
+    const texto = await resposta.text();
+
+    try {
+        return JSON.parse(texto);
+    } catch (erro) {
+        console.error('Resposta do servidor:', texto);
+        throw new Error(
+            'O servidor não retornou JSON válido.'
+        );
+    }
+}
+
+
+function esperar(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+
+async function aguardarFinalizacao(loteId, status) {
+
+    const tentativasMaximas = 120;
+
+    for (let tentativa = 0; tentativa < tentativasMaximas; tentativa++) {
+
+        status.innerHTML =
+            '⏳ Convertendo e unificando os arquivos em um único PDF...';
+        status.style.color = '#146fc1';
+
+        const resultado = await consultarStatusLote(loteId);
+
+        if (resultado.estado === 'CONCLUIDO') {
+            return resultado;
+        }
+
+        if (resultado.estado === 'ERRO') {
+            throw new Error(
+                resultado.mensagem ||
+                'Erro ao processar o PDF.'
+            );
+        }
+
+        await esperar(2000);
+    }
+
+    throw new Error(
+        'O processamento demorou mais que o esperado. ' +
+        'Verifique o Apps Script e tente consultar o lote novamente.'
+    );
+}
+
+
+async function enviarArquivo() {
+
+    const input = document.getElementById('arquivoInput');
+    const status = document.getElementById('status');
+    const botao = document.getElementById('btnEnviar');
+
+    const nomePastaInput =
+        document.getElementById('nomePasta').value.trim();
+
+    const nomeCustomInput =
+        document.getElementById('nomeArquivoCustom').value.trim();
+
+
+    if (!usuarioLogado) {
+        status.innerHTML =
+            '❌ Sessão expirada. Faça login novamente.';
+        status.style.color = '#d93025';
+        return;
+    }
+
+
+    if (!nomePastaInput) {
+        status.innerHTML = '⚠️ Informe o nome da pasta.';
+        status.style.color = '#d93025';
+        document.getElementById('nomePasta').focus();
+        return;
+    }
+
+
+    if (input.files.length === 0) {
+        status.innerHTML =
+            '⚠️ Por favor, selecione pelo menos um arquivo.';
+        status.style.color = '#d93025';
+        return;
+    }
+
+
+    botao.disabled = true;
+
+    const arquivos = Array.from(input.files);
+
+    try {
+
+        /*
+         * 1. Cria o lote no servidor.
+         */
+        status.innerHTML =
+            '⏳ Preparando lote com ' +
+            arquivos.length +
+            ' arquivo(s)...';
+        status.style.color = '#146fc1';
+
+        let nomePDF = nomeCustomInput;
+
+        if (!nomePDF) {
+            nomePDF = 'arquivos_unificados.pdf';
+        }
+
+        if (!/\.pdf$/i.test(nomePDF)) {
+            nomePDF += '.pdf';
+        }
+
+        const inicio = await enviarRequisicao(
+            new URLSearchParams({
+                acao: 'iniciarLote',
+                usuario: usuarioLogado,
+                pasta: nomePastaInput,
+                filename: nomePDF,
+                total: String(arquivos.length)
+            })
+        );
+
+        if (!inicio.sucesso || !inicio.loteId) {
+            throw new Error(
+                inicio.mensagem ||
+                'Não foi possível iniciar o lote.'
+            );
+        }
+
+        const loteId = inicio.loteId;
+
+
+        /*
+         * 2. Envia cada arquivo separadamente, mantendo
+         * exatamente a ordem escolhida pelo usuário.
+         */
+        for (let i = 0; i < arquivos.length; i++) {
+
+            const arquivo = arquivos[i];
+
+            status.innerHTML =
+                '⏳ Enviando arquivo ' +
+                (i + 1) +
+                ' de ' +
+                arquivos.length +
+                '...';
+            status.style.color = '#146fc1';
+
+            const dadosBase64 = await new Promise((resolve, reject) => {
+
+                const leitor = new FileReader();
+
+                leitor.onload = function() {
+                    try {
+                        resolve(
+                            leitor.result.split(',')[1]
+                        );
+                    } catch (erro) {
+                        reject(erro);
+                    }
+                };
+
+                leitor.onerror = function() {
+                    reject(
+                        new Error(
+                            'Não foi possível ler o arquivo ' +
+                            arquivo.name
+                        )
+                    );
+                };
+
+                leitor.readAsDataURL(arquivo);
+            });
+
+            const resultadoParte = await enviarRequisicao(
+                new URLSearchParams({
+                    acao: 'enviarParte',
+                    loteId: loteId,
+                    indice: String(i),
+                    filename: arquivo.name,
+                    mimeType: arquivo.type || 'application/octet-stream',
+                    data: dadosBase64
+                })
+            );
+
+            if (!resultadoParte.sucesso) {
+                throw new Error(
+                    resultadoParte.mensagem ||
+                    'Erro ao enviar ' + arquivo.name
+                );
+            }
+        }
+
+
+        /*
+         * 3. Solicita a conversão/união em segundo plano.
+         * O servidor responde imediatamente para evitar
+         * problemas de fetch com doPost assíncrono.
+         */
+        status.innerHTML =
+            '⏳ Arquivos recebidos. Iniciando conversão para PDF...';
+
+        const finalizacao = await enviarRequisicao(
+            new URLSearchParams({
+                acao: 'finalizarLote',
+                loteId: loteId
+            })
+        );
+
+        if (!finalizacao.sucesso) {
+            throw new Error(
+                finalizacao.mensagem ||
+                'Não foi possível iniciar a finalização.'
+            );
+        }
+
+
+        /*
+         * 4. Aguarda o processamento terminar.
+         */
+        const concluido = await aguardarFinalizacao(
+            loteId,
+            status
+        );
+
+        status.innerHTML =
+            '✅ PDF criado com sucesso: ' +
+            (concluido.resultado && concluido.resultado.filename
+                ? concluido.resultado.filename
+                : 'arquivo PDF');
+        status.style.color = '#188038';
+
+        if (
+            concluido.resultado &&
+            concluido.resultado.url
+        ) {
+            status.innerHTML +=
+                '<br><a href="' +
+                concluido.resultado.url +
+                '" target="_blank" rel="noopener">Abrir PDF no Google Drive</a>';
+        }
+
+        input.value = '';
+        document.getElementById('listaArquivos').innerHTML = '';
+        document.getElementById('nomeArquivoCustom').value = '';
+
+    } catch (erro) {
+
+        console.error(erro);
+
+        status.innerHTML =
+            '❌ ' +
+            (erro.message || 'Falha na comunicação com o servidor.');
+        status.style.color = '#d93025';
+
+    } finally {
+        botao.disabled = false;
+    }
+
 }
 </script>
+
+
 </body>
+
 </html>
