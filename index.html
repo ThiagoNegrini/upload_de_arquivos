@@ -1243,7 +1243,7 @@
         </div>
 
 
-        <!-- CONTADOR DE PRAZO - APENAS GRUPO ESPECIAL DE BAIRROS -->
+        <!-- CONTADOR DE PRAZOS DOS GRUPOS -->
 
         <div
             id="contadorPrazo"
@@ -1252,7 +1252,7 @@
         >
 
             <span class="contador-titulo">
-                Prazo de envio do Grupo Especial de Bairros
+                Prazo de envio do grupo
             </span>
 
             <span
@@ -1262,7 +1262,7 @@
                 Calculando...
             </span>
 
-            <span>
+            <span class="contador-final">
                 Prazo final: 12/10/2026 às 23:59:59
             </span>
 
@@ -2298,16 +2298,76 @@ function lerArquivoBase64(
 
 
 // ==========================================
-// CONTADOR DE PRAZO
+// CONTADOR DE PRAZOS DOS GRUPOS
 // ==========================================
 
-const DATA_EXPIRACAO_GRUPO_ESPECIAL =
-    new Date(
-        '2026-10-12T23:59:59'
-    );
+const PRAZOS_GRUPOS = {
+
+    'GRUPO ESPECIAL DE BAIRROS':
+        new Date('2026-10-12T23:59:59'),
+
+    'ACESSO DE BLOCOS':
+        new Date('2026-10-13T23:59:59'),
+
+    'BLOCOS ESPECIAIS':
+        new Date('2026-10-13T23:59:59'),
+
+    'GRUPO ACESSO I':
+        new Date('2026-10-14T23:59:59'),
+
+    'GRUPO ACESSO II':
+        new Date('2026-10-15T23:59:59'),
+
+    'GRUPO ACESSO III':
+        new Date('2026-10-16T23:59:59')
+
+};
 
 
 let intervaloContadorPrazo = null;
+
+
+function obterPrazoGrupo(categoria) {
+
+    return PRAZOS_GRUPOS[categoria] || null;
+
+}
+
+
+function grupoEstaExpirado(categoria) {
+
+    const prazo =
+        obterPrazoGrupo(categoria);
+
+
+    if (!prazo) {
+
+        return false;
+
+    }
+
+
+    return new Date().getTime() >= prazo.getTime();
+
+}
+
+
+function formatarDataPrazo(prazo) {
+
+    const dia =
+        String(prazo.getDate()).padStart(2, '0');
+
+    const mes =
+        String(prazo.getMonth() + 1).padStart(2, '0');
+
+    const ano =
+        prazo.getFullYear();
+
+
+    return dia + '/' + mes + '/' + ano +
+        ' às 23:59:59';
+
+}
 
 
 function atualizarContadorPrazo() {
@@ -2322,10 +2382,20 @@ function atualizarContadorPrazo() {
             'contadorPrazo'
         );
 
+    const titulo =
+        contador
+            ? contador.querySelector('.contador-titulo')
+            : null;
+
     const tempo =
         document.getElementById(
             'contadorTempo'
         );
+
+    const prazoFinal =
+        contador
+            ? contador.querySelector('.contador-final')
+            : null;
 
 
     if (
@@ -2339,53 +2409,57 @@ function atualizarContadorPrazo() {
     }
 
 
-    if (
-        select.value !==
-        'GRUPO ESPECIAL DE BAIRROS'
-    ) {
+    const categoria = select.value;
+    const prazo = obterPrazoGrupo(categoria);
 
-        contador.style.display =
-            'none';
 
-        contador.classList.remove(
-            'expirado'
-        );
+    if (!prazo) {
 
+        contador.style.display = 'none';
+        contador.classList.remove('expirado');
         return;
 
     }
 
 
-    contador.style.display =
-        'block';
+    contador.style.display = 'block';
 
 
-    const agora =
-        new Date();
+    if (titulo) {
 
+        titulo.textContent =
+            'Prazo de envio do ' + categoria;
+
+    }
+
+
+    if (prazoFinal) {
+
+        prazoFinal.textContent =
+            'Prazo final: ' +
+            formatarDataPrazo(prazo);
+
+    }
+
+
+    const agora = new Date();
 
     const diferenca =
-        DATA_EXPIRACAO_GRUPO_ESPECIAL.getTime() -
-        agora.getTime();
+        prazo.getTime() - agora.getTime();
 
 
     if (diferenca <= 0) {
 
-        tempo.textContent =
-            'PRAZO EXPIRADO';
+        tempo.textContent = 'PRAZO EXPIRADO';
 
-        contador.classList.add(
-            'expirado'
-        );
+        contador.classList.add('expirado');
 
         return;
 
     }
 
 
-    contador.classList.remove(
-        'expirado'
-    );
+    contador.classList.remove('expirado');
 
 
     const dias =
@@ -2438,6 +2512,63 @@ function atualizarContadorPrazo() {
 }
 
 
+function atualizarOpcoesExpiradas() {
+
+    const select =
+        document.getElementById(
+            'categoriaPasta'
+        );
+
+
+    if (!select) {
+
+        return;
+
+    }
+
+
+    Array.from(select.options).forEach(
+        function(opcao) {
+
+            if (!opcao.value) {
+
+                return;
+
+            }
+
+
+            const expirado =
+                grupoEstaExpirado(opcao.value);
+
+
+            opcao.disabled = expirado;
+
+
+            if (expirado) {
+
+                opcao.textContent =
+                    opcao.value +
+                    ' — PRAZO EXPIRADO';
+
+            }
+
+        }
+    );
+
+}
+
+
+function informarPrazoExpirado(categoria) {
+
+    alert(
+        'O prazo para envio de documentos do ' +
+        categoria +
+        ' está expirado.'
+    );
+
+}
+
+
 function iniciarContadorPrazo() {
 
     const select =
@@ -2456,31 +2587,54 @@ function iniciarContadorPrazo() {
     select.addEventListener(
         'change',
         function() {
-            if (
-                select.value ===
-                'GRUPO ESPECIAL DE BAIRROS' &&
-                new Date().getTime() >=
-                DATA_EXPIRACAO_GRUPO_ESPECIAL.getTime()
-            ) {
-                alert(
-                    'O prazo para envio de documentos do Grupo Especial de Bairros está expirado.'
-                );
+
+            const categoria = select.value;
+
+
+            if (grupoEstaExpirado(categoria)) {
+
+                informarPrazoExpirado(categoria);
+
                 select.value = '';
+
                 atualizarContadorPrazo();
+
                 return;
+
             }
 
+
             atualizarContadorPrazo();
+
         }
     );
 
 
+    select.addEventListener(
+        'mousedown',
+        function() {
+
+            atualizarOpcoesExpiradas();
+
+        }
+    );
+
+
+    select.addEventListener(
+        'keydown',
+        function() {
+
+            atualizarOpcoesExpiradas();
+
+        }
+    );
+
+
+    atualizarOpcoesExpiradas();
     atualizarContadorPrazo();
 
 
-    if (
-        intervaloContadorPrazo
-    ) {
+    if (intervaloContadorPrazo) {
 
         clearInterval(
             intervaloContadorPrazo
@@ -2491,7 +2645,12 @@ function iniciarContadorPrazo() {
 
     intervaloContadorPrazo =
         setInterval(
-            atualizarContadorPrazo,
+            function() {
+
+                atualizarOpcoesExpiradas();
+                atualizarContadorPrazo();
+
+            },
             1000
         );
 
@@ -2501,6 +2660,7 @@ function iniciarContadorPrazo() {
 iniciarContadorPrazo();
 
 
+// ==========================================
 // ==========================================
 // ENVIAR ARQUIVOS
 // ==========================================
