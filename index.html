@@ -28,16 +28,42 @@
       font-family: Inter, Arial, Helvetica, sans-serif;
       color: var(--text);
       background:
-        radial-gradient(circle at top left, #e9f1ff 0, transparent 35%),
-        var(--bg);
+        linear-gradient(120deg, #102b68 0%, #123f91 30%, #146fc1 65%, #25bfd3 100%);
+      background-attachment: fixed;
     }
 
     .app {
-      width: min(940px, calc(100% - 28px));
+      width: min(1180px, calc(100% - 40px));
       margin: 28px auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 48px;
+    }
+
+    .logo-area {
+      flex: 0 0 280px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .logo-area img {
+      display: block;
+      width: 100%;
+      max-width: 280px;
+      height: auto;
+      object-fit: contain;
+      padding: 18px;
+      background: rgba(255, 255, 255, .97);
+      border: 1px solid rgba(255, 255, 255, .9);
+      border-radius: 22px;
+      box-shadow: 0 20px 45px rgba(0, 0, 0, .20);
     }
 
     .card {
+      flex: 1 1 720px;
+      max-width: 760px;
       background: var(--card);
       border: 1px solid rgba(217, 224, 234, .8);
       border-radius: 22px;
@@ -52,17 +78,6 @@
       margin-bottom: 26px;
     }
 
-    .brand-icon {
-      width: 48px;
-      height: 48px;
-      border-radius: 14px;
-      display: grid;
-      place-items: center;
-      color: #fff;
-      background: linear-gradient(135deg, #2563eb, #4f46e5);
-      font-size: 22px;
-      font-weight: 800;
-    }
 
     h1 { margin: 0; font-size: 26px; }
     .subtitle { margin: 4px 0 0; color: var(--muted); }
@@ -323,10 +338,17 @@
 
 <body>
 <div class="app">
+  <div class="logo-area">
+    <img
+      src="https://github.com/ThiagoNegrini/upload_de_arquivos/blob/main/LOGO_SITE.PNG?raw=true"
+      alt="Logotipo"
+      id="imgLogo"
+    >
+  </div>
+
   <div class="card">
 
     <div class="brand">
-      <div class="brand-icon">↑</div>
       <div>
         <h1>Envio de Documentos</h1>
         <div class="subtitle">Selecione, organize e envie seus arquivos para gerar um PDF.</div>
