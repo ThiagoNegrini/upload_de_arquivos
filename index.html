@@ -341,6 +341,45 @@
 
         }
 
+        select {
+
+            width: 100%;
+
+            padding: 13px 14px;
+
+            border:
+                1px solid #d0d5dd;
+
+            border-radius: 10px;
+
+            background: #ffffff;
+
+            color: #101828;
+
+            font-size: 15px;
+
+            outline: none;
+
+            cursor: pointer;
+
+            transition:
+                border-color 0.2s ease,
+                box-shadow 0.2s ease;
+
+        }
+
+
+        select:focus {
+
+            border-color:
+                #146fc1;
+
+            box-shadow:
+                0 0 0 4px
+                rgba(20, 111, 193, 0.12);
+
+        }
+
 
         input::placeholder {
 
@@ -1094,35 +1133,40 @@
         </p>
 
 
-        <!-- NOME DA PASTA -->
+        <!-- GRUPO / CATEGORIA -->
 
         <div class="form-group">
 
-            <label for="nomePasta">
-                Nome da Pasta:
+            <label for="categoriaPasta">
+                Grupo:
             </label>
 
-            <input
-                type="text"
-                id="nomePasta"
-                placeholder="Ex:ESCOLA/BLOCO UNIDOS DA UESP"
-            >
+            <select id="categoriaPasta">
+                <option value="">SELECIONE O GRUPO</option>
+                <option value="GRUPO ESPECIAL DE BAIRROS">GRUPO ESPECIAL DE BAIRROS</option>
+                <option value="GRUPO ACESSO I">GRUPO ACESSO I</option>
+                <option value="GRUPO ACESSO II">GRUPO ACESSO II</option>
+                <option value="GRUPO ACESSO III">GRUPO ACESSO III</option>
+                <option value="ACESSO DE BLOCOS">ACESSO DE BLOCOS</option>
+                <option value="BLOCOS ESPECIAIS">BLOCOS ESPECIAIS</option>
+            </select>
 
         </div>
 
 
-        <!-- NOME DO ARQUIVO -->
+        <!-- NOME DA ESCOLA / PASTA -->
 
         <div class="form-group">
 
-            <label for="nomeArquivoCustom">
-                Nome do Arquivo / Identificação:
+            <label for="nomeEscola">
+                Nome da Pasta / Escola:
             </label>
 
             <input
                 type="text"
-                id="nomeArquivoCustom"
-                placeholder="INFORMAR O NOME DO ARQUIVO"
+                id="nomeEscola"
+                placeholder="INFORMAR O NOME DA ESCOLA"
+                autocomplete="off"
             >
 
         </div>
@@ -1189,7 +1233,7 @@
 // ==========================================
 
 const URL_SCRIPT =
-    'https://script.google.com/macros/s/AKfycbyzZB6DiNn9V_cGI4eJzhkx0Lc1lXnXWriFAvG99UHSGzeUxlMCbKh7WsyDUEsxzytwzQ/exec';
+    'https://script.google.com/macros/s/AKfycbxJPostO0UCWgcj0i06vSOA_u2-uFzVDxLrUwu7-xe-0mgAkeC3WusOihWn9yoC05lvMA/exec';
 
 
 let usuarioLogado = '';
@@ -1616,14 +1660,14 @@ function efetuarLogout() {
 
     document
         .getElementById(
-            'nomePasta'
+            'categoriaPasta'
         )
         .value = '';
 
 
     document
         .getElementById(
-            'nomeArquivoCustom'
+            'nomeEscola'
         )
         .value = '';
 
@@ -2156,19 +2200,19 @@ async function enviarArquivo() {
         );
 
 
-    const nomePastaInput =
+    const categoria =
         document
             .getElementById(
-                'nomePasta'
+                'categoriaPasta'
             )
             .value
             .trim();
 
 
-    const nomeCustomInput =
+    const nomeEscola =
         document
             .getElementById(
-                'nomeArquivoCustom'
+                'nomeEscola'
             )
             .value
             .trim();
@@ -2187,21 +2231,38 @@ async function enviarArquivo() {
     }
 
 
-    if (!nomePastaInput) {
+    if (!categoria) {
 
         status.innerHTML =
-            '⚠️ Informe o nome da pasta.';
+            '⚠️ Selecione o grupo.';
 
         status.style.color =
             '#d93025';
 
-
         document
             .getElementById(
-                'nomePasta'
+                'categoriaPasta'
             )
             .focus();
 
+        return;
+
+    }
+
+
+    if (!nomeEscola) {
+
+        status.innerHTML =
+            '⚠️ Informe o nome da escola.';
+
+        status.style.color =
+            '#d93025';
+
+        document
+            .getElementById(
+                'nomeEscola'
+            )
+            .focus();
 
         return;
 
@@ -2233,12 +2294,21 @@ async function enviarArquivo() {
     try {
 
         /*
-         * Cada arquivo será enviado diretamente
-         * para o Google Drive.
+         * Cada arquivo é enviado diretamente
+         * para a pasta da escola dentro do
+         * grupo escolhido.
          *
-         * Não existe mais lote.
-         * Não existe conversão para PDF.
-         * Não existe união de arquivos.
+         * O backend gera o nome final:
+         *
+         * 1 arquivo:
+         *   ESCOLA JOÃO.pdf
+         *
+         * vários arquivos:
+         *   ESCOLA JOÃO 1.pdf
+         *   ESCOLA JOÃO 2.pdf
+         *   ESCOLA JOÃO 3.pdf
+         *
+         * A extensão original é preservada.
          */
 
         for (
@@ -2270,54 +2340,6 @@ async function enviarArquivo() {
                 );
 
 
-            /*
-             * Se foi informado um nome personalizado
-             * e houver somente um arquivo, utiliza
-             * esse nome.
-             *
-             * Quando existem vários arquivos,
-             * cada arquivo mantém seu nome original.
-             */
-
-            let nomeFinalArquivo =
-                arquivo.name;
-
-
-            if (
-                arquivos.length === 1 &&
-                nomeCustomInput
-            ) {
-
-                nomeFinalArquivo =
-                    nomeCustomInput;
-
-
-                /*
-                 * Preserva a extensão original
-                 * caso o usuário não tenha digitado.
-                 */
-
-                const extensao =
-                    obterExtensao(
-                        arquivo.name
-                    );
-
-
-                if (
-                    extensao &&
-                    !temExtensao(
-                        nomeFinalArquivo
-                    )
-                ) {
-
-                    nomeFinalArquivo +=
-                        extensao;
-
-                }
-
-            }
-
-
             const parametros =
                 new URLSearchParams({
 
@@ -2327,8 +2349,11 @@ async function enviarArquivo() {
                     usuario:
                         usuarioLogado,
 
-                    pasta:
-                        nomePastaInput,
+                    categoria:
+                        categoria,
+
+                    escola:
+                        nomeEscola,
 
                     data:
                         dadosBase64,
@@ -2337,8 +2362,11 @@ async function enviarArquivo() {
                         arquivo.type ||
                         'application/octet-stream',
 
-                    filename:
-                        nomeFinalArquivo,
+                    filenameOriginal:
+                        arquivo.name,
+
+                    quantidade:
+                        String(arquivos.length),
 
                     indice:
                         String(i)
@@ -2370,30 +2398,28 @@ async function enviarArquivo() {
         }
 
 
-        /*
-         * Todos os arquivos foram enviados.
-         */
-
         status.innerHTML =
             '✅ ' +
             arquivos.length +
             ' arquivo(s) enviado(s) com sucesso!';
 
-
         status.style.color =
             '#188038';
 
-
-        /*
-         * Limpa a seleção após o envio.
-         */
 
         limparArquivosSelecionados();
 
 
         document
             .getElementById(
-                'nomeArquivoCustom'
+                'categoriaPasta'
+            )
+            .value = '';
+
+
+        document
+            .getElementById(
+                'nomeEscola'
             )
             .value = '';
 
@@ -2416,6 +2442,7 @@ async function enviarArquivo() {
         status.style.color =
             '#d93025';
 
+
     } finally {
 
         botao.disabled =
@@ -2426,47 +2453,6 @@ async function enviarArquivo() {
 }
 
 
-// ==========================================
-// OBTER EXTENSÃO
-// ==========================================
-
-function obterExtensao(
-    nomeArquivo
-) {
-
-    const ultimoPonto =
-        nomeArquivo.lastIndexOf('.');
-
-
-    if (
-        ultimoPonto <= 0
-    ) {
-
-        return '';
-
-    }
-
-
-    return nomeArquivo.substring(
-        ultimoPonto
-    );
-
-}
-
-
-// ==========================================
-// VERIFICAR EXTENSÃO
-// ==========================================
-
-function temExtensao(
-    nomeArquivo
-) {
-
-    return /\.[^./\\]+$/.test(
-        nomeArquivo
-    );
-
-}
 
 
 </script>
