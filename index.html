@@ -2710,16 +2710,26 @@ async function enviarArquivo() {
     }
 
 
-    if (
-        categoria === 'GRUPO ESPECIAL DE BAIRROS' &&
-        new Date().getTime() >= DATA_EXPIRACAO_GRUPO_ESPECIAL.getTime()
-    ) {
+    if (grupoEstaExpirado(categoria)) {
+
         status.innerHTML =
-            '❌ O prazo para envio de documentos do Grupo Especial de Bairros está expirado.';
-        status.style.color = '#d93025';
-        document.getElementById('categoriaPasta').value = '';
+            '❌ O prazo para envio de documentos do ' +
+            categoria +
+            ' está expirado.';
+
+        status.style.color =
+            '#d93025';
+
+        document
+            .getElementById(
+                'categoriaPasta'
+            )
+            .value = '';
+
         atualizarContadorPrazo();
+
         return;
+
     }
 
 
