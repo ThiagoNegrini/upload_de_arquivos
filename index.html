@@ -1,1789 +1,881 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
-
-    <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
-
-    <title>Sistema de Envio de Documentos</title>
-
-
-    <style>
-
-        /* ==========================================
-           CONFIGURAÇÃO GERAL
-        =========================================== */
-
-        * {
-            box-sizing: border-box;
-        }
-
-
-        html,
-        body {
-            margin: 0;
-            padding: 0;
-            min-height: 100%;
-        }
-
-
-        /* ==========================================
-           FUNDO COM DEGRADÊ
-        =========================================== */
-
-        body {
-
-            font-family:
-                Arial,
-                Helvetica,
-                sans-serif;
-
-            min-height: 100vh;
-
-            display: flex;
-
-            justify-content: center;
-
-            align-items: center;
-
-            padding: 30px;
-
-            background:
-                linear-gradient(
-                    120deg,
-                    #102b68 0%,
-                    #123f91 30%,
-                    #146fc1 65%,
-                    #25bfd3 100%
-                );
-
-            background-attachment: fixed;
-
-        }
-
-
-        /* ==========================================
-           CONTAINER PRINCIPAL
-        =========================================== */
-
-        .container {
-
-            width: 100%;
-
-            max-width: 1000px;
-
-            display: flex;
-
-            flex-direction: row;
-
-            justify-content: center;
-
-            align-items: center;
-
-            gap: 55px;
-
-        }
-
-
-        /* ==========================================
-           LOGO
-        =========================================== */
-
-        .logo-area {
-
-            flex: 1;
-
-            max-width: 340px;
-
-            display: flex;
-
-            justify-content: center;
-
-            align-items: center;
-
-        }
-
-
-        .logo-area img {
-
-            display: block;
-
-            max-width: 100%;
-
-            height: auto;
-
-            object-fit: contain;
-
-            padding: 18px;
-
-            background:
-                rgba(255, 255, 255, 0.97);
-
-            border:
-                1px solid
-                rgba(255, 255, 255, 0.90);
-
-            border-radius: 22px;
-
-            box-shadow:
-                0 20px 45px
-                rgba(0, 0, 0, 0.20);
-
-            transition:
-                transform 0.25s ease,
-                box-shadow 0.25s ease;
-
-        }
-
-
-        .logo-area img:hover {
-
-            transform:
-                translateY(-4px);
-
-            box-shadow:
-                0 25px 55px
-                rgba(0, 0, 0, 0.25);
-
-        }
-
-
-        /* ==========================================
-           CARTÃO
-        =========================================== */
-
-        .card {
-
-            width: 100%;
-
-            max-width: 390px;
-
-            padding: 34px;
-
-            background:
-                rgba(255, 255, 255, 0.97);
-
-            border-radius: 22px;
-
-            box-shadow:
-                0 22px 50px
-                rgba(0, 0, 0, 0.20);
-
-            text-align: center;
-
-            position: relative;
-
-            overflow: hidden;
-
-            animation:
-                aparecer 0.4s ease;
-
-        }
-
-
-        /* Linha superior do cartão */
-
-        .card::before {
-
-            content: "";
-
-            position: absolute;
-
-            top: 0;
-
-            left: 0;
-
-            width: 100%;
-
-            height: 5px;
-
-            background:
-                linear-gradient(
-                    90deg,
-                    #102b68,
-                    #123f91,
-                    #146fc1,
-                    #25bfd3
-                );
-
-        }
-
-
-        @keyframes aparecer {
-
-            from {
-
-                opacity: 0;
-
-                transform:
-                    translateY(12px);
-
-            }
-
-            to {
-
-                opacity: 1;
-
-                transform:
-                    translateY(0);
-
-            }
-
-        }
-
-
-        /* ==========================================
-           TÍTULOS
-        =========================================== */
-
-        h2 {
-
-            margin-top: 0;
-
-            margin-bottom: 12px;
-
-            font-size: 23px;
-
-            line-height: 1.25;
-
-            font-weight: 800;
-
-            color: #102b68;
-
-        }
-
-
-        p {
-
-            color: #667085;
-
-            font-size: 14px;
-
-            line-height: 1.5;
-
-            margin-bottom: 24px;
-
-        }
-
-
-        p strong {
-
-            color: #123f91;
-
-        }
-
-
-        /* ==========================================
-           FORMULÁRIOS
-        =========================================== */
-
-        .form-group {
-
-            text-align: left;
-
-            margin-bottom: 17px;
-
-        }
-
-
-        label {
-
-            display: block;
-
-            margin-bottom: 7px;
-
-            font-size: 13px;
-
-            font-weight: 700;
-
-            color: #344054;
-
-        }
-
-
-        input[type="text"],
-        input[type="password"] {
-
-            width: 100%;
-
-            padding: 13px 14px;
-
-            border:
-                1px solid #d0d5dd;
-
-            border-radius: 10px;
-
-            background: #ffffff;
-
-            color: #101828;
-
-            font-size: 15px;
-
-            outline: none;
-
-            transition:
-                border-color 0.2s ease,
-                box-shadow 0.2s ease;
-
-        }
-
-
-        input[type="text"]:focus,
-        input[type="password"]:focus {
-
-            border-color:
-                #146fc1;
-
-            box-shadow:
-                0 0 0 4px
-                rgba(20, 111, 193, 0.12);
-
-        }
-
-
-        input::placeholder {
-
-            color: #98a2b3;
-
-        }
-
-
-        /* ==========================================
-           CAMPO DE ARQUIVO
-        =========================================== */
-
-        input[type="file"] {
-
-            display: block;
-
-            width: 100%;
-
-            margin:
-                10px 0 18px;
-
-            padding: 10px;
-
-            border:
-                1px dashed #b8c7d9;
-
-            border-radius: 10px;
-
-            background:
-                #f8fafc;
-
-            color: #475467;
-
-            font-size: 13px;
-
-            cursor: pointer;
-
-        }
-
-
-        input[type="file"]:hover {
-
-            border-color:
-                #146fc1;
-
-            background:
-                #f1f8ff;
-
-        }
-
-
-        /* ==========================================
-           LISTA DE ARQUIVOS
-        =========================================== */
-
-        .lista-arquivos {
-            text-align: left;
-            margin: -5px 0 18px;
-            font-size: 13px;
-            color: #344054;
-        }
-
-        .arquivo-item {
-            background: #f8fafc;
-            border: 1px solid #d0d5dd;
-            border-radius: 8px;
-            padding: 8px 10px;
-            margin-bottom: 6px;
-            word-break: break-word;
-        }
-
-        .arquivo-item strong {
-            color: #123f91;
-        }
-
-        /* ==========================================
-           BOTÕES
-        =========================================== */
-
-        button {
-
-            width: 100%;
-
-            padding: 13px 16px;
-
-            margin-bottom: 10px;
-
-            border: none;
-
-            border-radius: 10px;
-
-            background:
-                linear-gradient(
-                    100deg,
-                    #102b68 0%,
-                    #123f91 35%,
-                    #146fc1 70%,
-                    #25bfd3 100%
-                );
-
-            color: #ffffff;
-
-            font-size: 15px;
-
-            font-weight: 700;
-
-            cursor: pointer;
-
-            box-shadow:
-                0 7px 18px
-                rgba(18, 63, 145, 0.25);
-
-            transition:
-                transform 0.2s ease,
-                box-shadow 0.2s ease;
-
-        }
-
-
-        button:hover {
-
-            transform:
-                translateY(-2px);
-
-            box-shadow:
-                0 11px 25px
-                rgba(18, 63, 145, 0.32);
-
-        }
-
-
-        button:active {
-
-            transform:
-                translateY(0);
-
-        }
-
-
-        button:disabled {
-
-            background:
-                #aab3bf;
-
-            cursor:
-                not-allowed;
-
-            box-shadow:
-                none;
-
-            transform:
-                none;
-
-        }
-
-
-        /* ==========================================
-           BOTÃO SAIR
-        =========================================== */
-
-        .btn-logout {
-
-            width: auto;
-
-            margin-top: 18px;
-
-            margin-bottom: 0;
-
-            padding:
-                8px 16px;
-
-            background:
-                linear-gradient(
-                    135deg,
-                    #b42318,
-                    #d92d20
-                );
-
-            font-size: 12px;
-
-            box-shadow:
-                0 5px 12px
-                rgba(217, 45, 32, 0.20);
-
-        }
-
-
-        .btn-logout:hover {
-
-            background:
-                linear-gradient(
-                    135deg,
-                    #912018,
-                    #b42318
-                );
-
-        }
-
-
-        /* ==========================================
-           STATUS
-        =========================================== */
-
-        .status-msg {
-
-            min-height: 20px;
-
-            margin-top: 15px;
-
-            font-size: 13px;
-
-            font-weight: 600;
-
-            line-height: 1.5;
-
-        }
-
-
-        /* ==========================================
-           LINKS
-        =========================================== */
-
-        .link {
-
-            display: block;
-
-            margin-top: 14px;
-
-            color:
-                #0b5cad;
-
-            font-size: 13px;
-
-            font-weight: 600;
-
-            cursor: pointer;
-
-            transition:
-                color 0.2s ease;
-
-        }
-
-
-        .link:hover {
-
-            color:
-                #159db8;
-
-        }
-
-
-        /* ==========================================
-           ELEMENTO OCULTO
-        =========================================== */
-
-        .hidden {
-
-            display: none;
-
-        }
-
-
-        /* ==========================================
-           CELULAR / TABLET
-        =========================================== */
-
-        @media (max-width: 768px) {
-
-            body {
-
-                padding: 20px;
-
-            }
-
-
-            .container {
-
-                flex-direction: column;
-
-                gap: 25px;
-
-            }
-
-
-            .logo-area {
-
-                max-width: 230px;
-
-            }
-
-
-            .logo-area img {
-
-                padding: 14px;
-
-                border-radius: 18px;
-
-            }
-
-
-            .card {
-
-                max-width: 420px;
-
-                padding: 28px 22px;
-
-                border-radius: 18px;
-
-            }
-
-        }
-
-
-        @media (max-width: 480px) {
-
-            body {
-
-                padding: 15px;
-
-            }
-
-
-            .logo-area {
-
-                max-width: 190px;
-
-            }
-
-
-            .card {
-
-                padding:
-                    27px 18px;
-
-            }
-
-
-            h2 {
-
-                font-size: 20px;
-
-            }
-
-        }
-
-    </style>
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Envio de Documentos</title>
+
+  <style>
+    :root {
+      --bg: #f4f7fb;
+      --card: #ffffff;
+      --text: #172033;
+      --muted: #667085;
+      --border: #d9e0ea;
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --success: #15803d;
+      --danger: #dc2626;
+      --soft: #eef4ff;
+      --shadow: 0 18px 50px rgba(15, 23, 42, .10);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Inter, Arial, Helvetica, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, #e9f1ff 0, transparent 35%),
+        var(--bg);
+    }
+
+    .app {
+      width: min(940px, calc(100% - 28px));
+      margin: 28px auto;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid rgba(217, 224, 234, .8);
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+      padding: 30px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 26px;
+    }
+
+    .brand-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      background: linear-gradient(135deg, #2563eb, #4f46e5);
+      font-size: 22px;
+      font-weight: 800;
+    }
+
+    h1 { margin: 0; font-size: 26px; }
+    .subtitle { margin: 4px 0 0; color: var(--muted); }
+
+    .section {
+      margin-top: 26px;
+      padding-top: 26px;
+      border-top: 1px solid #edf0f4;
+    }
+
+    .section h2 {
+      margin: 0 0 16px;
+      font-size: 18px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .field { margin-bottom: 2px; }
+    label {
+      display: block;
+      margin-bottom: 7px;
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: .02em;
+    }
+
+    input[type="text"],
+    input[type="password"] {
+      width: 100%;
+      height: 46px;
+      padding: 0 14px;
+      border: 1px solid var(--border);
+      border-radius: 11px;
+      background: #fff;
+      color: var(--text);
+      font-size: 15px;
+      outline: none;
+      transition: .2s;
+    }
+
+    input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, .10);
+    }
+
+    .hint {
+      margin-top: 7px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    button {
+      border: 0;
+      border-radius: 11px;
+      min-height: 44px;
+      padding: 0 18px;
+      font-weight: 800;
+      font-size: 14px;
+      cursor: pointer;
+      transition: transform .15s, opacity .15s, background .15s;
+    }
+
+    button:hover:not(:disabled) { transform: translateY(-1px); }
+    button:disabled { opacity: .55; cursor: not-allowed; }
+
+    .btn-primary { background: var(--primary); color: #fff; }
+    .btn-primary:hover:not(:disabled) { background: var(--primary-dark); }
+    .btn-secondary { background: #edf1f6; color: #344054; }
+    .btn-success { background: var(--success); color: #fff; }
+    .btn-danger { background: #fee4e2; color: #b42318; }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
+
+    .actions .grow { flex: 1; }
+
+    .userbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      background: var(--soft);
+      color: #1e40af;
+      font-size: 14px;
+    }
+
+    .dropzone {
+      position: relative;
+      border: 2px dashed #b8c4d6;
+      border-radius: 16px;
+      padding: 28px 20px;
+      text-align: center;
+      background: #fbfcfe;
+      transition: .2s;
+      cursor: pointer;
+    }
+
+    .dropzone:hover,
+    .dropzone.dragover {
+      border-color: var(--primary);
+      background: #f5f8ff;
+    }
+
+    .dropzone-icon { font-size: 32px; margin-bottom: 8px; }
+    .dropzone strong { display: block; font-size: 16px; }
+    .dropzone span { display: block; color: var(--muted); margin-top: 6px; font-size: 13px; }
+
+    #inputArquivos {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    .file-toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .file-list {
+      margin-top: 12px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .file-item {
+      display: grid;
+      grid-template-columns: 30px 1fr auto auto;
+      align-items: center;
+      gap: 10px;
+      padding: 11px 12px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: #fff;
+      cursor: grab;
+      user-select: none;
+    }
+
+    .file-item:active { cursor: grabbing; }
+    .file-item.dragging { opacity: .45; }
+    .file-item.drag-target { border-color: var(--primary); background: #f5f8ff; }
+
+    .order {
+      width: 28px;
+      height: 28px;
+      border-radius: 9px;
+      display: grid;
+      place-items: center;
+      background: #edf2f7;
+      color: #475467;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .file-name {
+      min-width: 0;
+      font-weight: 700;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .file-size { color: var(--muted); font-size: 12px; white-space: nowrap; }
+
+    .remove-file {
+      width: 32px;
+      min-height: 32px;
+      padding: 0;
+      border-radius: 9px;
+    }
+
+    .progress-wrap { display: none; margin-top: 20px; }
+    .progress-track {
+      height: 10px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: #e8edf3;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #2563eb, #4f46e5);
+      transition: width .25s;
+    }
+
+    .progress-text {
+      margin-top: 8px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .message {
+      display: none;
+      margin-top: 18px;
+      padding: 13px 14px;
+      border-radius: 11px;
+      line-height: 1.5;
+      font-size: 14px;
+    }
+
+    .message.info { display: block; background: #eff6ff; color: #1d4ed8; }
+    .message.success { display: block; background: #ecfdf3; color: #15803d; }
+    .message.error { display: block; background: #fef3f2; color: #b42318; }
+
+    .result {
+      display: none;
+      margin-top: 18px;
+      padding: 18px;
+      border-radius: 14px;
+      background: #ecfdf3;
+      border: 1px solid #bbf7d0;
+    }
+
+    .result h3 { margin: 0 0 8px; color: #166534; }
+    .result a { margin-top: 12px; display: inline-block; text-decoration: none; }
+
+    .hidden { display: none !important; }
+
+    .login-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+
+    .login-tabs button { flex: 1; }
+
+    @media (max-width: 700px) {
+      .card { padding: 20px; }
+      .grid { grid-template-columns: 1fr; }
+      .file-item { grid-template-columns: 30px 1fr auto; }
+      .file-size { display: none; }
+      .userbar { align-items: stretch; flex-direction: column; }
+      .actions button { width: 100%; }
+    }
+  </style>
 </head>
 
-
 <body>
+<div class="app">
+  <div class="card">
 
-
-<div class="container">
-
-
-    <!-- ==========================================
-         LOGO
-    =========================================== -->
-
-    <div class="logo-area">
-
-        <img
-            src="https://github.com/ThiagoNegrini/upload_de_arquivos/blob/main/LOGO_SITE.PNG?raw=true"
-            alt="Logotipo da Empresa"
-            id="imgLogo"
-        >
-
+    <div class="brand">
+      <div class="brand-icon">↑</div>
+      <div>
+        <h1>Envio de Documentos</h1>
+        <div class="subtitle">Selecione, organize e envie seus arquivos para gerar um PDF.</div>
+      </div>
     </div>
 
+    <!-- LOGIN -->
+    <section id="areaLogin">
+      <div class="login-tabs">
+        <button class="btn-primary" onclick="mostrarLogin()">ENTRAR</button>
+        <button class="btn-secondary" onclick="mostrarCadastro()">CADASTRAR</button>
+      </div>
 
-    <!-- ==========================================
-         LOGIN
-    =========================================== -->
+      <div class="field">
+        <label for="loginUsuario">USUÁRIO</label>
+        <input id="loginUsuario" type="text" autocomplete="username">
+      </div>
 
-    <div
-        class="card"
-        id="telaLogin"
-    >
+      <div class="field" style="margin-top:14px">
+        <label for="loginSenha">SENHA</label>
+        <input id="loginSenha" type="password" autocomplete="current-password">
+      </div>
 
-        <h2>
-            ACESSO AO PAINEL DE ENVIO
-        </h2>
+      <div class="actions">
+        <button id="btnLogin" class="btn-primary grow" onclick="fazerLogin()">ENTRAR</button>
+      </div>
+    </section>
 
+    <!-- CADASTRO -->
+    <section id="areaCadastro" class="hidden">
+      <div class="grid">
+        <div class="field">
+          <label for="cadastroNome">NOME</label>
+          <input id="cadastroNome" type="text">
+        </div>
+        <div class="field">
+          <label for="cadastroUsuario">USUÁRIO</label>
+          <input id="cadastroUsuario" type="text">
+        </div>
+      </div>
 
-        <p>
-            Entre com seu usuário e senha.
-        </p>
+      <div class="field" style="margin-top:16px">
+        <label for="cadastroSenha">SENHA</label>
+        <input id="cadastroSenha" type="password">
+        <div class="hint">A senha deve possuir pelo menos 6 caracteres.</div>
+      </div>
 
+      <div class="actions">
+        <button class="btn-primary grow" onclick="cadastrar()">CADASTRAR</button>
+        <button class="btn-secondary" onclick="mostrarLogin()">VOLTAR</button>
+      </div>
+    </section>
 
-        <div class="form-group">
+    <!-- SISTEMA -->
+    <section id="areaSistema" class="hidden">
+      <div class="userbar">
+        <div>USUÁRIO: <strong id="usuarioLogado"></strong></div>
+        <button class="btn-secondary" onclick="sair()">SAIR</button>
+      </div>
 
-            <label for="loginUsuario">
-                Usuário:
-            </label>
+      <div class="section">
+        <h2>Dados do envio</h2>
 
-            <input
-                type="text"
-                id="loginUsuario"
-                placeholder="Digite seu usuário"
-            >
+        <div class="grid">
+          <div class="field">
+            <label for="nomePasta">NOME DA PASTA</label>
+            <input id="nomePasta" type="text" autocomplete="off" placeholder="NOME DA PASTA" oninput="normalizarCampo(this)">
+            <div class="hint">Sempre será convertido para MAIÚSCULAS e sem acentos.</div>
+          </div>
 
+          <div class="field">
+            <label for="nomeArquivo">NOME DO ARQUIVO PDF</label>
+            <input id="nomeArquivo" type="text" autocomplete="off" value="ARQUIVOS_UNIFICADOS.PDF" oninput="normalizarCampo(this)">
+            <div class="hint">Se você não informar .PDF, ele será acrescentado automaticamente.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Arquivos</h2>
+
+        <div id="dropzone" class="dropzone">
+          <input id="inputArquivos" type="file" multiple>
+          <div class="dropzone-icon">＋</div>
+          <strong>Selecione ou arraste os arquivos aqui</strong>
+          <span>Você pode misturar PDF, Word, Excel, imagens e outros formatos suportados.</span>
         </div>
 
-
-        <div class="form-group">
-
-            <label for="loginSenha">
-                Senha:
-            </label>
-
-            <input
-                type="password"
-                id="loginSenha"
-                placeholder="Digite sua senha"
-            >
-
+        <div class="file-toolbar">
+          <span id="contadorArquivos">Nenhum arquivo selecionado.</span>
+          <span>Arraste os itens para alterar a ordem.</span>
         </div>
 
-
-        <button
-            id="btnLogin"
-            onclick="efetuarLogin()"
-        >
-            Entrar
-        </button>
-
-
-        <div
-            id="loginStatus"
-            class="status-msg"
-        ></div>
-
-
-        <span
-            class="link"
-            onclick="mostrarCadastro()"
-        >
-            Ainda não possui cadastro? Criar conta
-        </span>
-
-    </div>
-
-
-    <!-- ==========================================
-         CADASTRO
-    =========================================== -->
-
-    <div
-        class="card hidden"
-        id="telaCadastro"
-    >
-
-        <h2>
-            CRIAR CADASTRO
-        </h2>
-
-
-        <p>
-            Preencha seus dados para criar seu acesso.
-        </p>
-
-
-        <div class="form-group">
-
-            <label for="cadastroNome">
-                Nome:
-            </label>
-
-            <input
-                type="text"
-                id="cadastroNome"
-                placeholder="Seu nome"
-            >
-
-        </div>
-
-
-        <div class="form-group">
-
-            <label for="cadastroUsuario">
-                Usuário:
-            </label>
-
-            <input
-                type="text"
-                id="cadastroUsuario"
-                placeholder="Escolha um usuário"
-            >
-
-        </div>
-
-
-        <div class="form-group">
-
-            <label for="cadastroSenha">
-                Senha:
-            </label>
-
-            <input
-                type="password"
-                id="cadastroSenha"
-                placeholder="Mínimo de 6 caracteres"
-            >
-
-        </div>
-
-
-        <button
-            id="btnCadastro"
-            onclick="cadastrarUsuario()"
-        >
-            Criar Cadastro
-        </button>
-
-
-        <div
-            id="cadastroStatus"
-            class="status-msg"
-        ></div>
-
-
-        <span
-            class="link"
-            onclick="mostrarLogin()"
-        >
-            Já possui cadastro? Entrar
-        </span>
-
-    </div>
-
-
-    <!-- ==========================================
-         UPLOAD
-    =========================================== -->
-
-    <div
-        class="card hidden"
-        id="telaUpload"
-    >
-
-        <h2>
-            SISTEMA DE ENVIO
-        </h2>
-
-
-        <p>
-
-            Olá,
-            <strong id="nomeUsuarioLogado"></strong>!
-
-            <br>
-
-            DOCUMENTAÇÃO CARNAVAL 2027
-
-        </p>
-
-
-        <!-- NOME DA PASTA -->
-
-        <div class="form-group">
-
-            <label for="nomePasta">
-                Nome da Pasta:
-            </label>
-
-            <input
-                type="text"
-                id="nomePasta"
-                placeholder="Ex: Escola de Samba Unidos da UESP"
-            >
-
-        </div>
-
-
-        <!-- NOME DO ARQUIVO -->
-
-        <div class="form-group">
-
-            <label for="nomeArquivoCustom">
-                Nome do Arquivo / Identificação:
-            </label>
-
-            <input
-                type="text"
-                id="nomeArquivoCustom"
-                placeholder="Escolha 1 ou mais arquivos"
-            >
-
-        </div>
-
-
-        <!-- ARQUIVO -->
-
-        <input
-            type="file"
-            id="arquivoInput"
-            multiple
-            onchange="mostrarArquivosSelecionados()"
-        >
-
-        <div id="listaArquivos" class="lista-arquivos"></div>
-
-
-        <!-- ENVIAR -->
-
-        <button
-            id="btnEnviar"
-            onclick="enviarArquivo()"
-        >
-            Enviar Arquivo
-        </button>
-
-
-        <div
-            id="status"
-            class="status-msg"
-        ></div>
-
-
-        <!-- SAIR -->
-
-        <button
-            class="btn-logout"
-            onclick="efetuarLogout()"
-        >
-            Sair da Conta
-        </button>
-
-    </div>
-
+        <div id="listaArquivos" class="file-list"></div>
+      </div>
+
+      <div id="progressWrap" class="progress-wrap">
+        <div class="progress-track"><div id="progressBar" class="progress-bar"></div></div>
+        <div id="progressText" class="progress-text">Preparando...</div>
+      </div>
+
+      <div class="actions">
+        <button id="btnEnviar" class="btn-primary grow" onclick="enviarArquivos()">ENVIAR ARQUIVOS</button>
+        <button id="btnLimpar" class="btn-secondary" onclick="limparFormulario()">LIMPAR</button>
+      </div>
+
+      <div id="mensagem" class="message"></div>
+
+      <div id="resultado" class="result">
+        <h3>PDF criado com sucesso!</h3>
+        <div id="resultadoNome"></div>
+        <a id="resultadoLink" class="btn-success" target="_blank" rel="noopener noreferrer">ABRIR NO GOOGLE DRIVE</a>
+      </div>
+    </section>
+
+  </div>
 </div>
 
-
 <script>
+  const URL_SCRIPT =
+    'https://script.google.com/macros/s/AKfycbynEgHK38sfLugcPJKRAFg95gPpYt6ly3wAsb9x2xJd6wKZvkaVfomfqW4bE1dkwk48bw/exec';
 
+  let usuarioAtual = null;
+  let arquivos = [];
+  let enviando = false;
+  let arrastandoIndice = null;
 
-// ==========================================
-// CONFIGURAÇÃO
-// ==========================================
+  function normalizarTexto(valor) {
+    return String(valor || '')
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toUpperCase();
+  }
 
-const URL_SCRIPT =
-    'https://script.google.com/macros/s/AKfycbzaP42kLVKk4FLJhLe7BrTKkW4W0IkrXcjjK3gKjkZ13eYAa4u7OQZP0hWgaLGLM_KypQ/exec';
+  function normalizarCampo(campo) {
+    const inicio = campo.selectionStart;
+    campo.value = normalizarTexto(campo.value);
+    try { campo.setSelectionRange(inicio, inicio); } catch (e) {}
+  }
 
+  async function post(dados) {
+    const body = new URLSearchParams();
+    Object.keys(dados).forEach(chave => body.append(chave, dados[chave]));
 
-let usuarioLogado = '';
+    const resposta = await fetch(URL_SCRIPT, {
+      method: 'POST',
+      body
+    });
 
-
-// ==========================================
-// MOSTRAR LOGIN
-// ==========================================
-
-function mostrarLogin() {
-
-    document
-        .getElementById('telaCadastro')
-        .classList.add('hidden');
-
-    document
-        .getElementById('telaUpload')
-        .classList.add('hidden');
-
-    document
-        .getElementById('telaLogin')
-        .classList.remove('hidden');
-
-}
-
-
-// ==========================================
-// MOSTRAR CADASTRO
-// ==========================================
-
-function mostrarCadastro() {
-
-    document
-        .getElementById('telaLogin')
-        .classList.add('hidden');
-
-    document
-        .getElementById('telaUpload')
-        .classList.add('hidden');
-
-    document
-        .getElementById('telaCadastro')
-        .classList.remove('hidden');
-
-}
-
-
-// ==========================================
-// CADASTRO
-// ==========================================
-
-async function cadastrarUsuario() {
-
-    const nome =
-        document
-            .getElementById('cadastroNome')
-            .value
-            .trim();
-
-
-    const usuario =
-        document
-            .getElementById('cadastroUsuario')
-            .value
-            .trim();
-
-
-    const senha =
-        document
-            .getElementById('cadastroSenha')
-            .value
-            .trim();
-
-
-    const status =
-        document.getElementById(
-            'cadastroStatus'
-        );
-
-
-    const botao =
-        document.getElementById(
-            'btnCadastro'
-        );
-
-
-    if (!nome || !usuario || !senha) {
-
-        status.innerHTML =
-            '⚠️ Preencha todos os campos.';
-
-        status.style.color =
-            '#d93025';
-
-        return;
-
-    }
-
-
-    if (senha.length < 6) {
-
-        status.innerHTML =
-            '⚠️ A senha deve possuir pelo menos 6 caracteres.';
-
-        status.style.color =
-            '#d93025';
-
-        return;
-
-    }
-
-
-    botao.disabled = true;
-
-    status.innerHTML =
-        '⏳ Criando cadastro...';
-
-    status.style.color =
-        '#146fc1';
-
+    if (!resposta.ok) throw new Error('Erro HTTP ' + resposta.status);
+    const texto = await resposta.text();
 
     try {
-
-        const parametros =
-            new URLSearchParams({
-
-                acao: 'cadastro',
-
-                nome: nome,
-
-                usuario: usuario,
-
-                senha: senha
-
-            });
-
-
-        const resposta =
-            await fetch(
-
-                URL_SCRIPT,
-
-                {
-                    method: 'POST',
-                    mode: 'cors',
-                    body: parametros
-                }
-
-            );
-
-
-        const resultado =
-            await resposta.json();
-
-
-        if (resultado.sucesso) {
-
-            status.innerHTML =
-                '✅ Cadastro realizado com sucesso!';
-
-            status.style.color =
-                '#188038';
-
-
-            document
-                .getElementById(
-                    'cadastroNome'
-                )
-                .value = '';
-
-
-            document
-                .getElementById(
-                    'cadastroUsuario'
-                )
-                .value = '';
-
-
-            document
-                .getElementById(
-                    'cadastroSenha'
-                )
-                .value = '';
-
-
-            setTimeout(
-                mostrarLogin,
-                1500
-            );
-
-        } else {
-
-            status.innerHTML =
-                '❌ ' +
-                resultado.mensagem;
-
-            status.style.color =
-                '#d93025';
-
-        }
-
-
-    } catch (erro) {
-
-        console.error(erro);
-
-        status.innerHTML =
-            '❌ Erro de comunicação com o servidor.';
-
-        status.style.color =
-            '#d93025';
-
-    } finally {
-
-        botao.disabled = false;
-
+      return JSON.parse(texto);
+    } catch (e) {
+      throw new Error('Resposta inválida do servidor.');
     }
+  }
 
-}
+  async function get(dados) {
+    const params = new URLSearchParams(dados);
+    const resposta = await fetch(URL_SCRIPT + '?' + params.toString());
 
+    if (!resposta.ok) throw new Error('Erro HTTP ' + resposta.status);
+    const texto = await resposta.text();
 
-// ==========================================
-// LOGIN
-// ==========================================
+    try {
+      return JSON.parse(texto);
+    } catch (e) {
+      throw new Error('Resposta inválida do servidor.');
+    }
+  }
 
-async function efetuarLogin() {
+  function mostrarMensagem(texto, tipo = 'info') {
+    const el = document.getElementById('mensagem');
+    el.textContent = texto;
+    el.className = 'message ' + tipo;
+  }
 
-    const usuario =
-        document
-            .getElementById(
-                'loginUsuario'
-            )
-            .value
-            .trim();
+  function esconderMensagem() {
+    const el = document.getElementById('mensagem');
+    el.className = 'message';
+    el.textContent = '';
+  }
 
+  function mostrarLogin() {
+    document.getElementById('areaCadastro').classList.add('hidden');
+    document.getElementById('areaLogin').classList.remove('hidden');
+  }
 
-    const senha =
-        document
-            .getElementById(
-                'loginSenha'
-            )
-            .value
-            .trim();
+  function mostrarCadastro() {
+    document.getElementById('areaLogin').classList.add('hidden');
+    document.getElementById('areaCadastro').classList.remove('hidden');
+  }
 
-
-    const status =
-        document.getElementById(
-            'loginStatus'
-        );
-
-
-    const botao =
-        document.getElementById(
-            'btnLogin'
-        );
-
+  async function fazerLogin() {
+    const usuario = document.getElementById('loginUsuario').value.trim();
+    const senha = document.getElementById('loginSenha').value.trim();
 
     if (!usuario || !senha) {
-
-        status.innerHTML =
-            '⚠️ Informe usuário e senha.';
-
-        status.style.color =
-            '#d93025';
-
-        return;
-
+      alert('Informe usuário e senha.');
+      return;
     }
 
-
+    const botao = document.getElementById('btnLogin');
     botao.disabled = true;
-
-    status.innerHTML =
-        '⏳ Verificando acesso...';
-
-    status.style.color =
-        '#146fc1';
-
+    botao.textContent = 'ENTRANDO...';
 
     try {
+      const resposta = await post({ acao: 'login', usuario, senha });
+      if (!resposta.sucesso) throw new Error(resposta.mensagem || 'Usuário ou senha inválidos.');
 
-        const parametros =
-            new URLSearchParams({
+      usuarioAtual = resposta.usuario;
+      document.getElementById('usuarioLogado').textContent = resposta.nome
+        ? resposta.nome + ' (' + resposta.usuario + ')'
+        : resposta.usuario;
 
-                acao: 'login',
-
-                usuario: usuario,
-
-                senha: senha
-
-            });
-
-
-        const resposta =
-            await fetch(
-
-                URL_SCRIPT,
-
-                {
-                    method: 'POST',
-                    mode: 'cors',
-                    body: parametros
-                }
-
-            );
-
-
-        const resultado =
-            await resposta.json();
-
-
-        if (resultado.sucesso) {
-
-            usuarioLogado =
-                resultado.usuario;
-
-
-            document
-                .getElementById(
-                    'nomeUsuarioLogado'
-                )
-                .innerText =
-                resultado.nome ||
-                resultado.usuario;
-
-
-            document
-                .getElementById(
-                    'telaLogin'
-                )
-                .classList.add('hidden');
-
-
-            document
-                .getElementById(
-                    'telaUpload'
-                )
-                .classList.remove('hidden');
-
-
-            document
-                .getElementById(
-                    'loginUsuario'
-                )
-                .value = '';
-
-
-            document
-                .getElementById(
-                    'loginSenha'
-                )
-                .value = '';
-
-
-            status.innerHTML = '';
-
-        } else {
-
-            status.innerHTML =
-                '❌ ' +
-                resultado.mensagem;
-
-            status.style.color =
-                '#d93025';
-
-        }
-
-
+      document.getElementById('areaLogin').classList.add('hidden');
+      document.getElementById('areaCadastro').classList.add('hidden');
+      document.getElementById('areaSistema').classList.remove('hidden');
+      esconderMensagem();
     } catch (erro) {
-
-        console.error(erro);
-
-        status.innerHTML =
-            '❌ Erro de comunicação com o servidor.';
-
-        status.style.color =
-            '#d93025';
-
+      alert(erro.message || 'Não foi possível fazer login.');
     } finally {
+      botao.disabled = false;
+      botao.textContent = 'ENTRAR';
+    }
+  }
 
-        botao.disabled = false;
+  async function cadastrar() {
+    const nome = document.getElementById('cadastroNome').value.trim();
+    const usuario = document.getElementById('cadastroUsuario').value.trim();
+    const senha = document.getElementById('cadastroSenha').value.trim();
 
+    if (!nome || !usuario || !senha) {
+      alert('Preencha todos os campos.');
+      return;
     }
 
-}
+    if (senha.length < 6) {
+      alert('A senha deve possuir pelo menos 6 caracteres.');
+      return;
+    }
 
+    try {
+      const resposta = await post({ acao: 'cadastro', nome, usuario, senha });
+      if (!resposta.sucesso) throw new Error(resposta.mensagem);
 
-// ==========================================
-// LOGOUT
-// ==========================================
+      alert(resposta.mensagem || 'Cadastro realizado com sucesso.');
+      document.getElementById('cadastroNome').value = '';
+      document.getElementById('cadastroUsuario').value = '';
+      document.getElementById('cadastroSenha').value = '';
+      mostrarLogin();
+    } catch (erro) {
+      alert(erro.message || 'Erro ao realizar cadastro.');
+    }
+  }
 
-function efetuarLogout() {
+  function sair() {
+    usuarioAtual = null;
+    limparFormulario();
+    document.getElementById('areaSistema').classList.add('hidden');
+    document.getElementById('areaLogin').classList.remove('hidden');
+    document.getElementById('loginSenha').value = '';
+  }
 
-    usuarioLogado = '';
+  function adicionarArquivos(novos) {
+    const existentes = new Set(arquivos.map(a => a._chave));
 
+    Array.from(novos).forEach(file => {
+      const chave = file.name + '|' + file.size + '|' + file.lastModified;
+      if (!existentes.has(chave)) {
+        file._chave = chave;
+        arquivos.push(file);
+        existentes.add(chave);
+      }
+    });
 
-    document
-        .getElementById(
-            'telaUpload'
-        )
-        .classList.add('hidden');
+    atualizarListaArquivos();
+  }
 
+  function removerArquivo(indice) {
+    if (enviando) return;
+    arquivos.splice(indice, 1);
+    atualizarListaArquivos();
+  }
 
-    document
-        .getElementById(
-            'telaLogin'
-        )
-        .classList.remove('hidden');
-
-
-    document
-        .getElementById(
-            'status'
-        )
-        .innerHTML = '';
-
-
-    document
-        .getElementById(
-            'arquivoInput'
-        )
-        .value = '';
-
-
-    document
-        .getElementById(
-            'nomePasta'
-        )
-        .value = '';
-
-
-    document
-        .getElementById(
-            'nomeArquivoCustom'
-        )
-        .value = '';
-
-}
-
-
-// ==========================================
-// UPLOAD
-// ==========================================
-
-function mostrarArquivosSelecionados() {
-
-    const input = document.getElementById('arquivoInput');
+  function atualizarListaArquivos() {
     const lista = document.getElementById('listaArquivos');
-
+    const contador = document.getElementById('contadorArquivos');
     lista.innerHTML = '';
 
-    if (input.files.length === 0) {
-        return;
+    if (!arquivos.length) {
+      contador.textContent = 'Nenhum arquivo selecionado.';
+      return;
     }
 
-    Array.from(input.files).forEach((arquivo, indice) => {
+    contador.textContent = arquivos.length + (arquivos.length === 1 ? ' arquivo selecionado.' : ' arquivos selecionados.');
 
-        const item = document.createElement('div');
-        item.className = 'arquivo-item';
+    arquivos.forEach((arquivo, indice) => {
+      const item = document.createElement('div');
+      item.className = 'file-item';
+      item.draggable = true;
+      item.dataset.indice = indice;
 
-        item.innerHTML =
-            '<strong>' + (indice + 1) + '.</strong> ' +
-            arquivo.name +
-            ' (' + formatarTamanho(arquivo.size) + ')';
+      item.addEventListener('dragstart', () => {
+        arrastandoIndice = indice;
+        item.classList.add('dragging');
+      });
 
-        lista.appendChild(item);
+      item.addEventListener('dragend', () => {
+        arrastandoIndice = null;
+        item.classList.remove('dragging');
+        document.querySelectorAll('.file-item').forEach(el => el.classList.remove('drag-target'));
+      });
+
+      item.addEventListener('dragover', event => {
+        event.preventDefault();
+        if (arrastandoIndice !== null && arrastandoIndice !== indice) item.classList.add('drag-target');
+      });
+
+      item.addEventListener('dragleave', () => item.classList.remove('drag-target'));
+
+      item.addEventListener('drop', event => {
+        event.preventDefault();
+        item.classList.remove('drag-target');
+        if (arrastandoIndice === null || arrastandoIndice === indice) return;
+
+        const movido = arquivos.splice(arrastandoIndice, 1)[0];
+        arquivos.splice(indice, 0, movido);
+        arrastandoIndice = null;
+        atualizarListaArquivos();
+      });
+
+      const ordem = document.createElement('div');
+      ordem.className = 'order';
+      ordem.textContent = indice + 1;
+
+      const nome = document.createElement('div');
+      nome.className = 'file-name';
+      nome.title = arquivo.name;
+      nome.textContent = arquivo.name;
+
+      const tamanho = document.createElement('div');
+      tamanho.className = 'file-size';
+      tamanho.textContent = formatarTamanho(arquivo.size);
+
+      const remover = document.createElement('button');
+      remover.type = 'button';
+      remover.className = 'btn-danger remove-file';
+      remover.textContent = '×';
+      remover.title = 'Remover arquivo';
+      remover.onclick = event => {
+        event.stopPropagation();
+        removerArquivo(indice);
+      };
+
+      item.append(ordem, nome, tamanho, remover);
+      lista.appendChild(item);
     });
-}
+  }
 
+  function formatarTamanho(bytes) {
+    if (!bytes) return '0 B';
+    const unidades = ['B', 'KB', 'MB', 'GB'];
+    const indice = Math.min(Math.floor(Math.log(bytes) / Math.log(1024)), unidades.length - 1);
+    return (bytes / Math.pow(1024, indice)).toFixed(indice === 0 ? 0 : 2) + ' ' + unidades[indice];
+  }
 
-function formatarTamanho(bytes) {
+  function atualizarProgresso(percentual, texto) {
+    document.getElementById('progressBar').style.width = percentual + '%';
+    document.getElementById('progressText').textContent = texto;
+  }
 
-    if (bytes < 1024) {
-        return bytes + ' B';
-    }
-
-    if (bytes < 1024 * 1024) {
-        return (bytes / 1024).toFixed(1) + ' KB';
-    }
-
-    return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
-}
-
-
-async function enviarRequisicao(parametros) {
-
-    const resposta = await fetch(
-        URL_SCRIPT,
-        {
-            method: 'POST',
-            mode: 'cors',
-            body: parametros
-        }
-    );
-
-    if (!resposta.ok) {
-        throw new Error(
-            'Servidor retornou HTTP ' + resposta.status
-        );
-    }
-
-    const texto = await resposta.text();
-
-    try {
-        return JSON.parse(texto);
-    } catch (erro) {
-        console.error('Resposta do servidor:', texto);
-        throw new Error(
-            'O servidor não retornou JSON válido.'
-        );
-    }
-}
-
-
-async function consultarStatusLote(loteId) {
-
-    const url =
-        URL_SCRIPT +
-        '?acao=statusLote&loteId=' +
-        encodeURIComponent(loteId);
-
-    const resposta = await fetch(url, {
-        method: 'GET',
-        mode: 'cors'
+  function arquivoParaBase64(arquivo) {
+    return new Promise((resolve, reject) => {
+      const leitor = new FileReader();
+      leitor.onload = () => resolve(leitor.result.split(',')[1]);
+      leitor.onerror = () => reject(new Error('Não foi possível ler o arquivo: ' + arquivo.name));
+      leitor.readAsDataURL(arquivo);
     });
+  }
 
-    if (!resposta.ok) {
-        throw new Error(
-            'Servidor retornou HTTP ' + resposta.status
-        );
+  async function enviarArquivos() {
+    if (enviando) return;
+    if (!usuarioAtual) {
+      alert('Faça login antes de enviar arquivos.');
+      return;
     }
 
-    const texto = await resposta.text();
+    const nomePasta = normalizarTexto(document.getElementById('nomePasta').value.trim());
+    const nomeArquivo = normalizarTexto(document.getElementById('nomeArquivo').value.trim());
+
+    document.getElementById('nomePasta').value = nomePasta;
+    document.getElementById('nomeArquivo').value = nomeArquivo;
+
+    if (!nomePasta) {
+      alert('Informe o nome da pasta.');
+      document.getElementById('nomePasta').focus();
+      return;
+    }
+
+    if (!arquivos.length) {
+      alert('Selecione pelo menos um arquivo.');
+      return;
+    }
+
+    enviando = true;
+    document.getElementById('btnEnviar').disabled = true;
+    document.getElementById('btnLimpar').disabled = true;
+    document.getElementById('progressWrap').style.display = 'block';
+    document.getElementById('resultado').style.display = 'none';
 
     try {
-        return JSON.parse(texto);
+      mostrarMensagem('Iniciando envio...', 'info');
+
+      const inicio = await post({
+        acao: 'iniciarLote',
+        usuario: usuarioAtual,
+        pasta: nomePasta,
+        filename: nomeArquivo || 'ARQUIVOS_UNIFICADOS.PDF',
+        total: arquivos.length
+      });
+
+      if (!inicio.sucesso) throw new Error(inicio.mensagem || 'Não foi possível iniciar o lote.');
+
+      const loteId = inicio.loteId;
+
+      for (let i = 0; i < arquivos.length; i++) {
+        const arquivo = arquivos[i];
+        atualizarProgresso(Math.round((i / arquivos.length) * 90), 'Enviando ' + (i + 1) + ' de ' + arquivos.length + ': ' + arquivo.name);
+
+        const base64 = await arquivoParaBase64(arquivo);
+
+        const resposta = await post({
+          acao: 'enviarParte',
+          loteId,
+          indice: i,
+          filename: arquivo.name,
+          mimeType: arquivo.type || 'application/octet-stream',
+          data: base64
+        });
+
+        if (!resposta.sucesso) throw new Error(resposta.mensagem || 'Erro ao enviar ' + arquivo.name);
+      }
+
+      mostrarMensagem('Todos os arquivos foram enviados. Montando o PDF...', 'info');
+      atualizarProgresso(95, 'Montando o PDF final...');
+
+      const finalizacao = await post({ acao: 'finalizarLote', loteId });
+      if (!finalizacao.sucesso) throw new Error(finalizacao.mensagem || 'Não foi possível iniciar a finalização.');
+
+      await acompanharProcessamento(loteId);
     } catch (erro) {
-        console.error('Resposta do servidor:', texto);
-        throw new Error(
-            'O servidor não retornou JSON válido.'
-        );
-    }
-}
-
-
-function esperar(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-}
-
-
-async function aguardarFinalizacao(loteId, status) {
-
-    const tentativasMaximas = 120;
-
-    for (let tentativa = 0; tentativa < tentativasMaximas; tentativa++) {
-
-        status.innerHTML =
-            '⏳ Convertendo e unificando os arquivos em um único PDF...';
-        status.style.color = '#146fc1';
-
-        const resultado = await consultarStatusLote(loteId);
-
-        if (resultado.estado === 'CONCLUIDO') {
-            return resultado;
-        }
-
-        if (resultado.estado === 'ERRO') {
-            throw new Error(
-                resultado.mensagem ||
-                'Erro ao processar o PDF.'
-            );
-        }
-
-        await esperar(2000);
-    }
-
-    throw new Error(
-        'O processamento demorou mais que o esperado. ' +
-        'Verifique o Apps Script e tente consultar o lote novamente.'
-    );
-}
-
-
-async function enviarArquivo() {
-
-    const input = document.getElementById('arquivoInput');
-    const status = document.getElementById('status');
-    const botao = document.getElementById('btnEnviar');
-
-    const nomePastaInput =
-        document.getElementById('nomePasta').value.trim();
-
-    const nomeCustomInput =
-        document.getElementById('nomeArquivoCustom').value.trim();
-
-
-    if (!usuarioLogado) {
-        status.innerHTML =
-            '❌ Sessão expirada. Faça login novamente.';
-        status.style.color = '#d93025';
-        return;
-    }
-
-
-    if (!nomePastaInput) {
-        status.innerHTML = '⚠️ Informe o nome da pasta.';
-        status.style.color = '#d93025';
-        document.getElementById('nomePasta').focus();
-        return;
-    }
-
-
-    if (input.files.length === 0) {
-        status.innerHTML =
-            '⚠️ Por favor, selecione pelo menos um arquivo.';
-        status.style.color = '#d93025';
-        return;
-    }
-
-
-    botao.disabled = true;
-
-    const arquivos = Array.from(input.files);
-
-    try {
-
-        /*
-         * 1. Cria o lote no servidor.
-         */
-        status.innerHTML =
-            '⏳ Preparando lote com ' +
-            arquivos.length +
-            ' arquivo(s)...';
-        status.style.color = '#146fc1';
-
-        let nomePDF = nomeCustomInput;
-
-        if (!nomePDF) {
-            nomePDF = 'arquivos_unificados.pdf';
-        }
-
-        if (!/\.pdf$/i.test(nomePDF)) {
-            nomePDF += '.pdf';
-        }
-
-        const inicio = await enviarRequisicao(
-            new URLSearchParams({
-                acao: 'iniciarLote',
-                usuario: usuarioLogado,
-                pasta: nomePastaInput,
-                filename: nomePDF,
-                total: String(arquivos.length)
-            })
-        );
-
-        if (!inicio.sucesso || !inicio.loteId) {
-            throw new Error(
-                inicio.mensagem ||
-                'Não foi possível iniciar o lote.'
-            );
-        }
-
-        const loteId = inicio.loteId;
-
-
-        /*
-         * 2. Envia cada arquivo separadamente, mantendo
-         * exatamente a ordem escolhida pelo usuário.
-         */
-        for (let i = 0; i < arquivos.length; i++) {
-
-            const arquivo = arquivos[i];
-
-            status.innerHTML =
-                '⏳ Enviando arquivo ' +
-                (i + 1) +
-                ' de ' +
-                arquivos.length +
-                '...';
-            status.style.color = '#146fc1';
-
-            const dadosBase64 = await new Promise((resolve, reject) => {
-
-                const leitor = new FileReader();
-
-                leitor.onload = function() {
-                    try {
-                        resolve(
-                            leitor.result.split(',')[1]
-                        );
-                    } catch (erro) {
-                        reject(erro);
-                    }
-                };
-
-                leitor.onerror = function() {
-                    reject(
-                        new Error(
-                            'Não foi possível ler o arquivo ' +
-                            arquivo.name
-                        )
-                    );
-                };
-
-                leitor.readAsDataURL(arquivo);
-            });
-
-            const resultadoParte = await enviarRequisicao(
-                new URLSearchParams({
-                    acao: 'enviarParte',
-                    loteId: loteId,
-                    indice: String(i),
-                    filename: arquivo.name,
-                    mimeType: arquivo.type || 'application/octet-stream',
-                    data: dadosBase64
-                })
-            );
-
-            if (!resultadoParte.sucesso) {
-                throw new Error(
-                    resultadoParte.mensagem ||
-                    'Erro ao enviar ' + arquivo.name
-                );
-            }
-        }
-
-
-        /*
-         * 3. Solicita a conversão/união em segundo plano.
-         * O servidor responde imediatamente para evitar
-         * problemas de fetch com doPost assíncrono.
-         */
-        status.innerHTML =
-            '⏳ Arquivos recebidos. Iniciando conversão para PDF...';
-
-        const finalizacao = await enviarRequisicao(
-            new URLSearchParams({
-                acao: 'finalizarLote',
-                loteId: loteId
-            })
-        );
-
-        if (!finalizacao.sucesso) {
-            throw new Error(
-                finalizacao.mensagem ||
-                'Não foi possível iniciar a finalização.'
-            );
-        }
-
-
-        /*
-         * 4. Aguarda o processamento terminar.
-         */
-        const concluido = await aguardarFinalizacao(
-            loteId,
-            status
-        );
-
-        status.innerHTML =
-            '✅ PDF criado com sucesso: ' +
-            (concluido.resultado && concluido.resultado.filename
-                ? concluido.resultado.filename
-                : 'arquivo PDF');
-        status.style.color = '#188038';
-
-        if (
-            concluido.resultado &&
-            concluido.resultado.url
-        ) {
-            status.innerHTML +=
-                '<br><a href="' +
-                concluido.resultado.url +
-                '" target="_blank" rel="noopener">Abrir PDF no Google Drive</a>';
-        }
-
-        input.value = '';
-        document.getElementById('listaArquivos').innerHTML = '';
-        document.getElementById('nomeArquivoCustom').value = '';
-
-    } catch (erro) {
-
-        console.error(erro);
-
-        status.innerHTML =
-            '❌ ' +
-            (erro.message || 'Falha na comunicação com o servidor.');
-        status.style.color = '#d93025';
-
+      console.error(erro);
+      mostrarMensagem(erro.message || 'Ocorreu um erro durante o envio.', 'error');
+      atualizarProgresso(0, 'Erro no processamento.');
     } finally {
-        botao.disabled = false;
+      enviando = false;
+      document.getElementById('btnEnviar').disabled = false;
+      document.getElementById('btnLimpar').disabled = false;
+    }
+  }
+
+  async function acompanharProcessamento(loteId) {
+    const inicio = Date.now();
+    const limite = 10 * 60 * 1000;
+
+    while (Date.now() - inicio < limite) {
+      const resposta = await get({ acao: 'statusLote', loteId });
+
+      if (resposta.estado === 'CONCLUIDO') {
+        atualizarProgresso(100, 'Concluído!');
+        const resultado = resposta.resultado || resposta;
+        mostrarResultado(resultado);
+        mostrarMensagem('O PDF foi criado e salvo no Google Drive com sucesso.', 'success');
+        return;
+      }
+
+      if (resposta.estado === 'ERRO') throw new Error(resposta.mensagem || 'Erro durante a criação do PDF.');
+
+      atualizarProgresso(97, resposta.estado === 'EM_PROCESSAMENTO' ? 'Processando o PDF...' : 'Aguardando o processamento...');
+      await esperar(2000);
     }
 
-}
+    throw new Error('O processamento demorou mais do que o esperado. Verifique o Google Drive.');
+  }
+
+  function mostrarResultado(resultado) {
+    const area = document.getElementById('resultado');
+    const nome = document.getElementById('resultadoNome');
+    const link = document.getElementById('resultadoLink');
+
+    nome.textContent = 'Arquivo: ' + (resultado.filename || 'PDF FINAL');
+    link.href = resultado.url || '#';
+    link.style.display = resultado.url ? 'inline-block' : 'none';
+    area.style.display = 'block';
+  }
+
+  function esperar(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  function limparFormulario() {
+    if (enviando) return;
+
+    arquivos = [];
+    document.getElementById('inputArquivos').value = '';
+    document.getElementById('nomePasta').value = '';
+    document.getElementById('nomeArquivo').value = 'ARQUIVOS_UNIFICADOS.PDF';
+    document.getElementById('progressWrap').style.display = 'none';
+    document.getElementById('resultado').style.display = 'none';
+    atualizarListaArquivos();
+    esconderMensagem();
+  }
+
+  const inputArquivos = document.getElementById('inputArquivos');
+  const dropzone = document.getElementById('dropzone');
+
+  inputArquivos.addEventListener('change', event => {
+    adicionarArquivos(event.target.files);
+    event.target.value = '';
+  });
+
+  ['dragenter', 'dragover'].forEach(tipo => {
+    dropzone.addEventListener(tipo, event => {
+      event.preventDefault();
+      dropzone.classList.add('dragover');
+    });
+  });
+
+  ['dragleave', 'drop'].forEach(tipo => {
+    dropzone.addEventListener(tipo, event => {
+      event.preventDefault();
+      dropzone.classList.remove('dragover');
+    });
+  });
+
+  dropzone.addEventListener('drop', event => {
+    adicionarArquivos(event.dataTransfer.files);
+  });
+
+  document.getElementById('nomePasta').addEventListener('blur', function () {
+    this.value = normalizarTexto(this.value);
+  });
+
+  document.getElementById('nomeArquivo').addEventListener('blur', function () {
+    this.value = normalizarTexto(this.value);
+  });
 </script>
-
-
 </body>
-
 </html>
