@@ -12,7 +12,6 @@
 
     <title>Sistema de Envio de Documentos - UESP</title>
 
-
     <style>
 
         /* ==========================================
@@ -22,7 +21,6 @@
         * {
             box-sizing: border-box;
         }
-
 
         html,
         body {
@@ -72,84 +70,168 @@
         =========================================== */
 
         .container {
+
             width: min(1240px, calc(100% - 48px));
+
             min-height: calc(100vh - 48px);
+
             margin: 24px auto;
+
             display: grid;
+
             grid-template-columns: 250px minmax(0, 760px);
+
             grid-template-rows: auto 1fr;
+
             align-items: start;
+
             justify-content: center;
+
             column-gap: 48px;
+
             row-gap: 24px;
+
         }
+
 
         /* ==========================================
            LOGO
         =========================================== */
 
         .logo-area {
+
             grid-column: 1;
+
             grid-row: 1;
+
             width: 100%;
+
             display: flex;
+
             align-items: flex-start;
+
             justify-content: flex-start;
+
             padding-top: 4px;
+
         }
+
 
         .logo-area img {
+
             display: block;
+
             width: 100%;
+
             max-width: 250px;
+
             height: auto;
+
             object-fit: contain;
+
             padding: 18px;
+
             background: rgba(255, 255, 255, 0.97);
+
             border: 1px solid rgba(255, 255, 255, 0.90);
+
             border-radius: 22px;
-            box-shadow: 0 20px 45px rgba(0, 0, 0, 0.20);
-            transition: transform 0.25s ease, box-shadow 0.25s ease;
+
+            box-shadow:
+                0 20px 45px rgba(0, 0, 0, 0.20);
+
+            transition:
+                transform 0.25s ease,
+                box-shadow 0.25s ease;
+
         }
 
+
         .logo-area img:hover {
+
             transform: translateY(-4px);
-            box-shadow: 0 25px 55px rgba(0, 0, 0, 0.25);
+
+            box-shadow:
+                0 25px 55px rgba(0, 0, 0, 0.25);
+
         }
+
 
         /* ==========================================
            CARTÃO
         =========================================== */
 
         .card {
+
             grid-column: 2;
+
             grid-row: 1 / span 2;
+
             width: 100%;
+
             max-width: 760px;
+
             padding: 34px;
+
             background: rgba(255, 255, 255, 0.97);
+
             border-radius: 22px;
-            box-shadow: 0 22px 50px rgba(0, 0, 0, 0.20);
+
+            box-shadow:
+                0 22px 50px rgba(0, 0, 0, 0.20);
+
             text-align: center;
+
             position: relative;
+
             overflow: hidden;
-            animation: aparecer 0.4s ease;
+
+            animation:
+                aparecer 0.4s ease;
+
         }
+
 
         .card::before {
+
             content: "";
+
             position: absolute;
+
             top: 0;
+
             left: 0;
+
             width: 100%;
+
             height: 5px;
-            background: linear-gradient(90deg, #102b68, #123f91, #146fc1, #25bfd3);
+
+            background:
+                linear-gradient(
+                    90deg,
+                    #102b68,
+                    #123f91,
+                    #146fc1,
+                    #25bfd3
+                );
+
         }
 
+
         @keyframes aparecer {
-            from { opacity: 0; transform: translateY(12px); }
-            to { opacity: 1; transform: translateY(0); }
+
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
         }
+
 
         /* ==========================================
            TÍTULOS
@@ -315,67 +397,142 @@
         =========================================== */
 
         .lista-arquivos {
+
             text-align: left;
-            margin: -5px 0 18px;
+
+            margin:
+                -5px 0 18px;
+
             font-size: 13px;
+
             color: #344054;
+
         }
 
+
         .arquivo-item {
-            background: #f8fafc;
-            border: 1px solid #d0d5dd;
+
+            background:
+                #f8fafc;
+
+            border:
+                1px solid #d0d5dd;
+
             border-radius: 8px;
-            padding: 8px 10px;
+
+            padding:
+                8px 10px;
+
             margin-bottom: 6px;
-            word-break: break-word;
+
+            word-break:
+                break-word;
+
         }
+
 
         .arquivo-item strong {
-            color: #123f91;
+
+            color:
+                #123f91;
+
         }
+
 
         .arquivo-item {
+
             display: grid;
-            grid-template-columns: 32px 1fr auto;
+
+            grid-template-columns:
+                32px 1fr auto;
+
             align-items: center;
+
             gap: 10px;
+
             cursor: grab;
+
             user-select: none;
+
         }
 
-        .arquivo-item:active { cursor: grabbing; }
-        .arquivo-item.arrastando { opacity: 0.45; }
+
+        .arquivo-item:active {
+
+            cursor: grabbing;
+
+        }
+
+
+        .arquivo-item.arrastando {
+
+            opacity: 0.45;
+
+        }
+
 
         .arquivo-nome {
+
             min-width: 0;
+
             overflow-wrap: anywhere;
+
         }
+
 
         .arquivo-remover {
+
             border: 0;
-            background: #fee4e2;
-            color: #b42318;
+
+            background:
+                #fee4e2;
+
+            color:
+                #b42318;
+
             width: 32px;
+
             height: 32px;
+
             padding: 0;
+
             margin: 0;
+
             box-shadow: none;
+
             border-radius: 8px;
+
             font-size: 16px;
+
         }
+
 
         .arquivo-remover:hover {
+
             transform: none;
+
             box-shadow: none;
-            background: #fecdca;
+
+            background:
+                #fecdca;
+
         }
 
+
         .aviso-ordem {
-            margin: -8px 0 16px;
-            color: #667085;
+
+            margin:
+                -8px 0 16px;
+
+            color:
+                #667085;
+
             font-size: 12px;
+
             text-align: left;
+
         }
+
 
         /* ==========================================
            BOTÕES
@@ -385,7 +542,8 @@
 
             width: 100%;
 
-            padding: 13px 16px;
+            padding:
+                13px 16px;
 
             margin-bottom: 10px;
 
@@ -402,7 +560,8 @@
                     #25bfd3 100%
                 );
 
-            color: #ffffff;
+            color:
+                #ffffff;
 
             font-size: 15px;
 
@@ -569,63 +728,157 @@
         =========================================== */
 
         @media (max-width: 900px) {
+
             body {
-                align-items: flex-start;
+
+                align-items:
+                    flex-start;
+
                 padding: 0;
+
             }
 
+
             .container {
-                width: min(760px, calc(100% - 32px));
-                min-height: auto;
-                margin: 16px auto 24px;
-                display: flex;
-                flex-direction: column;
-                align-items: stretch;
-                gap: 18px;
+
+                width:
+                    min(760px, calc(100% - 32px));
+
+                min-height:
+                    auto;
+
+                margin:
+                    16px auto 24px;
+
+                display:
+                    flex;
+
+                flex-direction:
+                    column;
+
+                align-items:
+                    stretch;
+
+                gap:
+                    18px;
+
             }
+
 
             .logo-area {
-                order: 0;
-                width: 100%;
-                justify-content: center;
-                align-items: center;
-                padding-top: 0;
+
+                order:
+                    0;
+
+                width:
+                    100%;
+
+                justify-content:
+                    center;
+
+                align-items:
+                    center;
+
+                padding-top:
+                    0;
+
             }
 
+
             .logo-area img {
-                width: auto;
-                max-width: 230px;
+
+                width:
+                    auto;
+
+                max-width:
+                    230px;
+
             }
+
 
             .card {
-                order: 1;
-                grid-column: auto;
-                grid-row: auto;
-                max-width: 100%;
+
+                order:
+                    1;
+
+                grid-column:
+                    auto;
+
+                grid-row:
+                    auto;
+
+                max-width:
+                    100%;
+
             }
+
         }
+
 
         @media (max-width: 700px) {
-            .card { padding: 20px; }
-            .grid { grid-template-columns: 1fr; }
-            .file-item { grid-template-columns: 30px 1fr auto; }
-            .file-size { display: none; }
+
+            .card {
+                padding: 20px;
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .file-item {
+                grid-template-columns:
+                    30px 1fr auto;
+            }
+
+            .file-size {
+                display: none;
+            }
+
         }
 
+
         @media (max-width: 480px) {
+
             .container {
-                width: min(100% - 24px, 520px);
-                margin: 12px auto 20px;
+
+                width:
+                    min(100% - 24px, 520px);
+
+                margin:
+                    12px auto 20px;
+
             }
+
 
             .logo-area img {
-                max-width: 190px;
-                padding: 14px;
-                border-radius: 18px;
+
+                max-width:
+                    190px;
+
+                padding:
+                    14px;
+
+                border-radius:
+                    18px;
+
             }
 
-            .card { padding: 20px 18px; }
-            h2 { font-size: 20px; }
+
+            .card {
+
+                padding:
+                    20px 18px;
+
+            }
+
+
+            h2 {
+
+                font-size:
+                    20px;
+
+            }
+
         }
 
     </style>
@@ -884,8 +1137,17 @@
             onchange="adicionarArquivosSelecionados()"
         >
 
-        <div class="aviso-ordem">Selecione os arquivos e, se necessário, arraste-os para ajustar a ordem.</div>
-        <div id="listaArquivos" class="lista-arquivos"></div>
+
+        <div class="aviso-ordem">
+            Selecione os arquivos e, se necessário,
+            arraste-os para ajustar a ordem.
+        </div>
+
+
+        <div
+            id="listaArquivos"
+            class="lista-arquivos"
+        ></div>
 
 
         <!-- ENVIAR -->
@@ -915,6 +1177,7 @@
 
     </div>
 
+
 </div>
 
 
@@ -942,9 +1205,11 @@ function mostrarLogin() {
         .getElementById('telaCadastro')
         .classList.add('hidden');
 
+
     document
         .getElementById('telaUpload')
         .classList.add('hidden');
+
 
     document
         .getElementById('telaLogin')
@@ -963,9 +1228,11 @@ function mostrarCadastro() {
         .getElementById('telaLogin')
         .classList.add('hidden');
 
+
     document
         .getElementById('telaUpload')
         .classList.add('hidden');
+
 
     document
         .getElementById('telaCadastro')
@@ -1249,8 +1516,8 @@ async function efetuarLogin() {
                     'nomeUsuarioLogado'
                 )
                 .innerText =
-                resultado.nome ||
-                resultado.usuario;
+                    resultado.nome ||
+                    resultado.usuario;
 
 
             document
@@ -1368,426 +1635,840 @@ function efetuarLogout() {
 // ==========================================
 
 let arquivosSelecionados = [];
+
 let itemArrastado = null;
 
+
+// ==========================================
+// NORMALIZAÇÃO
+// ==========================================
+
 function normalizarTexto(valor) {
+
     return String(valor || '')
         .normalize('NFD')
-        .replace(/[\u0300-\u036f]/g, '')
+        .replace(
+            /[\u0300-\u036f]/g,
+            ''
+        )
         .toUpperCase();
+
 }
+
 
 function normalizarCampo(campo) {
-    const inicio = campo.selectionStart;
-    campo.value = normalizarTexto(campo.value);
-    try { campo.setSelectionRange(inicio, inicio); } catch (_) {}
+
+    const inicio =
+        campo.selectionStart;
+
+    campo.value =
+        normalizarTexto(
+            campo.value
+        );
+
+    try {
+
+        campo.setSelectionRange(
+            inicio,
+            inicio
+        );
+
+    } catch (_) {}
+
 }
+
+
+// ==========================================
+// IDENTIFICAÇÃO DO ARQUIVO
+// ==========================================
 
 function chaveArquivo(arquivo) {
-    return arquivo.name + '|' + arquivo.size + '|' + arquivo.lastModified;
+
+    return (
+        arquivo.name +
+        '|' +
+        arquivo.size +
+        '|' +
+        arquivo.lastModified
+    );
+
 }
+
+
+// ==========================================
+// ADICIONAR ARQUIVOS
+// ==========================================
 
 function adicionarArquivosSelecionados() {
-    const input = document.getElementById('arquivoInput');
-    const novos = Array.from(input.files || []);
+
+    const input =
+        document.getElementById(
+            'arquivoInput'
+        );
+
+
+    const novos =
+        Array.from(
+            input.files || []
+        );
+
 
     novos.forEach(arquivo => {
-        if (!arquivosSelecionados.some(item => chaveArquivo(item) === chaveArquivo(arquivo))) {
-            arquivosSelecionados.push(arquivo);
+
+        if (
+            !arquivosSelecionados.some(
+                item =>
+                    chaveArquivo(item) ===
+                    chaveArquivo(arquivo)
+            )
+        ) {
+
+            arquivosSelecionados.push(
+                arquivo
+            );
+
         }
+
     });
 
-    // Permite selecionar novamente outros arquivos pelo mesmo input.
+
+    /*
+     * Permite selecionar novamente
+     * outros arquivos pelo mesmo input.
+     */
+
     input.value = '';
+
+
     renderizarListaArquivos();
+
 }
+
+
+// ==========================================
+// RENDERIZAR LISTA
+// ==========================================
 
 function renderizarListaArquivos() {
-    const lista = document.getElementById('listaArquivos');
+
+    const lista =
+        document.getElementById(
+            'listaArquivos'
+        );
+
+
     lista.innerHTML = '';
 
-    arquivosSelecionados.forEach((arquivo, indice) => {
-        const item = document.createElement('div');
-        item.className = 'arquivo-item';
-        item.draggable = true;
-        item.dataset.indice = indice;
 
-        const numero = document.createElement('strong');
-        numero.textContent = (indice + 1) + '.';
+    arquivosSelecionados.forEach(
+        (arquivo, indice) => {
 
-        const nome = document.createElement('div');
-        nome.className = 'arquivo-nome';
-        nome.textContent = arquivo.name + ' (' + formatarTamanho(arquivo.size) + ')';
+            const item =
+                document.createElement(
+                    'div'
+                );
 
-        const remover = document.createElement('button');
-        remover.type = 'button';
-        remover.className = 'arquivo-remover';
-        remover.title = 'Remover arquivo';
-        remover.textContent = '×';
-        remover.addEventListener('click', event => {
-            event.stopPropagation();
-            arquivosSelecionados.splice(indice, 1);
-            renderizarListaArquivos();
-        });
 
-        item.append(numero, nome, remover);
+            item.className =
+                'arquivo-item';
 
-        item.addEventListener('dragstart', () => {
-            itemArrastado = indice;
-            item.classList.add('arrastando');
-        });
 
-        item.addEventListener('dragend', () => {
-            item.classList.remove('arrastando');
-            itemArrastado = null;
-        });
+            item.draggable = true;
 
-        item.addEventListener('dragover', event => {
-            event.preventDefault();
-        });
 
-        item.addEventListener('drop', event => {
-            event.preventDefault();
-            const destino = indice;
-            if (itemArrastado === null || itemArrastado === destino) return;
-            const movido = arquivosSelecionados.splice(itemArrastado, 1)[0];
-            arquivosSelecionados.splice(destino, 0, movido);
-            renderizarListaArquivos();
-        });
+            item.dataset.indice =
+                indice;
 
-        lista.appendChild(item);
-    });
+
+            const numero =
+                document.createElement(
+                    'strong'
+                );
+
+
+            numero.textContent =
+                (indice + 1) + '.';
+
+
+            const nome =
+                document.createElement(
+                    'div'
+                );
+
+
+            nome.className =
+                'arquivo-nome';
+
+
+            nome.textContent =
+                arquivo.name +
+                ' (' +
+                formatarTamanho(
+                    arquivo.size
+                ) +
+                ')';
+
+
+            const remover =
+                document.createElement(
+                    'button'
+                );
+
+
+            remover.type =
+                'button';
+
+
+            remover.className =
+                'arquivo-remover';
+
+
+            remover.title =
+                'Remover arquivo';
+
+
+            remover.textContent =
+                '×';
+
+
+            remover.addEventListener(
+                'click',
+                event => {
+
+                    event.stopPropagation();
+
+                    arquivosSelecionados.splice(
+                        indice,
+                        1
+                    );
+
+                    renderizarListaArquivos();
+
+                }
+            );
+
+
+            item.append(
+                numero,
+                nome,
+                remover
+            );
+
+
+            item.addEventListener(
+                'dragstart',
+                () => {
+
+                    itemArrastado =
+                        indice;
+
+                    item.classList.add(
+                        'arrastando'
+                    );
+
+                }
+            );
+
+
+            item.addEventListener(
+                'dragend',
+                () => {
+
+                    item.classList.remove(
+                        'arrastando'
+                    );
+
+                    itemArrastado =
+                        null;
+
+                }
+            );
+
+
+            item.addEventListener(
+                'dragover',
+                event => {
+
+                    event.preventDefault();
+
+                }
+            );
+
+
+            item.addEventListener(
+                'drop',
+                event => {
+
+                    event.preventDefault();
+
+
+                    const destino =
+                        indice;
+
+
+                    if (
+                        itemArrastado === null ||
+                        itemArrastado === destino
+                    ) {
+
+                        return;
+
+                    }
+
+
+                    const movido =
+                        arquivosSelecionados.splice(
+                            itemArrastado,
+                            1
+                        )[0];
+
+
+                    arquivosSelecionados.splice(
+                        destino,
+                        0,
+                        movido
+                    );
+
+
+                    renderizarListaArquivos();
+
+                }
+            );
+
+
+            lista.appendChild(
+                item
+            );
+
+        }
+    );
+
 }
+
+
+// ==========================================
+// LIMPAR ARQUIVOS
+// ==========================================
 
 function limparArquivosSelecionados() {
+
     arquivosSelecionados = [];
-    document.getElementById('arquivoInput').value = '';
-    document.getElementById('listaArquivos').innerHTML = '';
+
+
+    document
+        .getElementById(
+            'arquivoInput'
+        )
+        .value = '';
+
+
+    document
+        .getElementById(
+            'listaArquivos'
+        )
+        .innerHTML = '';
+
 }
 
+
+// ==========================================
+// FORMATAR TAMANHO
+// ==========================================
 
 function formatarTamanho(bytes) {
 
     if (bytes < 1024) {
+
         return bytes + ' B';
+
     }
+
 
     if (bytes < 1024 * 1024) {
-        return (bytes / 1024).toFixed(1) + ' KB';
+
+        return (
+            bytes / 1024
+        ).toFixed(1) + ' KB';
+
     }
 
-    return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+
+    return (
+        bytes / (1024 * 1024)
+    ).toFixed(1) + ' MB';
+
 }
 
 
-async function enviarRequisicao(parametros) {
+// ==========================================
+// ENVIO DA REQUISIÇÃO
+// ==========================================
 
-    const resposta = await fetch(
-        URL_SCRIPT,
-        {
-            method: 'POST',
-            mode: 'cors',
-            body: parametros
-        }
-    );
+async function enviarRequisicao(
+    parametros
+) {
+
+    const resposta =
+        await fetch(
+
+            URL_SCRIPT,
+
+            {
+                method: 'POST',
+                mode: 'cors',
+                body: parametros
+            }
+
+        );
+
 
     if (!resposta.ok) {
+
         throw new Error(
-            'Servidor retornou HTTP ' + resposta.status
+            'Servidor retornou HTTP ' +
+            resposta.status
         );
+
     }
 
-    const texto = await resposta.text();
+
+    const texto =
+        await resposta.text();
+
 
     try {
-        return JSON.parse(texto);
+
+        return JSON.parse(
+            texto
+        );
+
     } catch (erro) {
-        console.error('Resposta do servidor:', texto);
+
+        console.error(
+            'Resposta do servidor:',
+            texto
+        );
+
         throw new Error(
             'O servidor não retornou JSON válido.'
         );
+
     }
+
 }
 
 
-async function consultarStatusLote(loteId) {
+// ==========================================
+// LER ARQUIVO COMO BASE64
+// ==========================================
 
-    const url =
-        URL_SCRIPT +
-        '?acao=statusLote&loteId=' +
-        encodeURIComponent(loteId);
+function lerArquivoBase64(
+    arquivo
+) {
 
-    const resposta = await fetch(url, {
-        method: 'GET',
-        mode: 'cors'
-    });
+    return new Promise(
+        (resolve, reject) => {
 
-    if (!resposta.ok) {
-        throw new Error(
-            'Servidor retornou HTTP ' + resposta.status
-        );
-    }
-
-    const texto = await resposta.text();
-
-    try {
-        return JSON.parse(texto);
-    } catch (erro) {
-        console.error('Resposta do servidor:', texto);
-        throw new Error(
-            'O servidor não retornou JSON válido.'
-        );
-    }
-}
+            const leitor =
+                new FileReader();
 
 
-function esperar(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-}
+            leitor.onload =
+                function() {
 
-
-async function aguardarFinalizacao(loteId, status) {
-
-    const tentativasMaximas = 120;
-
-    for (let tentativa = 0; tentativa < tentativasMaximas; tentativa++) {
-
-        status.innerHTML =
-            '⏳ Convertendo e unificando os arquivos em um único PDF...';
-        status.style.color = '#146fc1';
-
-        const resultado = await consultarStatusLote(loteId);
-
-        if (resultado.estado === 'CONCLUIDO') {
-            return resultado;
-        }
-
-        if (resultado.estado === 'ERRO') {
-            throw new Error(
-                resultado.mensagem ||
-                'Erro ao processar o PDF.'
-            );
-        }
-
-        await esperar(2000);
-    }
-
-    throw new Error(
-        'O processamento demorou mais que o esperado. ' +
-        'Verifique o Apps Script e tente consultar o lote novamente.'
-    );
-}
-
-
-async function enviarArquivo() {
-
-    const input = document.getElementById('arquivoInput');
-    const status = document.getElementById('status');
-    const botao = document.getElementById('btnEnviar');
-
-    const nomePastaInput =
-        document.getElementById('nomePasta').value.trim();
-
-    const nomeCustomInput =
-        document.getElementById('nomeArquivoCustom').value.trim();
-
-
-    if (!usuarioLogado) {
-        status.innerHTML =
-            '❌ Sessão expirada. Faça login novamente.';
-        status.style.color = '#d93025';
-        return;
-    }
-
-
-    if (!nomePastaInput) {
-        status.innerHTML = '⚠️ Informe o nome da pasta.';
-        status.style.color = '#d93025';
-        document.getElementById('nomePasta').focus();
-        return;
-    }
-
-
-    if (arquivosSelecionados.length === 0) {
-        status.innerHTML =
-            '⚠️ Por favor, selecione pelo menos um arquivo.';
-        status.style.color = '#d93025';
-        return;
-    }
-
-
-    botao.disabled = true;
-
-    const arquivos = arquivosSelecionados.slice();
-
-    try {
-
-        /*
-         * 1. Cria o lote no servidor.
-         */
-        status.innerHTML =
-            '⏳ Preparando lote com ' +
-            arquivos.length +
-            ' arquivo(s)...';
-        status.style.color = '#146fc1';
-
-        let nomePDF = nomeCustomInput;
-
-        if (!nomePDF) {
-            nomePDF = 'arquivos_unificados.pdf';
-        }
-
-        if (!/\.pdf$/i.test(nomePDF)) {
-            nomePDF += '.pdf';
-        }
-
-        const inicio = await enviarRequisicao(
-            new URLSearchParams({
-                acao: 'iniciarLote',
-                usuario: usuarioLogado,
-                pasta: nomePastaInput,
-                filename: nomePDF,
-                total: String(arquivos.length)
-            })
-        );
-
-        if (!inicio.sucesso || !inicio.loteId) {
-            throw new Error(
-                inicio.mensagem ||
-                'Não foi possível iniciar o lote.'
-            );
-        }
-
-        const loteId = inicio.loteId;
-
-
-        /*
-         * 2. Envia cada arquivo separadamente, mantendo
-         * exatamente a ordem escolhida pelo usuário.
-         */
-        for (let i = 0; i < arquivos.length; i++) {
-
-            const arquivo = arquivos[i];
-
-            status.innerHTML =
-                '⏳ Enviando arquivo ' +
-                (i + 1) +
-                ' de ' +
-                arquivos.length +
-                '...';
-            status.style.color = '#146fc1';
-
-            const dadosBase64 = await new Promise((resolve, reject) => {
-
-                const leitor = new FileReader();
-
-                leitor.onload = function() {
                     try {
+
+                        const resultado =
+                            leitor.result;
+
+
+                        const dados =
+                            String(resultado)
+                                .split(',')[1];
+
+
+                        if (!dados) {
+
+                            reject(
+                                new Error(
+                                    'Não foi possível obter os dados do arquivo.'
+                                )
+                            );
+
+                            return;
+
+                        }
+
+
                         resolve(
-                            leitor.result.split(',')[1]
+                            dados
                         );
+
                     } catch (erro) {
-                        reject(erro);
+
+                        reject(
+                            erro
+                        );
+
                     }
+
                 };
 
-                leitor.onerror = function() {
+
+            leitor.onerror =
+                function() {
+
                     reject(
                         new Error(
                             'Não foi possível ler o arquivo ' +
                             arquivo.name
                         )
                     );
+
                 };
 
-                leitor.readAsDataURL(arquivo);
-            });
 
-            const resultadoParte = await enviarRequisicao(
-                new URLSearchParams({
-                    acao: 'enviarParte',
-                    loteId: loteId,
-                    indice: String(i),
-                    filename: arquivo.name,
-                    mimeType: arquivo.type || 'application/octet-stream',
-                    data: dadosBase64
-                })
+            leitor.readAsDataURL(
+                arquivo
             );
 
-            if (!resultadoParte.sucesso) {
-                throw new Error(
-                    resultadoParte.mensagem ||
-                    'Erro ao enviar ' + arquivo.name
-                );
-            }
         }
+    );
+
+}
 
 
-        /*
-         * 3. Solicita a conversão/união em segundo plano.
-         * O servidor responde imediatamente para evitar
-         * problemas de fetch com doPost assíncrono.
-         */
-        status.innerHTML =
-            '⏳ Arquivos recebidos. Iniciando conversão para PDF...';
+// ==========================================
+// ENVIAR ARQUIVOS
+// ==========================================
 
-        const finalizacao = await enviarRequisicao(
-            new URLSearchParams({
-                acao: 'finalizarLote',
-                loteId: loteId
-            })
+async function enviarArquivo() {
+
+    const status =
+        document.getElementById(
+            'status'
         );
 
-        if (!finalizacao.sucesso) {
-            throw new Error(
-                finalizacao.mensagem ||
-                'Não foi possível iniciar a finalização.'
-            );
-        }
 
-
-        /*
-         * 4. Aguarda o processamento terminar.
-         */
-        const concluido = await aguardarFinalizacao(
-            loteId,
-            status
+    const botao =
+        document.getElementById(
+            'btnEnviar'
         );
 
-        status.innerHTML =
-            '✅ PDF criado com sucesso: ' +
-            (concluido.resultado && concluido.resultado.filename
-                ? concluido.resultado.filename
-                : 'arquivo PDF');
-        status.style.color = '#188038';
 
-        if (
-            concluido.resultado &&
-            concluido.resultado.url
+    const nomePastaInput =
+        document
+            .getElementById(
+                'nomePasta'
+            )
+            .value
+            .trim();
+
+
+    const nomeCustomInput =
+        document
+            .getElementById(
+                'nomeArquivoCustom'
+            )
+            .value
+            .trim();
+
+
+    if (!usuarioLogado) {
+
+        status.innerHTML =
+            '❌ Sessão expirada. Faça login novamente.';
+
+        status.style.color =
+            '#d93025';
+
+        return;
+
+    }
+
+
+    if (!nomePastaInput) {
+
+        status.innerHTML =
+            '⚠️ Informe o nome da pasta.';
+
+        status.style.color =
+            '#d93025';
+
+
+        document
+            .getElementById(
+                'nomePasta'
+            )
+            .focus();
+
+
+        return;
+
+    }
+
+
+    if (
+        arquivosSelecionados.length === 0
+    ) {
+
+        status.innerHTML =
+            '⚠️ Por favor, selecione pelo menos um arquivo.';
+
+        status.style.color =
+            '#d93025';
+
+        return;
+
+    }
+
+
+    botao.disabled = true;
+
+
+    const arquivos =
+        arquivosSelecionados.slice();
+
+
+    try {
+
+        /*
+         * Cada arquivo será enviado diretamente
+         * para o Google Drive.
+         *
+         * Não existe mais lote.
+         * Não existe conversão para PDF.
+         * Não existe união de arquivos.
+         */
+
+        for (
+            let i = 0;
+            i < arquivos.length;
+            i++
         ) {
-            status.innerHTML +=
-                '<br><a href="' +
-                concluido.resultado.url +
-                '" target="_blank" rel="noopener">Abrir PDF no Google Drive</a>';
+
+            const arquivo =
+                arquivos[i];
+
+
+            status.innerHTML =
+                '⏳ Enviando arquivo ' +
+                (i + 1) +
+                ' de ' +
+                arquivos.length +
+                ':<br>' +
+                arquivo.name;
+
+
+            status.style.color =
+                '#146fc1';
+
+
+            const dadosBase64 =
+                await lerArquivoBase64(
+                    arquivo
+                );
+
+
+            /*
+             * Se foi informado um nome personalizado
+             * e houver somente um arquivo, utiliza
+             * esse nome.
+             *
+             * Quando existem vários arquivos,
+             * cada arquivo mantém seu nome original.
+             */
+
+            let nomeFinalArquivo =
+                arquivo.name;
+
+
+            if (
+                arquivos.length === 1 &&
+                nomeCustomInput
+            ) {
+
+                nomeFinalArquivo =
+                    nomeCustomInput;
+
+
+                /*
+                 * Preserva a extensão original
+                 * caso o usuário não tenha digitado.
+                 */
+
+                const extensao =
+                    obterExtensao(
+                        arquivo.name
+                    );
+
+
+                if (
+                    extensao &&
+                    !temExtensao(
+                        nomeFinalArquivo
+                    )
+                ) {
+
+                    nomeFinalArquivo +=
+                        extensao;
+
+                }
+
+            }
+
+
+            const parametros =
+                new URLSearchParams({
+
+                    acao:
+                        'upload',
+
+                    usuario:
+                        usuarioLogado,
+
+                    pasta:
+                        nomePastaInput,
+
+                    data:
+                        dadosBase64,
+
+                    mimeType:
+                        arquivo.type ||
+                        'application/octet-stream',
+
+                    filename:
+                        nomeFinalArquivo,
+
+                    indice:
+                        String(i)
+
+                });
+
+
+            const resultado =
+                await enviarRequisicao(
+                    parametros
+                );
+
+
+            if (
+                !resultado ||
+                !resultado.sucesso
+            ) {
+
+                throw new Error(
+                    resultado &&
+                    resultado.mensagem
+                        ? resultado.mensagem
+                        : 'Erro ao enviar o arquivo ' +
+                          arquivo.name
+                );
+
+            }
+
         }
+
+
+        /*
+         * Todos os arquivos foram enviados.
+         */
+
+        status.innerHTML =
+            '✅ ' +
+            arquivos.length +
+            ' arquivo(s) enviado(s) com sucesso!';
+
+
+        status.style.color =
+            '#188038';
+
+
+        /*
+         * Limpa a seleção após o envio.
+         */
 
         limparArquivosSelecionados();
-        document.getElementById('nomeArquivoCustom').value = '';
+
+
+        document
+            .getElementById(
+                'nomeArquivoCustom'
+            )
+            .value = '';
+
 
     } catch (erro) {
 
-        console.error(erro);
+        console.error(
+            erro
+        );
+
 
         status.innerHTML =
             '❌ ' +
-            (erro.message || 'Falha na comunicação com o servidor.');
-        status.style.color = '#d93025';
+            (
+                erro.message ||
+                'Falha na comunicação com o servidor.'
+            );
+
+
+        status.style.color =
+            '#d93025';
 
     } finally {
-        botao.disabled = false;
+
+        botao.disabled =
+            false;
+
     }
 
 }
+
+
+// ==========================================
+// OBTER EXTENSÃO
+// ==========================================
+
+function obterExtensao(
+    nomeArquivo
+) {
+
+    const ultimoPonto =
+        nomeArquivo.lastIndexOf('.');
+
+
+    if (
+        ultimoPonto <= 0
+    ) {
+
+        return '';
+
+    }
+
+
+    return nomeArquivo.substring(
+        ultimoPonto
+    );
+
+}
+
+
+// ==========================================
+// VERIFICAR EXTENSÃO
+// ==========================================
+
+function temExtensao(
+    nomeArquivo
+) {
+
+    return /\.[^./\\]+$/.test(
+        nomeArquivo
+    );
+
+}
+
+
 </script>
 
 
