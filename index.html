@@ -1486,10 +1486,13 @@
 // ==========================================
 
 const URL_SCRIPT =
-    'https://script.google.com/macros/s/AKfycbwMX4Bcc-vaiqJhPhp7auPPuRY1hWoDIyRwEaBqWB_hpHoygOcXCZ-ONkymdngDD0m2Cw/exec';
+    'https://script.google.com/macros/s/AKfycbz86zCtJ1FGXdjhO6tUC5xoekIQmnKhAf9jWb4Ll6keD53AIMEHnxM_cmM6oEcsBHFZhw/exec';
 
 
 let usuarioLogado = '';
+let escolasPorGrupo = {};
+let grupoVinculado = '';
+let escolaVinculada = '';
 
 
 // ==========================================
@@ -1973,6 +1976,15 @@ async function efetuarLogin() {
             usuarioLogado =
                 resultado.usuario;
 
+            escolasPorGrupo =
+                resultado.escolasPorGrupo || {};
+
+            grupoVinculado =
+                String(resultado.grupoVinculado || '').trim();
+
+            escolaVinculada =
+                String(resultado.nomeEscolaVinculada || resultado.nomeEscola || '').trim();
+
 
             document
                 .getElementById(
@@ -1986,16 +1998,22 @@ async function efetuarLogin() {
             const campoNomeEscola =
                 document.getElementById('nomeEscola');
 
-            campoNomeEscola.value =
-                resultado.nomeEscola || '';
+            const selectGrupo =
+                document.getElementById('categoriaPasta');
 
-            /*
-             * Quando a escola já estiver vinculada ao usuário,
-             * o campo fica preenchido e protegido contra alteração.
-             * No primeiro envio, permanece editável.
-             */
-            campoNomeEscola.readOnly =
-                !!resultado.nomeEscola;
+            if (grupoVinculado) {
+                // O primeiro envio já definiu o destino definitivo.
+                selectGrupo.value = grupoVinculado;
+                selectGrupo.disabled = true;
+                campoNomeEscola.value = escolaVinculada;
+                campoNomeEscola.readOnly = true;
+            } else {
+                // Primeiro acesso: ainda não existe vínculo.
+                selectGrupo.value = '';
+                selectGrupo.disabled = false;
+                campoNomeEscola.value = '';
+                campoNomeEscola.readOnly = false;
+            }
 
 
             document
@@ -2118,6 +2136,9 @@ document.addEventListener('DOMContentLoaded', function () {
 function efetuarLogout() {
 
     usuarioLogado = '';
+    escolasPorGrupo = {};
+    grupoVinculado = '';
+    escolaVinculada = '';
 
 
     document
@@ -2965,6 +2986,27 @@ function informarPrazoExpirado(categoria) {
 }
 
 
+function aplicarEscolaDoGrupo(categoria) {
+
+    const campo = document.getElementById('nomeEscola');
+    const select = document.getElementById('categoriaPasta');
+    if (!campo || !select) return;
+
+    if (grupoVinculado) {
+        select.value = grupoVinculado;
+        select.disabled = true;
+        campo.value = escolaVinculada;
+        campo.readOnly = true;
+        return;
+    }
+
+    campo.value = '';
+    campo.readOnly = false;
+
+}
+
+
+
 function iniciarContadorPrazo() {
 
     const select =
@@ -2984,6 +3026,13 @@ function iniciarContadorPrazo() {
         'change',
         function() {
 
+            if (grupoVinculado) {
+                select.value = grupoVinculado;
+                aplicarEscolaDoGrupo(grupoVinculado);
+                atualizarContadorPrazo();
+                return;
+            }
+
             const categoria = select.value;
 
 
@@ -2993,6 +3042,7 @@ function iniciarContadorPrazo() {
 
                 select.value = '';
 
+                aplicarEscolaDoGrupo('');
                 atualizarContadorPrazo();
 
                 return;
@@ -3000,6 +3050,7 @@ function iniciarContadorPrazo() {
             }
 
 
+            aplicarEscolaDoGrupo(categoria);
             atualizarContadorPrazo();
 
         }
@@ -3332,6 +3383,16 @@ async function enviarArquivo() {
             )
             .readOnly = true;
 
+
+        // O primeiro envio cria o vínculo definitivo desta sessão.
+        grupoVinculado = categoria;
+        escolaVinculada = nomeEscola;
+        escolasPorGrupo[categoria] = nomeEscola;
+
+        document.getElementById('categoriaPasta').value = grupoVinculado;
+        document.getElementById('categoriaPasta').disabled = true;
+        document.getElementById('nomeEscola').value = escolaVinculada;
+        document.getElementById('nomeEscola').readOnly = true;
 
         document
             .getElementById(
