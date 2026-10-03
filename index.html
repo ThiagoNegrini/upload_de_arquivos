@@ -234,6 +234,107 @@
 
 
         /* ==========================================
+           LINKS DO MANUAL
+        =========================================== */
+
+        .manual-links {
+
+            grid-column: 1;
+
+            grid-row: 2;
+
+            width: 100%;
+
+            display: flex;
+
+            flex-direction: column;
+
+            gap: 10px;
+
+            align-self: start;
+
+            padding: 0;
+
+        }
+
+
+        .manual-links-titulo {
+
+            color: #ffffff;
+
+            font-size: 14px;
+
+            font-weight: 800;
+
+            text-align: center;
+
+            margin-bottom: 2px;
+
+            text-shadow: 0 1px 4px rgba(0, 0, 0, 0.18);
+
+        }
+
+
+        .manual-link {
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            min-height: 46px;
+
+            padding: 11px 14px;
+
+            border-radius: 12px;
+
+            background: rgba(255, 255, 255, 0.96);
+
+            color: #102b68;
+
+            text-decoration: none;
+
+            font-size: 13px;
+
+            font-weight: 800;
+
+            box-shadow: 0 10px 24px rgba(0, 0, 0, 0.14);
+
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+        }
+
+
+        .manual-link:hover {
+
+            transform: translateY(-2px);
+
+            box-shadow: 0 14px 28px rgba(0, 0, 0, 0.18);
+
+        }
+
+
+        .manual-link.video {
+
+            background: linear-gradient(135deg, #146fc1, #25bfd3);
+
+            color: #ffffff;
+
+        }
+
+
+        @media (max-width: 900px) {
+
+            .manual-links {
+                grid-column: 1;
+                grid-row: 3;
+            }
+
+        }
+
+
+        /* ==========================================
            TÍTULOS
         =========================================== */
 
@@ -1474,6 +1575,38 @@
 
     </div>
 
+
+
+
+    <!-- ==========================================
+         MANUAL DO USUÁRIO
+    =========================================== -->
+
+    <div class="manual-links">
+
+        <div class="manual-links-titulo">
+            AJUDA AO USUÁRIO
+        </div>
+
+        <a
+            class="manual-link"
+            href="./manual_usuario_envio_documentos.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+        >
+            📄 Abrir Manual em PDF
+        </a>
+
+        <a
+            class="manual-link video"
+            href="./manual_usuario_html_passo_a_passo.mp4"
+            target="_blank"
+            rel="noopener noreferrer"
+        >
+            ▶️ Assistir Vídeo de Orientação
+        </a>
+
+    </div>
 
 </div>
 
