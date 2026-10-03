@@ -1393,13 +1393,32 @@
         <div class="form-group">
 
             <label for="nomeEscola">
-                Nome da Pasta / Escola:
+                Nome da Escola / Pasta: <span aria-hidden="true">*</span>
             </label>
 
             <input
                 type="text"
                 id="nomeEscola"
-                placeholder="INFORMAR O NOME DA ESCOLA E DOCUMENTO"
+                placeholder="INFORMAR O NOME DA ESCOLA"
+                autocomplete="off"
+                required
+            >
+
+        </div>
+
+
+        <!-- NOME DO ARQUIVO / DOCUMENTO -->
+
+        <div class="form-group">
+
+            <label for="nomeDocumento">
+                Nome do Arquivo / Documento: <span class="opcional">(opcional)</span>
+            </label>
+
+            <input
+                type="text"
+                id="nomeDocumento"
+                placeholder="DEIXE VAZIO PARA MANTER O NOME ORIGINAL"
                 autocomplete="off"
             >
 
@@ -1467,7 +1486,7 @@
 // ==========================================
 
 const URL_SCRIPT =
-    'https://script.google.com/macros/s/AKfycbyD_-3xBMvYolU2ngD-Gwmv1yBDhhOM0slSdg8s9_u7zxe1fFN5u4-eWT5UnpO6F0Kauw/exec';
+    'https://script.google.com/macros/s/AKfycbwMX4Bcc-vaiqJhPhp7auPPuRY1hWoDIyRwEaBqWB_hpHoygOcXCZ-ONkymdngDD0m2Cw/exec';
 
 
 let usuarioLogado = '';
@@ -1964,6 +1983,21 @@ async function efetuarLogin() {
                     resultado.usuario;
 
 
+            const campoNomeEscola =
+                document.getElementById('nomeEscola');
+
+            campoNomeEscola.value =
+                resultado.nomeEscola || '';
+
+            /*
+             * Quando a escola já estiver vinculada ao usuário,
+             * o campo fica preenchido e protegido contra alteração.
+             * No primeiro envio, permanece editável.
+             */
+            campoNomeEscola.readOnly =
+                !!resultado.nomeEscola;
+
+
             document
                 .getElementById(
                     'telaLogin'
@@ -2133,6 +2167,18 @@ function efetuarLogout() {
     document
         .getElementById(
             'nomeEscola'
+        )
+        .value = '';
+
+    document
+        .getElementById(
+            'nomeEscola'
+        )
+        .readOnly = false;
+
+    document
+        .getElementById(
+            'nomeDocumento'
         )
         .value = '';
 
@@ -3047,6 +3093,15 @@ async function enviarArquivo() {
             .trim();
 
 
+    const nomeDocumento =
+        document
+            .getElementById(
+                'nomeDocumento'
+            )
+            .value
+            .trim();
+
+
     if (!usuarioLogado) {
 
         status.innerHTML =
@@ -3150,17 +3205,13 @@ async function enviarArquivo() {
          * para a pasta da escola dentro do
          * grupo escolhido.
          *
-         * O backend gera o nome final:
+         * Nome do documento é opcional.
          *
-         * 1 arquivo:
-         *   ESCOLA JOÃO.pdf
-         *
-         * vários arquivos:
-         *   ESCOLA JOÃO 1.pdf
-         *   ESCOLA JOÃO 2.pdf
-         *   ESCOLA JOÃO 3.pdf
-         *
-         * A extensão original é preservada.
+         * Se preenchido, o backend usa o nome informado
+         * e preserva a extensão original.
+         * Se vazio, mantém o nome original de cada arquivo.
+         * Em caso de nome já existente, o backend nunca
+         * substitui o arquivo: usa data/hora do envio.
          */
 
         for (
@@ -3206,6 +3257,9 @@ async function enviarArquivo() {
 
                     escola:
                         nomeEscola,
+
+                    nomeDocumento:
+                        nomeDocumento,
 
                     data:
                         dadosBase64,
@@ -3275,6 +3329,13 @@ async function enviarArquivo() {
         document
             .getElementById(
                 'nomeEscola'
+            )
+            .readOnly = true;
+
+
+        document
+            .getElementById(
+                'nomeDocumento'
             )
             .value = '';
 
