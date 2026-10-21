@@ -1142,6 +1142,17 @@
 
         }
 
+    
+        .painel-arquivos { margin: 24px 0 18px; text-align:left; border:1px solid #d0d5dd; border-radius:10px; padding:14px; background:#fff; }
+        .painel-arquivos h3 { margin:0 0 8px; color:#17365d; }
+        .painel-arquivos .arquivo-painel { padding:12px 0; border-bottom:1px solid #eaecf0; }
+        .painel-arquivos .arquivo-painel:last-child { border-bottom:0; }
+        .painel-arquivos .arquivo-nome { font-weight:600; overflow-wrap:anywhere; margin-bottom:5px; }
+        .painel-arquivos .arquivo-acoes { display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin-top:8px; }
+        .painel-arquivos a { color:#146fc1; font-weight:600; }
+        .painel-arquivos input[type=file] { max-width:100%; font-size:12px; }
+        .painel-arquivos .painel-vazio { color:#667085; font-size:13px; }
+
     </style>
 
 </head>
@@ -1596,6 +1607,15 @@
         ></div>
 
 
+        <!-- PAINEL DE ARQUIVOS DO USUÁRIO -->
+        <section class="painel-arquivos" aria-labelledby="tituloMeusArquivos">
+            <h3 id="tituloMeusArquivos">Meus arquivos enviados</h3>
+            <p>Baixe um arquivo ou selecione uma nova versão para substituí-lo.</p>
+            <button type="button" id="btnAtualizarArquivos" onclick="carregarMeusArquivos()">Atualizar lista</button>
+            <div id="statusMeusArquivos" class="status-msg" aria-live="polite"></div>
+            <div id="listaMeusArquivos"><p class="painel-vazio">Faça login para consultar seus arquivos.</p></div>
+        </section>
+
         <!-- SAIR -->
 
         <button
@@ -1664,6 +1684,7 @@ const URL_SCRIPT =
 
 
 let usuarioLogado = '';
+let tokenSessao = '';
 let escolasPorGrupo = {};
 let grupoVinculado = '';
 let escolaVinculada = '';
@@ -2149,6 +2170,7 @@ async function efetuarLogin() {
 
             usuarioLogado =
                 resultado.usuario;
+            tokenSessao = resultado.token || '';
 
             escolasPorGrupo =
                 resultado.escolasPorGrupo || {};
@@ -2219,6 +2241,7 @@ async function efetuarLogin() {
 
 
             status.innerHTML = '';
+            carregarMeusArquivos();
 
         } else {
 
@@ -2304,12 +2327,128 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 // ==========================================
+// PAINEL: LISTAR, BAIXAR E SUBSTITUIR ARQUIVOS
+// ==========================================
+
+async function carregarMeusArquivos() {
+    const lista = document.getElementById('listaMeusArquivos');
+    const status = document.getElementById('statusMeusArquivos');
+    if (!usuarioLogado) return;
+    lista.innerHTML = '<p class="painel-vazio">Carregando seus arquivos...</p>';
+    status.textContent = '';
+    try {
+        const resultado = await enviarRequisicao(new URLSearchParams({acao:'listarArquivos', usuario:usuarioLogado, token:tokenSessao}));
+        if (!resultado.sucesso) throw new Error(resultado.mensagem || 'Não foi possível carregar os arquivos.');
+        lista.innerHTML = '';
+        if (!resultado.arquivos || !resultado.arquivos.length) {
+            lista.innerHTML = '<p class="painel-vazio">Nenhum arquivo enviado encontrado para esta conta.</p>';
+            return;
+        }
+        resultado.arquivos.forEach(arquivo => {
+            const item = document.createElement('div');
+            item.className = 'arquivo-painel';
+            const nome = document.createElement('div');
+            nome.className = 'arquivo-nome';
+            nome.textContent = arquivo.nome;
+            const info = document.createElement('div');
+            info.className = 'painel-vazio';
+            info.textContent = [arquivo.pasta, arquivo.escola].filter(Boolean).join(' • ');
+            const acoes = document.createElement('div');
+            acoes.className = 'arquivo-acoes';
+            const link = document.createElement('button');
+            link.type = 'button';
+            link.textContent = 'Baixar arquivo';
+            link.addEventListener('click', () => baixarArquivoUsuario(arquivo));
+            acoes.appendChild(link);
+            const rotulo = document.createElement('label');
+            rotulo.textContent = 'Substituir por nova versão: ';
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.addEventListener('change', () => {
+                if (input.files && input.files[0]) substituirArquivoEnviado(arquivo, input.files[0], input);
+            });
+            rotulo.appendChild(input);
+            acoes.appendChild(rotulo);
+            item.appendChild(nome);
+            if (info.textContent) item.appendChild(info);
+            item.appendChild(acoes);
+            lista.appendChild(item);
+        });
+    } catch (erro) {
+        lista.innerHTML = '<p class="painel-vazio">Não foi possível carregar os arquivos.</p>';
+        status.textContent = erro.message || String(erro);
+        status.style.color = '#d93025';
+    }
+}
+
+async function baixarArquivoUsuario(arquivo) {
+    const status = document.getElementById('statusMeusArquivos');
+    status.textContent = 'Preparando download...';
+    status.style.color = '#146fc1';
+    try {
+        const resultado = await enviarRequisicao(new URLSearchParams({
+            acao:'baixarArquivo', usuario:usuarioLogado, token:tokenSessao, idArquivo:arquivo.id
+        }));
+        if (!resultado || !resultado.sucesso) throw new Error(resultado && resultado.mensagem || 'Não foi possível baixar o arquivo.');
+        const binario = atob(resultado.data);
+        const bytes = new Uint8Array(binario.length);
+        for (let i = 0; i < binario.length; i++) bytes[i] = binario.charCodeAt(i);
+        const blob = new Blob([bytes], {type:resultado.mimeType || 'application/octet-stream'});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = resultado.nome || arquivo.nome;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+        status.textContent = 'Download iniciado.';
+        status.style.color = '#188038';
+    } catch (erro) {
+        status.textContent = erro.message || String(erro);
+        status.style.color = '#d93025';
+    }
+}
+
+async function substituirArquivoEnviado(arquivoAntigo, arquivoNovo, input) {
+    const status = document.getElementById('statusMeusArquivos');
+    if (!confirm('Substituir "' + arquivoAntigo.nome + '" por "' + arquivoNovo.name + '"? O arquivo anterior será enviado para a lixeira do Drive.')) {
+        input.value = '';
+        return;
+    }
+    status.textContent = 'Enviando nova versão...';
+    status.style.color = '#146fc1';
+    input.disabled = true;
+    try {
+        const base64 = await lerArquivoBase64(arquivoNovo);
+        const parametros = new URLSearchParams({
+            acao:'substituirArquivo', usuario:usuarioLogado, token:tokenSessao, idArquivo:arquivoAntigo.id,
+            filenameOriginal:arquivoNovo.name, mimeType:arquivoNovo.type || 'application/octet-stream', data:base64
+        });
+        const resultado = await enviarRequisicao(parametros);
+        if (!resultado || !resultado.sucesso) throw new Error(resultado && resultado.mensagem || 'Falha ao substituir o arquivo.');
+        status.textContent = '✓ ' + resultado.mensagem;
+        status.style.color = '#188038';
+        await carregarMeusArquivos();
+    } catch (erro) {
+        status.textContent = '✕ ' + (erro.message || String(erro));
+        status.style.color = '#d93025';
+    } finally {
+        input.disabled = false;
+        input.value = '';
+    }
+}
+
+// ==========================================
 // LOGOUT
 // ==========================================
 
 function efetuarLogout() {
 
     usuarioLogado = '';
+    tokenSessao = '';
+    document.getElementById('listaMeusArquivos').innerHTML = '<p class="painel-vazio">Faça login para consultar seus arquivos.</p>';
+    document.getElementById('statusMeusArquivos').textContent = '';
     escolasPorGrupo = {};
     grupoVinculado = '';
     escolaVinculada = '';
