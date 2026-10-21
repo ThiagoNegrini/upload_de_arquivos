@@ -19,7 +19,7 @@
         .container {
             display: flex;
             flex-direction: row;
-            align-items: flex-start;
+            align-items: center;
             justify-content: center;
             gap: 40px;
             max-width: 1000px;
@@ -39,7 +39,6 @@
         .logo-area img {
             max-width: 100%;
             height: auto;
-            object-fit: contain;
             display: block;
             margin: 0 auto;
         }
@@ -61,14 +60,13 @@
         }
         input[type="file"] { margin: 10px 0; width: 100%; font-size: 14px; }
         
-        /* Estilização da Tabela de Arquivos do Usuário */
+        /* Gerenciador de Arquivos */
         .file-manager { margin-top: 25px; text-align: left; border-top: 2px solid #eee; padding-top: 20px; }
         .file-manager h3 { font-size: 16px; color: #444; margin-bottom: 10px; }
         .file-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13px; }
         .file-table th { background-color: #f8f9fa; color: #555; font-weight: bold; padding: 10px; border-bottom: 2px solid #dee2e6; text-align: left; }
         .file-table td { padding: 10px; border-bottom: 1px solid #dee2e6; color: #333; vertical-align: middle; }
         
-        /* Ações organizadas por botões compactos */
         .actions-cell { display: flex; gap: 6px; }
         .btn-action { padding: 5px 8px; border-radius: 4px; border: none; font-size: 11px; font-weight: bold; cursor: pointer; color: white; text-decoration: none; }
         .btn-download { background-color: #28a745; }
@@ -84,15 +82,16 @@
 
         @media (max-width: 768px) {
             .container { flex-direction: column; align-items: center; gap: 20px; }
-            .logo-area { max-width: 220px; }
+            .logo-area { max-width: 280px; }
         }
     </style>
 </head>
 <body>
 
 <div class="container">
+    <!-- URL DO LOGOTIPO CORRIGIDA PARA O SERVIDOR DE PRODUÇÃO DO GITHUB PAGES -->
     <div class="logo-area">
-        <img src="https://github.com" alt="Logotipo UESP" id="imgLogo">
+        <img src="https://github.io" alt="Logotipo UESP" id="imgLogo">
     </div>
 
     <!-- TELA 1: LOGIN -->
@@ -111,7 +110,7 @@
         <div id="loginStatus" class="status-msg"></div>
     </div>
 
-    <!-- TELA 2: ÁREA DO USUÁRIO (MANIPULAÇÃO DE ARQUIVOS) -->
+    <!-- TELA 2: ÁREA DO USUÁRIO -->
     <div class="card hidden" id="telaUpload">
         <h2>PAINEL DO USUÁRIO - CARNAVAL 2027</h2>
         <p>Olá, <strong id="nomeUsuarioLogado"></strong>! Gerencie os seus documentos abaixo.</p>
@@ -129,7 +128,6 @@
         <button id="btnEnviar" class="btn-primary" onclick="enviarArquivo('upload')">Enviar Novo Arquivo</button>
         <div id="status" class="status-msg"></div>
 
-        <!-- MANAGER: LISTAGEM E OPERAÇÃO EM ARQUIVOS EXISTENTES -->
         <div class="file-manager">
             <h3>🗂️ Arquivos na Pasta</h3>
             <table class="file-table">
@@ -142,7 +140,7 @@
                 </thead>
                 <tbody id="corpoTabelaArquivos">
                     <tr>
-                        <td colspan="3" style="text-align: center; color: #888;">Digite ou altere o nome da pasta para carregar os arquivos...</td>
+                        <td colspan="3" style="text-align: center; color: #888;">Digite o nome da pasta acima para carregar arquivos...</td>
                     </tr>
                 </tbody>
             </table>
@@ -153,7 +151,7 @@
 
 <script>
     const BASE_DE_DADOS = { 'adm': '123', 'joao': 'senha987', 'maria': 'google2026', 'suporte': 'token#44' };
-    const URL_SCRIPT = 'https://script.google.com/macros/s/AKfycbwsxIMj1VVekYs3KPS1j7GyuBZ9xMa3NvVrlEAMGeu4D3Gg72JJVUydU2U_5pNCOVQ53Q/exec';
+    const URL_SCRIPT = 'https://google.com';
 
     function efetuarLogin() {
         const usuarioInput = document.getElementById('loginUsuario').value.trim();
@@ -181,18 +179,22 @@
         document.getElementById('nomePastaCustom').value = '';
     }
 
-    // FUNÇÃO QUE CONSULTA O SERVIDOR DO DRIVE E MONTA A LISTA DE ARQUIVOS
     function listarArquivosDoUsuario() {
         const nomePasta = document.getElementById('nomePastaCustom').value.trim();
         const tabela = document.getElementById('corpoTabelaArquivos');
         
+        if(nomePasta === "") {
+            tabela.innerHTML = '<tr><td colspan="3" style="text-align: center; color: #888;">Digite o nome da pasta acima para carregar arquivos...</td></tr>';
+            return;
+        }
+
         tabela.innerHTML = '<tr><td colspan="3" style="text-align: center; color: #1a73e8;">⏳ Carregando lista de documentos...</td></tr>';
 
         fetch(`${URL_SCRIPT}?action=list&nomePasta=${encodeURIComponent(nomePasta)}`, { method: 'POST' })
         .then(response => response.json())
         .then(data => {
             tabela.innerHTML = '';
-            if (data.length === 0) {
+            if (!data || data.length === 0) {
                 tabela.innerHTML = '<tr><td colspan="3" style="text-align: center; color: #888;">Nenhum arquivo encontrado nesta pasta.</td></tr>';
                 return;
             }
@@ -202,11 +204,12 @@
                         <td>${arq.name}</td>
                         <td>${arq.size}</td>
                         <td class="actions-cell">
-                            <a href="${arq.url}" target="_blank" class="btn-action btn-download" title="Visualizar/Baixar">Abrir</a>
-                            <button class="btn-action btn-replace" onclick="dispararSubstituicao('${arq.name}')" title="Substituir por um novo">Substituir</button>
-                            <button class="btn-action btn-delete" onclick="deletarArquivoDoUsuario('${arq.id}')" title="Excluir arquivo">Excluir</button>
+                            <a href="${arq.url}" target="_blank" class="btn-action btn-download">Abrir</a>
+                            <button class="btn-action btn-replace" onclick="dispararSubstituicao('${arq.name}')">Substituir</button>
+                            <button class="btn-action btn-delete" onclick="deletarArquivoDoUsuario('${arq.id}')">Excluir</button>
                         </td>
                     </tr>
                 `;
             });
         })
+        .catch(() => {
