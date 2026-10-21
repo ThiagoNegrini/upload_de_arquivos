@@ -1,284 +1,3614 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Envio de Documentos</title>
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta name="author" content="Thiago A Negrini">
+    <meta name="copyright" content="Criado por - Thiago A Negrini - © 2026">
+
+    <title>Sistema de Envio de Documentos - UESP</title>
+
     <style>
-        /* Estilos Globais e Responsividade */
-        body { 
-            font-family: Arial, sans-serif; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            min-height: 100vh; 
-            background-color: #f4f4f9; 
-            margin: 0; 
-            padding: 20px;
+
+        /* ==========================================
+           CONFIGURAÇÃO GERAL
+        =========================================== */
+
+        * {
             box-sizing: border-box;
         }
 
-        /* Container Principal Split (Logo + Card) */
-        .container {
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100%;
+        }
+
+
+        /* ==========================================
+           FUNDO COM DEGRADÊ
+        =========================================== */
+
+        body {
+
+            font-family:
+                Arial,
+                Helvetica,
+                sans-serif;
+
+            min-height: 100vh;
+
             display: flex;
-            flex-direction: row;
-            align-items: center;
+
             justify-content: center;
-            gap: 50px;
-            max-width: 900px;
-            width: 100%;
+
+            align-items: center;
+
+            padding: 30px;
+
+            background:
+                linear-gradient(
+                    120deg,
+                    #102b68 0%,
+                    #123f91 30%,
+                    #146fc1 65%,
+                    #25bfd3 100%
+                );
+
+            background-attachment: fixed;
+
         }
 
-        /* Área do Logotipo com Moldura */
+
+        /* ==========================================
+           CONTAINER PRINCIPAL
+        =========================================== */
+
+        .container {
+
+            width: min(1240px, calc(100% - 48px));
+
+            min-height: calc(100vh - 48px);
+
+            margin: 24px auto;
+
+            display: grid;
+
+            grid-template-columns: 288px minmax(0, 760px);
+
+            grid-template-rows: auto 1fr;
+
+            align-items: start;
+
+            justify-content: center;
+
+            column-gap: 48px;
+
+            row-gap: 24px;
+
+        }
+
+
+        /* ==========================================
+           LOGO — AUMENTADO EM 15%
+        =========================================== */
+
         .logo-area {
-            flex: 1;
-            text-align: center;
-            max-width: 320px;
-            background: white;
-            padding: 15px;
-            border: 1px solid #e0e0e0;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
-            box-sizing: border-box;
-        }
-        .logo-area img {
-            max-width: 100%;
-            height: auto;
-            object-fit: contain;
-            display: block;
-            margin: 0 auto;
-        }
 
-        /* Card do Formulário */
-        .card { 
-            background: white; 
-            padding: 30px; 
-            border-radius: 8px; 
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1); 
+            grid-column: 1;
+
+            grid-row: 1;
+
             width: 100%;
-            max-width: 360px; 
-            text-align: center; 
-            box-sizing: border-box;
+
+            display: flex;
+
+            align-items: flex-start;
+
+            justify-content: flex-start;
+
+            padding-top: 4px;
+
         }
 
-        h2 { color: #333; margin-top: 0; font-size: 22px; }
-        p { color: #666; font-size: 14px; margin-bottom: 20px; }
-        
-        /* Formulários e Inputs */
-        .form-group { text-align: left; margin-bottom: 15px; }
-        label { font-size: 14px; color: #555; font-weight: bold; display: block; margin-bottom: 5px; }
-        input[type="text"], input[type="password"] { 
-            width: 100%; 
-            padding: 12px; 
-            border: 1px solid #ccc; 
-            border-radius: 4px; 
-            box-sizing: border-box; 
-            font-size: 16px; 
-            background-color: #fff;
+
+        .logo-area img {
+
+            display: block;
+
+            width: 100%;
+
+            max-width: 288px;
+
+            height: auto;
+
+            object-fit: contain;
+
+            padding: 18px;
+
+            background: rgba(255, 255, 255, 0.97);
+
+            border: 1px solid rgba(255, 255, 255, 0.90);
+
+            border-radius: 22px;
+
+            box-shadow:
+                0 20px 45px rgba(0, 0, 0, 0.20);
+
+            transition:
+                transform 0.25s ease,
+                box-shadow 0.25s ease;
+
         }
-        input[type="file"] { 
-            margin: 15px 0; 
-            width: 100%; 
-            box-sizing: border-box; 
-            font-size: 14px;
+
+
+        .logo-area img:hover {
+
+            transform: translateY(-4px);
+
+            box-shadow:
+                0 25px 55px rgba(0, 0, 0, 0.25);
+
         }
-        
-        /* Área de Pré-visualização / Miniatura */
-        .preview-container {
-            margin: 15px 0;
-            padding: 10px;
-            border: 2px dashed #ccc;
-            border-radius: 6px;
-            background-color: #fafafa;
-            display: none; 
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-        }
-        .preview-image {
-            max-width: 120px;
-            max-height: 120px;
-            border-radius: 4px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-            object-fit: cover;
-        }
-        .preview-icon {
-            font-size: 48px;
-            margin-bottom: 5px;
-        }
-        .preview-filename {
+
+
+        /* ==========================================
+           DIREITOS AUTORAIS
+        =========================================== */
+
+        .copyright {
+
+            width: 100%;
+
+            grid-column: 1 / span 2;
+
+            grid-row: 3;
+
+            text-align: center;
+
+            color: rgba(255, 255, 255, 0.96);
+
             font-size: 12px;
-            color: #555;
-            margin-top: 5px;
-            word-break: break-all;
-            font-weight: bold;
-        }
-        
-        /* Botões */
-        button { 
-            background: #1a73e8; 
-            color: white; 
-            border: none; 
-            padding: 12px 15px; 
-            border-radius: 4px; 
-            cursor: pointer; 
-            width: 100%; 
-            font-size: 16px; 
-            font-weight: bold; 
-            transition: background 0.2s; 
-            margin-bottom: 10px; 
-        }
-        button:hover { background: #1557b0; }
-        button:disabled { background: #ccc; cursor: not-allowed; }
-        
-        .btn-logout { background: #d93025; color: white; border: none; font-size: 12px; padding: 6px 10px; width: auto; margin-top: 15px; border-radius: 4px; cursor: pointer; }
-        .btn-logout:hover { background: #a51d12; }
-        
-        .status-msg { margin-top: 15px; font-size: 14px; font-weight: 500; }
-        
-        /* Controle de Telas */
-        .hidden { display: none; }
 
-        /* REGRAS PARA TELEMÓVEIS / TELAS PEQUENAS */
-        @media (max-width: 768px) {
+            font-weight: 700;
+
+            letter-spacing: 0.2px;
+
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.24);
+
+            padding: 2px 0 4px;
+
+        }
+
+
+        /* ==========================================
+           CARTÃO
+        =========================================== */
+
+        .card {
+
+            grid-column: 2;
+
+            grid-row: 1 / span 2;
+
+            width: 100%;
+
+            max-width: 760px;
+
+            padding: 34px;
+
+            background: rgba(255, 255, 255, 0.97);
+
+            border-radius: 22px;
+
+            box-shadow:
+                0 22px 50px rgba(0, 0, 0, 0.20);
+
+            text-align: center;
+
+            position: relative;
+
+            overflow: hidden;
+
+            animation:
+                aparecer 0.4s ease;
+
+        }
+
+
+        .card::before {
+
+            content: "";
+
+            position: absolute;
+
+            top: 0;
+
+            left: 0;
+
+            width: 100%;
+
+            height: 5px;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    #102b68,
+                    #123f91,
+                    #146fc1,
+                    #25bfd3
+                );
+
+        }
+
+
+        @keyframes aparecer {
+
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+        }
+
+
+        /* ==========================================
+           LINKS DO MANUAL
+        =========================================== */
+
+        .manual-links {
+
+            grid-column: 1;
+
+            grid-row: 2;
+
+            width: 100%;
+
+            display: flex;
+
+            flex-direction: column;
+
+            gap: 10px;
+
+            align-self: start;
+
+            padding: 0;
+
+        }
+
+
+        .manual-links-titulo {
+
+            color: #ffffff;
+
+            font-size: 14px;
+
+            font-weight: 800;
+
+            text-align: center;
+
+            margin-bottom: 2px;
+
+            text-shadow: 0 1px 4px rgba(0, 0, 0, 0.18);
+
+        }
+
+
+        .manual-link {
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            min-height: 46px;
+
+            padding: 11px 14px;
+
+            border-radius: 12px;
+
+            background: rgba(255, 255, 255, 0.96);
+
+            color: #102b68;
+
+            text-decoration: none;
+
+            font-size: 13px;
+
+            font-weight: 800;
+
+            box-shadow: 0 10px 24px rgba(0, 0, 0, 0.14);
+
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+        }
+
+
+        .manual-link:hover {
+
+            transform: translateY(-2px);
+
+            box-shadow: 0 14px 28px rgba(0, 0, 0, 0.18);
+
+        }
+
+
+        .manual-link.video {
+
+            background: linear-gradient(135deg, #146fc1, #25bfd3);
+
+            color: #ffffff;
+
+        }
+
+
+        @media (max-width: 900px) {
+
+            .manual-links {
+                grid-column: 1;
+                grid-row: 3;
+            }
+
+        }
+
+
+        /* ==========================================
+           TÍTULOS
+        =========================================== */
+
+        h2 {
+
+            margin-top: 0;
+
+            margin-bottom: 12px;
+
+            font-size: 23px;
+
+            line-height: 1.25;
+
+            font-weight: 800;
+
+            color: #102b68;
+
+        }
+
+
+        p {
+
+            color: #667085;
+
+            font-size: 14px;
+
+            line-height: 1.5;
+
+            margin-bottom: 24px;
+
+        }
+
+
+        p strong {
+
+            color: #123f91;
+
+        }
+
+
+        /* ==========================================
+           FORMULÁRIOS
+        =========================================== */
+
+        .form-group {
+
+            text-align: left;
+
+            margin-bottom: 17px;
+
+        }
+
+
+        label {
+
+            display: block;
+
+            margin-bottom: 7px;
+
+            font-size: 13px;
+
+            font-weight: 700;
+
+            color: #344054;
+
+        }
+
+
+        input[type="text"],
+        input[type="password"] {
+
+            width: 100%;
+
+            padding: 13px 14px;
+
+            border:
+                1px solid #d0d5dd;
+
+            border-radius: 10px;
+
+            background: #ffffff;
+
+            color: #101828;
+
+            font-size: 15px;
+
+            outline: none;
+
+            transition:
+                border-color 0.2s ease,
+                box-shadow 0.2s ease;
+
+        }
+
+
+        input[type="text"]:focus,
+        input[type="password"]:focus {
+
+            border-color:
+                #146fc1;
+
+            box-shadow:
+                0 0 0 4px
+                rgba(20, 111, 193, 0.12);
+
+        }
+
+        select {
+
+            width: 100%;
+
+            padding: 13px 14px;
+
+            border:
+                1px solid #d0d5dd;
+
+            border-radius: 10px;
+
+            background: #ffffff;
+
+            color: #101828;
+
+            font-size: 15px;
+
+            outline: none;
+
+            cursor: pointer;
+
+            transition:
+                border-color 0.2s ease,
+                box-shadow 0.2s ease;
+
+        }
+
+
+        select:focus {
+
+            border-color:
+                #146fc1;
+
+            box-shadow:
+                0 0 0 4px
+                rgba(20, 111, 193, 0.12);
+
+        }
+
+
+        input::placeholder {
+
+            color: #98a2b3;
+
+        }
+
+
+        /* ==========================================
+           CAMPO DE ARQUIVO
+        =========================================== */
+
+        input[type="file"] {
+
+            display: block;
+
+            width: 100%;
+
+            margin:
+                10px 0 18px;
+
+            padding: 10px;
+
+            border:
+                1px dashed #b8c7d9;
+
+            border-radius: 10px;
+
+            background:
+                #f8fafc;
+
+            color: #475467;
+
+            font-size: 13px;
+
+            cursor: pointer;
+
+        }
+
+
+        input[type="file"]:hover {
+
+            border-color:
+                #146fc1;
+
+            background:
+                #f1f8ff;
+
+        }
+
+
+        /* ==========================================
+           LISTA DE ARQUIVOS
+        =========================================== */
+
+        .lista-arquivos {
+
+            text-align: left;
+
+            margin:
+                -5px 0 18px;
+
+            font-size: 13px;
+
+            color: #344054;
+
+        }
+
+
+        .arquivo-item {
+
+            background:
+                #f8fafc;
+
+            border:
+                1px solid #d0d5dd;
+
+            border-radius: 8px;
+
+            padding:
+                8px 10px;
+
+            margin-bottom: 6px;
+
+            word-break:
+                break-word;
+
+        }
+
+
+        .arquivo-item strong {
+
+            color:
+                #123f91;
+
+        }
+
+
+        .arquivo-item {
+
+            display: grid;
+
+            grid-template-columns:
+                32px 1fr auto;
+
+            align-items: center;
+
+            gap: 10px;
+
+            cursor: grab;
+
+            user-select: none;
+
+        }
+
+
+        .arquivo-item:active {
+
+            cursor: grabbing;
+
+        }
+
+
+        .arquivo-item.arrastando {
+
+            opacity: 0.45;
+
+        }
+
+
+        .arquivo-nome {
+
+            min-width: 0;
+
+            overflow-wrap: anywhere;
+
+        }
+
+
+        .arquivo-remover {
+
+            border: 0;
+
+            background:
+                #fee4e2;
+
+            color:
+                #b42318;
+
+            width: 32px;
+
+            height: 32px;
+
+            padding: 0;
+
+            margin: 0;
+
+            box-shadow: none;
+
+            border-radius: 8px;
+
+            font-size: 16px;
+
+        }
+
+
+        .arquivo-remover:hover {
+
+            transform: none;
+
+            box-shadow: none;
+
+            background:
+                #fecdca;
+
+        }
+
+
+        .aviso-ordem {
+
+            margin:
+                -8px 0 16px;
+
+            color:
+                #667085;
+
+            font-size: 12px;
+
+            text-align: left;
+
+        }
+
+
+        /* ==========================================
+           BOTÕES
+        =========================================== */
+
+        button {
+
+            width: 100%;
+
+            padding:
+                13px 16px;
+
+            margin-bottom: 10px;
+
+            border: none;
+
+            border-radius: 10px;
+
+            background:
+                linear-gradient(
+                    100deg,
+                    #102b68 0%,
+                    #123f91 35%,
+                    #146fc1 70%,
+                    #25bfd3 100%
+                );
+
+            color:
+                #ffffff;
+
+            font-size: 15px;
+
+            font-weight: 700;
+
+            cursor: pointer;
+
+            box-shadow:
+                0 7px 18px
+                rgba(18, 63, 145, 0.25);
+
+            transition:
+                transform 0.2s ease,
+                box-shadow 0.2s ease;
+
+        }
+
+
+        button:hover {
+
+            transform:
+                translateY(-2px);
+
+            box-shadow:
+                0 11px 25px
+                rgba(18, 63, 145, 0.32);
+
+        }
+
+
+        button:active {
+
+            transform:
+                translateY(0);
+
+        }
+
+
+        button:disabled {
+
+            background:
+                #aab3bf;
+
+            cursor:
+                not-allowed;
+
+            box-shadow:
+                none;
+
+            transform:
+                none;
+
+        }
+
+
+        /* ==========================================
+           BOTÃO SAIR
+        =========================================== */
+
+        .btn-logout {
+
+            width: auto;
+
+            margin-top: 18px;
+
+            margin-bottom: 0;
+
+            padding:
+                8px 16px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #b42318,
+                    #d92d20
+                );
+
+            font-size: 12px;
+
+            box-shadow:
+                0 5px 12px
+                rgba(217, 45, 32, 0.20);
+
+        }
+
+
+        .btn-logout:hover {
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #912018,
+                    #b42318
+                );
+
+        }
+
+
+        /* ==========================================
+           STATUS
+        =========================================== */
+
+        .status-msg {
+
+            min-height: 20px;
+
+            margin-top: 15px;
+
+            font-size: 13px;
+
+            font-weight: 600;
+
+            line-height: 1.5;
+
+        }
+
+
+        /* ==========================================
+           CONTADOR DE PRAZO - GRUPO ESPECIAL DE BAIRROS
+        =========================================== */
+
+        .contador-prazo {
+
+            display: none;
+
+            margin:
+                -5px 0 18px;
+
+            padding:
+                13px 15px;
+
+            border:
+                1px solid #f5c26b;
+
+            border-radius:
+                10px;
+
+            background:
+                #fff8e8;
+
+            color:
+                #8a4b08;
+
+            font-size:
+                13px;
+
+            font-weight:
+                700;
+
+            line-height:
+                1.5;
+
+            text-align:
+                center;
+
+        }
+
+
+        .contador-prazo .contador-titulo {
+
+            display: block;
+
+            margin-bottom: 4px;
+
+            font-size:
+                12px;
+
+            text-transform:
+                uppercase;
+
+            letter-spacing:
+                0.3px;
+
+        }
+
+
+        .contador-prazo .contador-tempo {
+
+            display: block;
+
+            color:
+                #b42318;
+
+            font-size:
+                18px;
+
+            font-weight:
+                800;
+
+        }
+
+
+        .contador-prazo.expirado {
+
+            border-color:
+                #f04438;
+
+            background:
+                #fff1f0;
+
+            color:
+                #b42318;
+
+        }
+
+
+        /* ==========================================
+           LINKS
+        =========================================== */
+
+        .link {
+
+            display: block;
+
+            margin-top: 14px;
+
+            color:
+                #0b5cad;
+
+            font-size: 13px;
+
+            font-weight: 600;
+
+            cursor: pointer;
+
+            transition:
+                color 0.2s ease;
+
+        }
+
+
+        .link:hover {
+
+            color:
+                #159db8;
+
+        }
+
+
+        /* ==========================================
+           ELEMENTO OCULTO
+        =========================================== */
+
+        .hidden {
+
+            display: none;
+
+        }
+
+
+        /* ==========================================
+           CELULAR / TABLET
+        =========================================== */
+
+        @media (max-width: 900px) {
+
+            body {
+
+                align-items:
+                    flex-start;
+
+                padding: 0;
+
+            }
+
+
             .container {
-                flex-direction: column; 
-                gap: 20px;
+
+                width:
+                    min(760px, calc(100% - 32px));
+
+                min-height:
+                    auto;
+
+                margin:
+                    16px auto 24px;
+
+                display:
+                    flex;
+
+                flex-direction:
+                    column;
+
+                align-items:
+                    stretch;
+
+                gap:
+                    18px;
+
             }
+
+
             .logo-area {
-                max-width: 220px; 
-                padding: 10px;
+
+                order:
+                    0;
+
+                width:
+                    100%;
+
+                justify-content:
+                    center;
+
+                align-items:
+                    center;
+
+                padding-top:
+                    0;
+
             }
+
+
+            .logo-area img {
+
+                width:
+                    auto;
+
+                max-width:
+                    265px;
+
+            }
+
+
+            .card {
+
+                order:
+                    1;
+
+                grid-column:
+                    auto;
+
+                grid-row:
+                    auto;
+
+                max-width:
+                    100%;
+
+            }
+
+        }
+
+
+        @media (max-width: 700px) {
+
             .card {
                 padding: 20px;
             }
+
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .file-item {
+                grid-template-columns:
+                    30px 1fr auto;
+            }
+
+            .file-size {
+                display: none;
+            }
+
         }
+
+
+        @media (max-width: 480px) {
+
+            .container {
+
+                width:
+                    min(100% - 24px, 520px);
+
+                margin:
+                    12px auto 20px;
+
+            }
+
+
+            .logo-area img {
+
+                max-width:
+                    219px;
+
+                padding:
+                    14px;
+
+                border-radius:
+                    18px;
+
+            }
+
+
+            .card {
+
+                padding:
+                    20px 18px;
+
+            }
+
+
+            h2 {
+
+                font-size:
+                    20px;
+
+            }
+
+        }
+
     </style>
+
 </head>
+
+
 <body>
 
+
 <div class="container">
-    
-    <!-- ÁREA DO LOGOTIPO -->
+
+
+    <!-- ==========================================
+         LOGO
+    =========================================== -->
+
     <div class="logo-area">
-        <img src="https://github.com" alt="Logotipo UESP" id="imgLogo">
+
+        <img
+            src="https://github.com/ThiagoNegrini/upload_de_arquivos/blob/main/LOGO_SITE.PNG?raw=true"
+            alt="Logotipo da Empresa"
+            id="imgLogo"
+        >
+
     </div>
 
-    <!-- TELA 1: LOGIN -->
-    <div class="card" id="telaLogin">
-        <h2>ACESSO AO PAINEL DE ENVIO</h2>
-        <p>Insira suas credenciais pré-configuradas para continuar.</p>
-        
+
+    <!-- ==========================================
+         LOGIN
+    =========================================== -->
+
+    <div
+        class="card"
+        id="telaLogin"
+    >
+
+        <h2>
+            ACESSO AO PAINEL DE ENVIO
+        </h2>
+
+
+        <p>
+            Entre com seu usuário e senha.
+        </p>
+
+
         <div class="form-group">
-            <label for="loginUsuario">Usuário:</label>
-            <input type="text" id="loginUsuario" placeholder="Digite seu usuário">
+
+            <label for="loginUsuario">
+                Usuário:
+            </label>
+
+            <input
+                type="text"
+                id="loginUsuario"
+                placeholder="Digite seu usuário"
+            >
+
         </div>
-        
+
+
         <div class="form-group">
-            <label for="loginSenha">Senha:</label>
-            <input type="password" id="loginSenha" placeholder="Digite sua senha">
+
+            <label for="loginSenha">
+                Senha:
+            </label>
+
+            <input
+                type="password"
+                id="loginSenha"
+                placeholder="Digite sua senha"
+            >
+
         </div>
-        
-        <button onclick="efetuarLogin()">Entrar</button>
-        <div id="loginStatus" class="status-msg"></div>
+
+
+        <button
+            id="btnLogin"
+            onclick="efetuarLogin()"
+        >
+            Entrar
+        </button>
+
+
+        <div
+            id="loginStatus"
+            class="status-msg"
+        ></div>
+
+
+        <span
+            class="link"
+            onclick="mostrarRecuperacaoSenha()"
+        >
+            Esqueci minha senha
+        </span>
+
+
+        <span
+            class="link"
+            onclick="mostrarCadastro()"
+        >
+            Ainda não possui cadastro? Criar conta
+        </span>
+
     </div>
 
-    <!-- TELA 2: UPLOAD (APÓS O LOGIN) -->
-    <div class="card hidden" id="telaUpload">
-        <h2>SISTEMA DE ENVIO - DOCUMENTAÇÃO CARNAVAL 2027</h2>
-        <p>Olá, <strong id="nomeUsuarioLogado"></strong>! Preencha as informações do arquivo.</p>
-        
-        <div class="form-group">
-            <label for="nomePastaCustom">Nome da Pasta no Drive:</label>
-            <input type="text" id="nomePastaCustom" placeholder="Ex: Nome_da_Agremiacao">
-        </div>
+
+    <!-- ==========================================
+         CADASTRO
+    =========================================== -->
+
+    <div
+        class="card hidden"
+        id="telaCadastro"
+    >
+
+        <h2>
+            CRIAR CADASTRO
+        </h2>
+
+
+        <p>
+            Preencha seus dados para criar seu acesso.
+        </p>
+
 
         <div class="form-group">
-            <label for="nomeArquivoCustom">Nome do Arquivo / Identificação:</label>
-            <input type="text" id="nomeArquivoCustom" placeholder="Ex: Oficio_Diretoria_01">
+
+            <label for="cadastroNome">
+                Nome:
+            </label>
+
+            <input
+                type="text"
+                id="cadastroNome"
+                placeholder="Seu nome"
+            >
+
         </div>
 
-        <!-- SELETOR DE ARQUIVOS -->
-        <input type="file" id="arquivoInput" onchange="mostrarPreview()">
 
-        <!-- ÁREA PARA MINIATURA DA PRÉ-VISUALIZAÇÃO -->
-        <div id="previewContainer" class="preview-container">
-            <div id="previewConteudo"></div>
-            <div id="previewFilename" class="preview-filename"></div>
+        <div class="form-group">
+
+            <label for="cadastroUsuario">
+                Usuário:
+            </label>
+
+            <input
+                type="text"
+                id="cadastroUsuario"
+                placeholder="Escolha um usuário"
+            >
+
         </div>
 
-        <button id="btnEnviar" onclick="enviarArquivo()">Enviar Arquivo</button>
-        
-        <div id="status" class="status-msg"></div>
-        
-        <button class="btn-logout" onclick="efetuarLogout()">Sair da Conta</button>
+
+        <div class="form-group">
+
+            <label for="cadastroCpf">
+                CPF:
+            </label>
+
+            <input
+                type="text"
+                id="cadastroCpf"
+                placeholder="000.000.000-00"
+                inputmode="numeric"
+                maxlength="14"
+                autocomplete="off"
+            >
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label for="cadastroSenha">
+                Senha:
+            </label>
+
+            <input
+                type="password"
+                id="cadastroSenha"
+                placeholder="Mínimo de 6 caracteres"
+            >
+
+        </div>
+
+
+        <button
+            id="btnCadastro"
+            onclick="cadastrarUsuario()"
+        >
+            Criar Cadastro
+        </button>
+
+
+        <div
+            id="cadastroStatus"
+            class="status-msg"
+        ></div>
+
+
+        <span
+            class="link"
+            onclick="mostrarLogin()"
+        >
+            Já possui cadastro? Entrar
+        </span>
+
+    </div>
+
+
+    <!-- ==========================================
+         RECUPERAÇÃO DE SENHA
+    =========================================== -->
+
+    <div
+        class="card hidden"
+        id="telaRecuperacaoSenha"
+    >
+
+        <h2>
+            RECUPERAR SENHA
+        </h2>
+
+
+        <p>
+            Informe seu usuário e os 5 últimos números do CPF cadastrado.
+        </p>
+
+
+        <div class="form-group">
+
+            <label for="recuperacaoUsuario">
+                Usuário:
+            </label>
+
+            <input
+                type="text"
+                id="recuperacaoUsuario"
+                placeholder="Digite seu usuário"
+                autocomplete="off"
+            >
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label for="recuperacaoCpf">
+                5 últimos números do CPF:
+            </label>
+
+            <input
+                type="text"
+                id="recuperacaoCpf"
+                placeholder="Digite os 5 últimos números"
+                inputmode="numeric"
+                maxlength="5"
+                autocomplete="off"
+            >
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label for="recuperacaoNovaSenha">
+                Nova senha:
+            </label>
+
+            <input
+                type="password"
+                id="recuperacaoNovaSenha"
+                placeholder="Mínimo de 6 caracteres"
+                autocomplete="new-password"
+            >
+
+        </div>
+
+
+        <button
+            id="btnRecuperacaoSenha"
+            onclick="recuperarSenha()"
+        >
+            Alterar Senha
+        </button>
+
+
+        <div
+            id="recuperacaoStatus"
+            class="status-msg"
+        ></div>
+
+
+        <span
+            class="link"
+            onclick="mostrarLogin()"
+        >
+            Voltar para o login
+        </span>
+
+    </div>
+
+
+    <!-- ==========================================
+         UPLOAD
+    =========================================== -->
+
+    <div
+        class="card hidden"
+        id="telaUpload"
+    >
+
+        <h2>
+            SISTEMA DE ENVIO
+        </h2>
+
+
+        <p>
+
+            Olá,
+            <strong id="nomeUsuarioLogado"></strong>!
+
+            <br>
+
+            DOCUMENTAÇÃO CARNAVAL 2027
+
+        </p>
+
+
+        <!-- GRUPO / CATEGORIA -->
+
+        <div class="form-group">
+
+            <label for="categoriaPasta">
+                Grupo:
+            </label>
+
+            <select id="categoriaPasta">
+                <option value="">SELECIONE O GRUPO</option>
+                <option value="GRUPO ESPECIAL DE BAIRROS">GRUPO ESPECIAL DE BAIRROS</option>
+                <option value="GRUPO ACESSO I">GRUPO ACESSO I</option>
+                <option value="GRUPO ACESSO II">GRUPO ACESSO II</option>
+                <option value="GRUPO ACESSO III">GRUPO ACESSO III</option>
+                <option value="ACESSO DE BLOCOS">ACESSO DE BLOCOS</option>
+                <option value="BLOCOS ESPECIAIS">BLOCOS ESPECIAIS</option>
+            </select>
+
+        </div>
+
+
+        <!-- CONTADOR DE PRAZOS DOS GRUPOS -->
+
+        <div
+            id="contadorPrazo"
+            class="contador-prazo"
+            aria-live="polite"
+        >
+
+            <span class="contador-titulo">
+                Prazo de envio do grupo
+            </span>
+
+            <span
+                id="contadorTempo"
+                class="contador-tempo"
+            >
+                Calculando...
+            </span>
+
+            <span class="contador-final">
+                Prazo final: 12/10/2026 às 23:59:59
+            </span>
+
+        </div>
+
+
+        <!-- NOME DA ESCOLA / PASTA -->
+
+        <div class="form-group">
+
+            <label for="nomeEscola">
+                Nome da Escola / Pasta: <span aria-hidden="true">*</span>
+            </label>
+
+            <input
+                type="text"
+                id="nomeEscola"
+                placeholder="INFORMAR O NOME DA ESCOLA"
+                autocomplete="off"
+                required
+            >
+
+        </div>
+
+
+        <!-- NOME DO ARQUIVO / DOCUMENTO -->
+
+        <div class="form-group">
+
+            <label for="nomeDocumento">
+                Nome do Arquivo / Documento: <span class="opcional">(opcional)</span>
+            </label>
+
+            <input
+                type="text"
+                id="nomeDocumento"
+                placeholder="DEIXE VAZIO PARA MANTER O NOME ORIGINAL"
+                autocomplete="off"
+            >
+
+        </div>
+
+
+        <!-- ARQUIVO -->
+
+        <input
+            type="file"
+            id="arquivoInput"
+            multiple
+            onchange="adicionarArquivosSelecionados()"
+        >
+
+
+        <div class="aviso-ordem">
+            Selecione os arquivos e, se necessário,
+            arraste-os para ajustar a ordem.
+        </div>
+
+
+        <div
+            id="listaArquivos"
+            class="lista-arquivos"
+        ></div>
+
+
+        <!-- ENVIAR -->
+
+        <button
+            id="btnEnviar"
+            onclick="enviarArquivo()"
+        >
+            Enviar Arquivo
+        </button>
+
+
+        <div
+            id="status"
+            class="status-msg"
+        ></div>
+
+
+        <!-- SAIR -->
+
+        <button
+            class="btn-logout"
+            onclick="efetuarLogout()"
+        >
+            Sair da Conta
+        </button>
+
+    </div>
+
+
+
+
+    <!-- ==========================================
+         MANUAL DO USUÁRIO
+    =========================================== -->
+
+    <div class="manual-links">
+
+        <div class="manual-links-titulo">
+            AJUDA AO USUÁRIO
+        </div>
+
+        <a
+            class="manual-link"
+            href="./manual_usuario_envio_documentos.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+        >
+            📄 Abrir Manual em PDF
+        </a>
+
+        <a
+            class="manual-link video"
+            href="./manual_usuario_envio_documentos.mp4"
+            target="_blank"
+            rel="noopener noreferrer"
+        >
+            ▶️ Assistir Vídeo de Orientação
+        </a>
+
+    </div>
+
+
+    <!-- ==========================================
+         DIREITOS AUTORAIS
+    =========================================== -->
+
+    <div class="copyright">
+        Criado por - Thiago A Negrini - © 2026
     </div>
 
 </div>
 
+
 <script>
-    // BASE DE DADOS DE USUÁRIOS
-    const BASE_DE_DADOS = {
-        'adm': '123',
-        'joao': 'senha987',
-        'maria': 'google2026',
-        'suporte': 'token#44'
-    };
 
-    // URL do seu Google Apps Script integrada
-    const URL_SCRIPT = 'https://script.google.com/macros/s/AKfycbyZYszUTOmkFoWnSjvfrN-AyGS6U4OxPwmqGBnKuJg_SbsPhmV3ly5MpHzyMHrQcGZv2g/exec';
 
-    function efetuarLogin() {
-        const usuarioInput = document.getElementById('loginUsuario').value.trim();
-        const senhaInput = document.getElementById('loginSenha').value.trim();
-        const loginStatus = document.getElementById('loginStatus');
+// ==========================================
+// CONFIGURAÇÃO
+// ==========================================
 
-        if (BASE_DE_DADOS[usuarioInput] && BASE_DE_DADOS[usuarioInput] === senhaInput) {
-            document.getElementById('nomeUsuarioLogado').innerText = usuarioInput;
-            document.getElementById('telaLogin').classList.add('hidden');
-            document.getElementById('telaUpload').classList.remove('hidden');
-            document.getElementById('loginUsuario').value = '';
-            document.getElementById('loginSenha').value = '';
-            loginStatus.innerHTML = '';
-        } else {
-            loginStatus.innerHTML = '❌ Usuário ou senha incorretos.';
-            loginStatus.style.color = '#d93025';
-        }
+const URL_SCRIPT =
+    'https://script.google.com/macros/s/AKfycbybVPcMQLFD3eQu2Q_zouaBqi4s46UGdivHqeLgdf--RofAvxUwmajM-bFmKIdBa50ivA/exec';
+
+
+let usuarioLogado = '';
+let escolasPorGrupo = {};
+let grupoVinculado = '';
+let escolaVinculada = '';
+
+
+// ==========================================
+// MOSTRAR LOGIN
+// ==========================================
+
+function mostrarLogin() {
+
+    document
+        .getElementById('telaCadastro')
+        .classList.add('hidden');
+
+
+    document
+        .getElementById('telaRecuperacaoSenha')
+        .classList.add('hidden');
+
+
+    document
+        .getElementById('telaUpload')
+        .classList.add('hidden');
+
+
+    document
+        .getElementById('telaLogin')
+        .classList.remove('hidden');
+
+}
+
+
+// ==========================================
+// MOSTRAR CADASTRO
+// ==========================================
+
+function mostrarCadastro() {
+
+    document
+        .getElementById('telaLogin')
+        .classList.add('hidden');
+
+
+    document
+        .getElementById('telaRecuperacaoSenha')
+        .classList.add('hidden');
+
+
+    document
+        .getElementById('telaUpload')
+        .classList.add('hidden');
+
+
+    document
+        .getElementById('telaCadastro')
+        .classList.remove('hidden');
+
+}
+
+
+// ==========================================
+// MOSTRAR RECUPERAÇÃO DE SENHA
+// ==========================================
+
+function mostrarRecuperacaoSenha() {
+
+    document
+        .getElementById('telaLogin')
+        .classList.add('hidden');
+
+    document
+        .getElementById('telaCadastro')
+        .classList.add('hidden');
+
+    document
+        .getElementById('telaUpload')
+        .classList.add('hidden');
+
+    document
+        .getElementById('telaRecuperacaoSenha')
+        .classList.remove('hidden');
+
+}
+
+
+// ==========================================
+// CADASTRO
+// ==========================================
+
+async function cadastrarUsuario() {
+
+    const nome =
+        document
+            .getElementById('cadastroNome')
+            .value
+            .trim();
+
+
+    const usuario =
+        document
+            .getElementById('cadastroUsuario')
+            .value
+            .trim();
+
+
+    const cpf =
+        document
+            .getElementById('cadastroCpf')
+            .value
+            .replace(/\D/g, '');
+
+
+    const senha =
+        document
+            .getElementById('cadastroSenha')
+            .value
+            .trim();
+
+
+    const status =
+        document.getElementById(
+            'cadastroStatus'
+        );
+
+
+    const botao =
+        document.getElementById(
+            'btnCadastro'
+        );
+
+
+    if (!nome || !usuario || !cpf || !senha) {
+
+        status.innerHTML =
+            '⚠️ Preencha todos os campos.';
+
+        status.style.color =
+            '#d93025';
+
+        return;
+
     }
 
-    function efetuarLogout() {
-        document.getElementById('telaUpload').classList.add('hidden');
-        document.getElementById('telaLogin').classList.remove('hidden');
-        document.getElementById('status').innerHTML = '';
-        document.getElementById('arquivoInput').value = '';
-        document.getElementById('nomeArquivoCustom').value = '';
-        document.getElementById('nomePastaCustom').value = '';
-        limparPreview();
+
+    if (cpf.length !== 11) {
+
+        status.innerHTML =
+            '⚠️ Informe um CPF válido com 11 números.';
+
+        status.style.color =
+            '#d93025';
+
+        return;
+
     }
 
-    // GERA A MINIATURA DINÂMICA NA TELA
-    function mostrarPreview() {
-        const input = document.getElementById('arquivoInput');
-        const container = document.getElementById('previewContainer');
-        const conteudo = document.getElementById('previewConteudo');
-        const filename = document.getElementById('previewFilename');
 
-        if (input.files.length === 0) {
-            limparPreview();
-            return;
+    if (senha.length < 6) {
+
+        status.innerHTML =
+            '⚠️ A senha deve possuir pelo menos 6 caracteres.';
+
+        status.style.color =
+            '#d93025';
+
+        return;
+
+    }
+
+
+    botao.disabled = true;
+
+    status.innerHTML =
+        '⏳ Criando cadastro...';
+
+    status.style.color =
+        '#146fc1';
+
+
+    try {
+
+        const parametros =
+            new URLSearchParams({
+
+                acao: 'cadastro',
+
+                nome: nome,
+
+                usuario: usuario,
+
+                cpf: cpf,
+
+                senha: senha
+
+            });
+
+
+        const resposta =
+            await fetch(
+
+                URL_SCRIPT,
+
+                {
+                    method: 'POST',
+                    mode: 'cors',
+                    body: parametros
+                }
+
+            );
+
+
+        const resultado =
+            await resposta.json();
+
+
+        if (resultado.sucesso) {
+
+            status.innerHTML =
+                '✅ Cadastro realizado com sucesso!';
+
+            status.style.color =
+                '#188038';
+
+
+            document
+                .getElementById(
+                    'cadastroNome'
+                )
+                .value = '';
+
+
+            document
+                .getElementById(
+                    'cadastroUsuario'
+                )
+                .value = '';
+
+
+            document
+                .getElementById(
+                    'cadastroCpf'
+                )
+                .value = '';
+
+
+            document
+                .getElementById(
+                    'cadastroSenha'
+                )
+                .value = '';
+
+
+            setTimeout(
+                mostrarLogin,
+                1500
+            );
+
+        } else {
+
+            status.innerHTML =
+                '❌ ' +
+                resultado.mensagem;
+
+            status.style.color =
+                '#d93025';
+
         }
 
-        const arquivo = input.files[0];
-        filename.innerText = arquivo.name;
-        container.style.display = 'flex';
 
-        if (arquivo.type.startsWith('image/')) {
-            const leitorPreview = new FileReader();
-            leitorPreview.onload = function (e) {
-                conteudo.innerHTML = `<img src="${e.target.result}" class="preview-image" alt="Miniatura">`;
-            };
-            leitorPreview.readAsDataURL(arquivo);
+    } catch (erro) {
+
+        console.error(erro);
+
+        status.innerHTML =
+            '❌ Erro de comunicação com o servidor.';
+
+        status.style.color =
+            '#d93025';
+
+    } finally {
+
+        botao.disabled = false;
+
+    }
+
+}
+
+
+// ==========================================
+// RECUPERAR SENHA
+// ==========================================
+
+async function recuperarSenha() {
+
+    const usuario =
+        document
+            .getElementById('recuperacaoUsuario')
+            .value
+            .trim();
+
+    const ultimosCpf =
+        document
+            .getElementById('recuperacaoCpf')
+            .value
+            .replace(/\D/g, '');
+
+    const novaSenha =
+        document
+            .getElementById('recuperacaoNovaSenha')
+            .value
+            .trim();
+
+    const status =
+        document.getElementById('recuperacaoStatus');
+
+    const botao =
+        document.getElementById('btnRecuperacaoSenha');
+
+    if (!usuario || ultimosCpf.length !== 5 || !novaSenha) {
+        status.innerHTML =
+            '⚠️ Preencha usuário, os 5 últimos números do CPF e a nova senha.';
+        status.style.color = '#d93025';
+        return;
+    }
+
+    if (novaSenha.length < 6) {
+        status.innerHTML =
+            '⚠️ A nova senha deve possuir pelo menos 6 caracteres.';
+        status.style.color = '#d93025';
+        return;
+    }
+
+    botao.disabled = true;
+    status.innerHTML = '⏳ Verificando dados...';
+    status.style.color = '#146fc1';
+
+    try {
+
+        const parametros =
+            new URLSearchParams({
+                acao: 'recuperarSenha',
+                usuario: usuario,
+                ultimosCpf: ultimosCpf,
+                novaSenha: novaSenha
+            });
+
+        const resposta =
+            await fetch(
+                URL_SCRIPT,
+                {
+                    method: 'POST',
+                    mode: 'cors',
+                    body: parametros
+                }
+            );
+
+        const resultado =
+            await resposta.json();
+
+        if (resultado.sucesso) {
+
+            status.innerHTML =
+                '✅ Senha alterada com sucesso!';
+            status.style.color = '#188038';
+
+            document.getElementById('recuperacaoUsuario').value = '';
+            document.getElementById('recuperacaoCpf').value = '';
+            document.getElementById('recuperacaoNovaSenha').value = '';
+
+            setTimeout(mostrarLogin, 1500);
+
         } else {
-            let icone = '📄'; 
-            if (arquivo.type === 'application/pdf') icone = '📕';
-            else if (arquivo.name.endsWith('.doc') || arquivo.name.endsWith('.docx')) icone = '📘';
+            status.innerHTML =
+                '❌ ' + resultado.mensagem;
+            status.style.color = '#d93025';
+        }
+
+    } catch (erro) {
+
+        console.error(erro);
+        status.innerHTML =
+            '❌ Erro de comunicação com o servidor.';
+        status.style.color = '#d93025';
+
+    } finally {
+        botao.disabled = false;
+    }
+}
+
+
+// ==========================================
+// LOGIN
+// ==========================================
+
+async function efetuarLogin() {
+
+    const usuario =
+        document
+            .getElementById(
+                'loginUsuario'
+            )
+            .value
+            .trim();
+
+
+    const senha =
+        document
+            .getElementById(
+                'loginSenha'
+            )
+            .value
+            .trim();
+
+
+    const status =
+        document.getElementById(
+            'loginStatus'
+        );
+
+
+    const botao =
+        document.getElementById(
+            'btnLogin'
+        );
+
+
+    if (!usuario || !senha) {
+
+        status.innerHTML =
+            '⚠️ Informe usuário e senha.';
+
+        status.style.color =
+            '#d93025';
+
+        return;
+
+    }
+
+
+    botao.disabled = true;
+
+    status.innerHTML =
+        '⏳ Verificando acesso...';
+
+    status.style.color =
+        '#146fc1';
+
+
+    try {
+
+        const parametros =
+            new URLSearchParams({
+
+                acao: 'login',
+
+                usuario: usuario,
+
+                senha: senha
+
+            });
+
+
+        const resposta =
+            await fetch(
+
+                URL_SCRIPT,
+
+                {
+                    method: 'POST',
+                    mode: 'cors',
+                    body: parametros
+                }
+
+            );
+
+
+        const resultado =
+            await resposta.json();
+
+
+        if (resultado.sucesso) {
+
+            usuarioLogado =
+                resultado.usuario;
+
+            escolasPorGrupo =
+                resultado.escolasPorGrupo || {};
+
+            grupoVinculado =
+                String(resultado.grupoVinculado || '').trim();
+
+            escolaVinculada =
+                String(resultado.nomeEscolaVinculada || resultado.nomeEscola || '').trim();
+
+
+            document
+                .getElementById(
+                    'nomeUsuarioLogado'
+                )
+                .innerText =
+                    resultado.nome ||
+                    resultado.usuario;
+
+
+            const campoNomeEscola =
+                document.getElementById('nomeEscola');
+
+            const selectGrupo =
+                document.getElementById('categoriaPasta');
+
+            if (grupoVinculado) {
+                // O primeiro envio já definiu o destino definitivo.
+                selectGrupo.value = grupoVinculado;
+                selectGrupo.disabled = true;
+                campoNomeEscola.value = escolaVinculada;
+                campoNomeEscola.readOnly = true;
+            } else {
+                // Primeiro acesso: ainda não existe vínculo.
+                selectGrupo.value = '';
+                selectGrupo.disabled = false;
+                campoNomeEscola.value = '';
+                campoNomeEscola.readOnly = false;
+            }
+
+
+            document
+                .getElementById(
+                    'telaLogin'
+                )
+                .classList.add('hidden');
+
+
+            document
+                .getElementById(
+                    'telaUpload'
+                )
+                .classList.remove('hidden');
+
+
+            document
+                .getElementById(
+                    'loginUsuario'
+                )
+                .value = '';
+
+
+            document
+                .getElementById(
+                    'loginSenha'
+                )
+                .value = '';
+
+
+            status.innerHTML = '';
+
+        } else {
+
+            status.innerHTML =
+                '❌ ' +
+                resultado.mensagem;
+
+            status.style.color =
+                '#d93025';
+
+        }
+
+
+    } catch (erro) {
+
+        console.error(erro);
+
+        status.innerHTML =
+            '❌ Erro de comunicação com o servidor.';
+
+        status.style.color =
+            '#d93025';
+
+    } finally {
+
+        botao.disabled = false;
+
+    }
+
+}
+
+
+// ==========================================
+// FORMATAÇÃO DO CPF
+// ==========================================
+
+document.addEventListener('DOMContentLoaded', function () {
+
+    const campoCpf =
+        document.getElementById('cadastroCpf');
+
+    if (!campoCpf) {
+        return;
+    }
+
+    campoCpf.addEventListener('input', function () {
+
+        // Mantém somente números e limita o CPF a 11 dígitos.
+        let numeros = this.value
+            .replace(/\D/g, '')
+            .substring(0, 11);
+
+        // Aplica a máscara sem remover o 11º dígito.
+        if (numeros.length <= 3) {
+
+            this.value = numeros;
+
+        } else if (numeros.length <= 6) {
+
+            this.value =
+                numeros.substring(0, 3) + '.' +
+                numeros.substring(3);
+
+        } else if (numeros.length <= 9) {
+
+            this.value =
+                numeros.substring(0, 3) + '.' +
+                numeros.substring(3, 6) + '.' +
+                numeros.substring(6);
+
+        } else {
+
+            this.value =
+                numeros.substring(0, 3) + '.' +
+                numeros.substring(3, 6) + '.' +
+                numeros.substring(6, 9) + '-' +
+                numeros.substring(9, 11);
+        }
+
+    });
+
+});
+
+
+// ==========================================
+// LOGOUT
+// ==========================================
+
+function efetuarLogout() {
+
+    usuarioLogado = '';
+    escolasPorGrupo = {};
+    grupoVinculado = '';
+    escolaVinculada = '';
+
+
+    document
+        .getElementById(
+            'telaUpload'
+        )
+        .classList.add('hidden');
+
+
+    document
+        .getElementById(
+            'telaRecuperacaoSenha'
+        )
+        .classList.add('hidden');
+
+
+    document
+        .getElementById(
+            'telaLogin'
+        )
+        .classList.remove('hidden');
+
+
+    document
+        .getElementById(
+            'status'
+        )
+        .innerHTML = '';
+
+
+    document.getElementById('recuperacaoUsuario').value = '';
+    document.getElementById('recuperacaoCpf').value = '';
+    document.getElementById('recuperacaoNovaSenha').value = '';
+    document.getElementById('recuperacaoStatus').innerHTML = '';
+
+
+    limparArquivosSelecionados();
+
+
+    document
+        .getElementById(
+            'categoriaPasta'
+        )
+        .value = '';
+
+
+    document
+        .getElementById(
+            'nomeEscola'
+        )
+        .value = '';
+
+    document
+        .getElementById(
+            'nomeEscola'
+        )
+        .readOnly = false;
+
+    document
+        .getElementById(
+            'nomeDocumento'
+        )
+        .value = '';
+
+}
+
+
+// ==========================================
+// UPLOAD
+// ==========================================
+
+let arquivosSelecionados = [];
+
+let itemArrastado = null;
+
+
+// ==========================================
+// NORMALIZAÇÃO
+// ==========================================
+
+function normalizarTexto(valor) {
+
+    return String(valor || '')
+        .normalize('NFD')
+        .replace(
+            /[\u0300-\u036f]/g,
+            ''
+        )
+        .toUpperCase();
+
+}
+
+
+function normalizarCampo(campo) {
+
+    const inicio =
+        campo.selectionStart;
+
+    campo.value =
+        normalizarTexto(
+            campo.value
+        );
+
+    try {
+
+        campo.setSelectionRange(
+            inicio,
+            inicio
+        );
+
+    } catch (_) {}
+
+}
+
+
+// ==========================================
+// IDENTIFICAÇÃO DO ARQUIVO
+// ==========================================
+
+function chaveArquivo(arquivo) {
+
+    return (
+        arquivo.name +
+        '|' +
+        arquivo.size +
+        '|' +
+        arquivo.lastModified
+    );
+
+}
+
+
+// ==========================================
+// ADICIONAR ARQUIVOS
+// ==========================================
+
+function adicionarArquivosSelecionados() {
+
+    const input =
+        document.getElementById(
+            'arquivoInput'
+        );
+
+
+    const novos =
+        Array.from(
+            input.files || []
+        );
+
+
+    novos.forEach(arquivo => {
+
+        if (
+            !arquivosSelecionados.some(
+                item =>
+                    chaveArquivo(item) ===
+                    chaveArquivo(arquivo)
+            )
+        ) {
+
+            arquivosSelecionados.push(
+                arquivo
+            );
+
+        }
+
+    });
+
+
+    /*
+     * Permite selecionar novamente
+     * outros arquivos pelo mesmo input.
+     */
+
+    input.value = '';
+
+
+    renderizarListaArquivos();
+
+}
+
+
+// ==========================================
+// RENDERIZAR LISTA
+// ==========================================
+
+function renderizarListaArquivos() {
+
+    const lista =
+        document.getElementById(
+            'listaArquivos'
+        );
+
+
+    lista.innerHTML = '';
+
+
+    arquivosSelecionados.forEach(
+        (arquivo, indice) => {
+
+            const item =
+                document.createElement(
+                    'div'
+                );
+
+
+            item.className =
+                'arquivo-item';
+
+
+            item.draggable = true;
+
+
+            item.dataset.indice =
+                indice;
+
+
+            const numero =
+                document.createElement(
+                    'strong'
+                );
+
+
+            numero.textContent =
+                (indice + 1) + '.';
+
+
+            const nome =
+                document.createElement(
+                    'div'
+                );
+
+
+            nome.className =
+                'arquivo-nome';
+
+
+            nome.textContent =
+                arquivo.name +
+                ' (' +
+                formatarTamanho(
+                    arquivo.size
+                ) +
+                ')';
+
+
+            const remover =
+                document.createElement(
+                    'button'
+                );
+
+
+            remover.type =
+                'button';
+
+
+            remover.className =
+                'arquivo-remover';
+
+
+            remover.title =
+                'Remover arquivo';
+
+
+            remover.textContent =
+                '×';
+
+
+            remover.addEventListener(
+                'click',
+                event => {
+
+                    event.stopPropagation();
+
+                    arquivosSelecionados.splice(
+                        indice,
+                        1
+                    );
+
+                    renderizarListaArquivos();
+
+                }
+            );
+
+
+            item.append(
+                numero,
+                nome,
+                remover
+            );
+
+
+            item.addEventListener(
+                'dragstart',
+                () => {
+
+                    itemArrastado =
+                        indice;
+
+                    item.classList.add(
+                        'arrastando'
+                    );
+
+                }
+            );
+
+
+            item.addEventListener(
+                'dragend',
+                () => {
+
+                    item.classList.remove(
+                        'arrastando'
+                    );
+
+                    itemArrastado =
+                        null;
+
+                }
+            );
+
+
+            item.addEventListener(
+                'dragover',
+                event => {
+
+                    event.preventDefault();
+
+                }
+            );
+
+
+            item.addEventListener(
+                'drop',
+                event => {
+
+                    event.preventDefault();
+
+
+                    const destino =
+                        indice;
+
+
+                    if (
+                        itemArrastado === null ||
+                        itemArrastado === destino
+                    ) {
+
+                        return;
+
+                    }
+
+
+                    const movido =
+                        arquivosSelecionados.splice(
+                            itemArrastado,
+                            1
+                        )[0];
+
+
+                    arquivosSelecionados.splice(
+                        destino,
+                        0,
+                        movido
+                    );
+
+
+                    renderizarListaArquivos();
+
+                }
+            );
+
+
+            lista.appendChild(
+                item
+            );
+
+        }
+    );
+
+}
+
+
+// ==========================================
+// LIMPAR ARQUIVOS
+// ==========================================
+
+function limparArquivosSelecionados() {
+
+    arquivosSelecionados = [];
+
+
+    document
+        .getElementById(
+            'arquivoInput'
+        )
+        .value = '';
+
+
+    document
+        .getElementById(
+            'listaArquivos'
+        )
+        .innerHTML = '';
+
+}
+
+
+// ==========================================
+// FORMATAR TAMANHO
+// ==========================================
+
+function formatarTamanho(bytes) {
+
+    if (bytes < 1024) {
+
+        return bytes + ' B';
+
+    }
+
+
+    if (bytes < 1024 * 1024) {
+
+        return (
+            bytes / 1024
+        ).toFixed(1) + ' KB';
+
+    }
+
+
+    return (
+        bytes / (1024 * 1024)
+    ).toFixed(1) + ' MB';
+
+}
+
+
+// ==========================================
+// ENVIO DA REQUISIÇÃO
+// ==========================================
+
+async function enviarRequisicao(
+    parametros
+) {
+
+    const resposta =
+        await fetch(
+
+            URL_SCRIPT,
+
+            {
+                method: 'POST',
+                mode: 'cors',
+                body: parametros
+            }
+
+        );
+
+
+    if (!resposta.ok) {
+
+        throw new Error(
+            'Servidor retornou HTTP ' +
+            resposta.status
+        );
+
+    }
+
+
+    const texto =
+        await resposta.text();
+
+
+    try {
+
+        return JSON.parse(
+            texto
+        );
+
+    } catch (erro) {
+
+        console.error(
+            'Resposta do servidor:',
+            texto
+        );
+
+        throw new Error(
+            'O servidor não retornou JSON válido.'
+        );
+
+    }
+
+}
+
+
+// ==========================================
+// LER ARQUIVO COMO BASE64
+// ==========================================
+
+function lerArquivoBase64(
+    arquivo
+) {
+
+    return new Promise(
+        (resolve, reject) => {
+
+            const leitor =
+                new FileReader();
+
+
+            leitor.onload =
+                function() {
+
+                    try {
+
+                        const resultado =
+                            leitor.result;
+
+
+                        const dados =
+                            String(resultado)
+                                .split(',')[1];
+
+
+                        if (!dados) {
+
+                            reject(
+                                new Error(
+                                    'Não foi possível obter os dados do arquivo.'
+                                )
+                            );
+
+                            return;
+
+                        }
+
+
+                        resolve(
+                            dados
+                        );
+
+                    } catch (erro) {
+
+                        reject(
+                            erro
+                        );
+
+                    }
+
+                };
+
+
+            leitor.onerror =
+                function() {
+
+                    reject(
+                        new Error(
+                            'Não foi possível ler o arquivo ' +
+                            arquivo.name
+                        )
+                    );
+
+                };
+
+
+            leitor.readAsDataURL(
+                arquivo
+            );
+
+        }
+    );
+
+}
+
+
+// ==========================================
+// CONTADOR DE PRAZOS DOS GRUPOS
+// ==========================================
+
+const PRAZOS_GRUPOS = {
+
+    'GRUPO ESPECIAL DE BAIRROS':
+        new Date('2026-10-21T23:59:59'),
+
+    'ACESSO DE BLOCOS':
+        new Date('2026-10-21T23:59:59'),
+
+    'BLOCOS ESPECIAIS':
+        new Date('2026-10-21T23:59:59'),
+
+    'GRUPO ACESSO I':
+        new Date('2026-10-21T23:59:59'),
+
+    'GRUPO ACESSO II':
+        new Date('2026-10-21T23:59:59'),
+
+    'GRUPO ACESSO III':
+        new Date('2026-10-21T23:59:59')
+
+};
+
+
+let intervaloContadorPrazo = null;
+
+
+function obterPrazoGrupo(categoria) {
+
+    return PRAZOS_GRUPOS[categoria] || null;
+
+}
+
+
+function grupoEstaExpirado(categoria) {
+
+    const prazo =
+        obterPrazoGrupo(categoria);
+
+
+    if (!prazo) {
+
+        return false;
+
+    }
+
+
+    return new Date().getTime() >= prazo.getTime();
+
+}
+
+
+function formatarDataPrazo(prazo) {
+
+    const dia =
+        String(prazo.getDate()).padStart(2, '0');
+
+    const mes =
+        String(prazo.getMonth() + 1).padStart(2, '0');
+
+    const ano =
+        prazo.getFullYear();
+
+
+    return dia + '/' + mes + '/' + ano +
+        ' às 23:59:59';
+
+}
+
+
+function atualizarContadorPrazo() {
+
+    const select =
+        document.getElementById(
+            'categoriaPasta'
+        );
+
+    const contador =
+        document.getElementById(
+            'contadorPrazo'
+        );
+
+    const titulo =
+        contador
+            ? contador.querySelector('.contador-titulo')
+            : null;
+
+    const tempo =
+        document.getElementById(
+            'contadorTempo'
+        );
+
+    const prazoFinal =
+        contador
+            ? contador.querySelector('.contador-final')
+            : null;
+
+
+    if (
+        !select ||
+        !contador ||
+        !tempo
+    ) {
+
+        return;
+
+    }
+
+
+    const categoria = select.value;
+    const prazo = obterPrazoGrupo(categoria);
+
+
+    if (!prazo) {
+
+        contador.style.display = 'none';
+        contador.classList.remove('expirado');
+        return;
+
+    }
+
+
+    contador.style.display = 'block';
+
+
+    if (titulo) {
+
+        titulo.textContent =
+            'Prazo de envio do ' + categoria;
+
+    }
+
+
+    if (prazoFinal) {
+
+        prazoFinal.textContent =
+            'Prazo final: ' +
+            formatarDataPrazo(prazo);
+
+    }
+
+
+    const agora = new Date();
+
+    const diferenca =
+        prazo.getTime() - agora.getTime();
+
+
+    if (diferenca <= 0) {
+
+        tempo.textContent = 'PRAZO EXPIRADO';
+
+        contador.classList.add('expirado');
+
+        return;
+
+    }
+
+
+    contador.classList.remove('expirado');
+
+
+    const dias =
+        Math.floor(
+            diferenca /
+            (1000 * 60 * 60 * 24)
+        );
+
+
+    const horas =
+        Math.floor(
+            (
+                diferenca %
+                (1000 * 60 * 60 * 24)
+            ) /
+            (1000 * 60 * 60)
+        );
+
+
+    const minutos =
+        Math.floor(
+            (
+                diferenca %
+                (1000 * 60 * 60)
+            ) /
+            (1000 * 60)
+        );
+
+
+    const segundos =
+        Math.floor(
+            (
+                diferenca %
+                (1000 * 60)
+            ) /
+            1000
+        );
+
+
+    tempo.textContent =
+        String(dias).padStart(2, '0') +
+        ' dias, ' +
+        String(horas).padStart(2, '0') +
+        ' horas, ' +
+        String(minutos).padStart(2, '0') +
+        ' minutos e ' +
+        String(segundos).padStart(2, '0') +
+        ' segundos';
+
+}
+
+
+function atualizarOpcoesExpiradas() {
+
+    const select =
+        document.getElementById(
+            'categoriaPasta'
+        );
+
+
+    if (!select) {
+
+        return;
+
+    }
+
+
+    Array.from(select.options).forEach(
+        function(opcao) {
+
+            if (!opcao.value) {
+
+                return;
+
+            }
+
+
+            const expirado =
+                grupoEstaExpirado(opcao.value);
+
+
+            opcao.disabled = expirado;
+
+
+            if (expirado) {
+
+                opcao.textContent =
+                    opcao.value +
+                    ' — PRAZO EXPIRADO';
+
+            }
+
+        }
+    );
+
+}
+
+
+function informarPrazoExpirado(categoria) {
+
+    alert(
+        'O prazo para envio de documentos do ' +
+        categoria +
+        ' está expirado.'
+    );
+
+}
+
+
+function aplicarEscolaDoGrupo(categoria) {
+
+    const campo = document.getElementById('nomeEscola');
+    const select = document.getElementById('categoriaPasta');
+    if (!campo || !select) return;
+
+    if (grupoVinculado) {
+        select.value = grupoVinculado;
+        select.disabled = true;
+        campo.value = escolaVinculada;
+        campo.readOnly = true;
+        return;
+    }
+
+    campo.value = '';
+    campo.readOnly = false;
+
+}
+
+
+
+function iniciarContadorPrazo() {
+
+    const select =
+        document.getElementById(
+            'categoriaPasta'
+        );
+
+
+    if (!select) {
+
+        return;
+
+    }
+
+
+    select.addEventListener(
+        'change',
+        function() {
+
+            if (grupoVinculado) {
+                select.value = grupoVinculado;
+                aplicarEscolaDoGrupo(grupoVinculado);
+                atualizarContadorPrazo();
+                return;
+            }
+
+            const categoria = select.value;
+
+
+            if (grupoEstaExpirado(categoria)) {
+
+                informarPrazoExpirado(categoria);
+
+                select.value = '';
+
+                aplicarEscolaDoGrupo('');
+                atualizarContadorPrazo();
+
+                return;
+
+            }
+
+
+            aplicarEscolaDoGrupo(categoria);
+            atualizarContadorPrazo();
+
+        }
+    );
+
+
+    select.addEventListener(
+        'mousedown',
+        function() {
+
+            atualizarOpcoesExpiradas();
+
+        }
+    );
+
+
+    select.addEventListener(
+        'keydown',
+        function() {
+
+            atualizarOpcoesExpiradas();
+
+        }
+    );
+
+
+    atualizarOpcoesExpiradas();
+    atualizarContadorPrazo();
+
+
+    if (intervaloContadorPrazo) {
+
+        clearInterval(
+            intervaloContadorPrazo
+        );
+
+    }
+
+
+    intervaloContadorPrazo =
+        setInterval(
+            function() {
+
+                atualizarOpcoesExpiradas();
+                atualizarContadorPrazo();
+
+            },
+            1000
+        );
+
+}
+
+
+iniciarContadorPrazo();
+
+
+// ==========================================
+// ==========================================
+// ENVIAR ARQUIVOS
+// ==========================================
+
+async function enviarArquivo() {
+
+    const status =
+        document.getElementById(
+            'status'
+        );
+
+
+    const botao =
+        document.getElementById(
+            'btnEnviar'
+        );
+
+
+    const categoria =
+        document
+            .getElementById(
+                'categoriaPasta'
+            )
+            .value
+            .trim();
+
+
+    const nomeEscola =
+        document
+            .getElementById(
+                'nomeEscola'
+            )
+            .value
+            .trim();
+
+
+    const nomeDocumento =
+        document
+            .getElementById(
+                'nomeDocumento'
+            )
+            .value
+            .trim();
+
+
+    if (!usuarioLogado) {
+
+        status.innerHTML =
+            '❌ Sessão expirada. Faça login novamente.';
+
+        status.style.color =
+            '#d93025';
+
+        return;
+
+    }
+
+
+    if (grupoEstaExpirado(categoria)) {
+
+        status.innerHTML =
+            '❌ O prazo para envio de documentos do ' +
+            categoria +
+            ' está expirado.';
+
+        status.style.color =
+            '#d93025';
+
+        document
+            .getElementById(
+                'categoriaPasta'
+            )
+            .value = '';
+
+        atualizarContadorPrazo();
+
+        return;
+
+    }
+
+
+    if (!categoria) {
+
+        status.innerHTML =
+            '⚠️ Selecione o grupo.';
+
+        status.style.color =
+            '#d93025';
+
+        document
+            .getElementById(
+                'categoriaPasta'
+            )
+            .focus();
+
+        return;
+
+    }
+
+
+    if (!nomeEscola) {
+
+        status.innerHTML =
+            '⚠️ Informe o nome da escola.';
+
+        status.style.color =
+            '#d93025';
+
+        document
+            .getElementById(
+                'nomeEscola'
+            )
+            .focus();
+
+        return;
+
+    }
+
+
+    if (
+        arquivosSelecionados.length === 0
+    ) {
+
+        status.innerHTML =
+            '⚠️ Por favor, selecione pelo menos um arquivo.';
+
+        status.style.color =
+            '#d93025';
+
+        return;
+
+    }
+
+
+    botao.disabled = true;
+
+
+    const arquivos =
+        arquivosSelecionados.slice();
+
+
+    try {
+
+        /*
+         * Cada arquivo é enviado diretamente
+         * para a pasta da escola dentro do
+         * grupo escolhido.
+         *
+         * Nome do documento é opcional.
+         *
+         * Se preenchido, o backend usa o nome informado
+         * e preserva a extensão original.
+         * Se vazio, mantém o nome original de cada arquivo.
+         * Em caso de nome já existente, o backend nunca
+         * substitui o arquivo: usa data/hora do envio.
+         */
+
+        for (
+            let i = 0;
+            i < arquivos.length;
+            i++
+        ) {
+
+            const arquivo =
+                arquivos[i];
+
+
+            status.innerHTML =
+                '⏳ Enviando arquivo ' +
+                (i + 1) +
+                ' de ' +
+                arquivos.length +
+                ':<br>' +
+                arquivo.name;
+
+
+            status.style.color =
+                '#146fc1';
+
+
+            const dadosBase64 =
+                await lerArquivoBase64(
+                    arquivo
+                );
+
+
+            const parametros =
+                new URLSearchParams({
+
+                    acao:
+                        'upload',
+
+                    usuario:
+                        usuarioLogado,
+
+                    categoria:
+                        categoria,
+
+                    escola:
+                        nomeEscola,
+
+                    nomeDocumento:
+                        nomeDocumento,
+
+                    data:
+                        dadosBase64,
+
+                    mimeType:
+                        arquivo.type ||
+                        'application/octet-stream',
+
+                    filenameOriginal:
+                        arquivo.name,
+
+                    quantidade:
+                        String(arquivos.length),
+
+                    indice:
+                        String(i)
+
+                });
+
+
+            const resultado =
+                await enviarRequisicao(
+                    parametros
+                );
+
+
+            if (
+                !resultado ||
+                !resultado.sucesso
+            ) {
+
+                throw new Error(
+                    resultado &&
+                    resultado.mensagem
+                        ? resultado.mensagem
+                        : 'Erro ao enviar o arquivo ' +
+                          arquivo.name
+                );
+
+            }
+
+        }
+
+
+        status.innerHTML =
+            '✅ ' +
+            arquivos.length +
+            ' arquivo(s) enviado(s) com sucesso!';
+
+        status.style.color =
+            '#188038';
+
+
+        limparArquivosSelecionados();
+
+
+        document
+            .getElementById(
+                'categoriaPasta'
+            )
+            .value = '';
+
+
+        atualizarContadorPrazo();
+
+
+        document
+            .getElementById(
+                'nomeEscola'
+            )
+            .readOnly = true;
+
+
+        // O primeiro envio cria o vínculo definitivo desta sessão.
+        grupoVinculado = categoria;
+        escolaVinculada = nomeEscola;
+        escolasPorGrupo[categoria] = nomeEscola;
+
+        document.getElementById('categoriaPasta').value = grupoVinculado;
+        document.getElementById('categoriaPasta').disabled = true;
+        document.getElementById('nomeEscola').value = escolaVinculada;
+        document.getElementById('nomeEscola').readOnly = true;
+
+        document
+            .getElementById(
+                'nomeDocumento'
+            )
+            .value = '';
+
+
+    } catch (erro) {
+
+        console.error(
+            erro
+        );
+
+
+        status.innerHTML =
+            '❌ ' +
+            (
+                erro.message ||
+                'Falha na comunicação com o servidor.'
+            );
+
+
+        status.style.color =
+            '#d93025';
+
+
+    } finally {
+
+        botao.disabled =
+            false;
+
+    }
+
+}
+
+
+
+
+</script>
+
+
+</body>
+
+</html>
