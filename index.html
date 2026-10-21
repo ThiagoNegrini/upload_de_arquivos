@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel do Usuário - Envio UESP</title>
+    <title>Sistema de Envio de Documentos</title>
     <style>
+        /* Estilos Globais e Responsividade */
         body { 
             font-family: Arial, sans-serif; 
             display: flex; 
@@ -16,15 +17,19 @@
             padding: 20px;
             box-sizing: border-box;
         }
+
+        /* Container Principal Split (Logo + Card) */
         .container {
             display: flex;
             flex-direction: row;
             align-items: center;
             justify-content: center;
-            gap: 40px;
-            max-width: 1000px;
+            gap: 50px;
+            max-width: 900px;
             width: 100%;
         }
+
+        /* Área do Logotipo com Moldura */
         .logo-area {
             flex: 1;
             text-align: center;
@@ -39,119 +44,189 @@
         .logo-area img {
             max-width: 100%;
             height: auto;
+            object-fit: contain;
             display: block;
             margin: 0 auto;
         }
+
+        /* Card do Formulário */
         .card { 
             background: white; 
             padding: 30px; 
             border-radius: 8px; 
             box-shadow: 0 4px 12px rgba(0,0,0,0.1); 
             width: 100%;
-            max-width: 550px; 
+            max-width: 360px; 
+            text-align: center; 
             box-sizing: border-box;
         }
-        h2 { color: #333; margin-top: 0; font-size: 22px; text-align: center; }
-        p { color: #666; font-size: 14px; margin-bottom: 20px; text-align: center; }
+
+        h2 { color: #333; margin-top: 0; font-size: 22px; }
+        p { color: #666; font-size: 14px; margin-bottom: 20px; }
+        
+        /* Formulários e Inputs */
         .form-group { text-align: left; margin-bottom: 15px; }
         label { font-size: 14px; color: #555; font-weight: bold; display: block; margin-bottom: 5px; }
         input[type="text"], input[type="password"] { 
-            width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-size: 16px; 
+            width: 100%; 
+            padding: 12px; 
+            border: 1px solid #ccc; 
+            border-radius: 4px; 
+            box-sizing: border-box; 
+            font-size: 16px; 
+            background-color: #fff;
         }
-        input[type="file"] { margin: 10px 0; width: 100%; font-size: 14px; }
+        input[type="file"] { 
+            margin: 15px 0; 
+            width: 100%; 
+            box-sizing: border-box; 
+            font-size: 14px;
+        }
         
-        /* Gerenciador de Arquivos */
-        .file-manager { margin-top: 25px; text-align: left; border-top: 2px solid #eee; padding-top: 20px; }
-        .file-manager h3 { font-size: 16px; color: #444; margin-bottom: 10px; }
-        .file-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13px; }
-        .file-table th { background-color: #f8f9fa; color: #555; font-weight: bold; padding: 10px; border-bottom: 2px solid #dee2e6; text-align: left; }
-        .file-table td { padding: 10px; border-bottom: 1px solid #dee2e6; color: #333; vertical-align: middle; }
+        /* Área de Pré-visualização / Miniatura */
+        .preview-container {
+            margin: 15px 0;
+            padding: 10px;
+            border: 2px dashed #ccc;
+            border-radius: 6px;
+            background-color: #fafafa;
+            display: none; 
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+        .preview-image {
+            max-width: 120px;
+            max-height: 120px;
+            border-radius: 4px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+            object-fit: cover;
+        }
+        .preview-icon {
+            font-size: 48px;
+            margin-bottom: 5px;
+        }
+        .preview-filename {
+            font-size: 12px;
+            color: #555;
+            margin-top: 5px;
+            word-break: break-all;
+            font-weight: bold;
+        }
         
-        .actions-cell { display: flex; gap: 6px; }
-        .btn-action { padding: 5px 8px; border-radius: 4px; border: none; font-size: 11px; font-weight: bold; cursor: pointer; color: white; text-decoration: none; }
-        .btn-download { background-color: #28a745; }
-        .btn-replace { background-color: #ffc107; color: #212529; }
-        .btn-delete { background-color: #dc3545; }
-        
-        button.btn-primary { background: #1a73e8; color: white; border: none; padding: 12px 15px; border-radius: 4px; cursor: pointer; width: 100%; font-size: 16px; font-weight: bold; }
-        button.btn-primary:hover { background: #1557b0; }
+        /* Botões */
+        button { 
+            background: #1a73e8; 
+            color: white; 
+            border: none; 
+            padding: 12px 15px; 
+            border-radius: 4px; 
+            cursor: pointer; 
+            width: 100%; 
+            font-size: 16px; 
+            font-weight: bold; 
+            transition: background 0.2s; 
+            margin-bottom: 10px; 
+        }
+        button:hover { background: #1557b0; }
         button:disabled { background: #ccc; cursor: not-allowed; }
-        .btn-logout { background: #6c757d; color: white; border: none; font-size: 12px; padding: 6px 12px; margin-top: 20px; border-radius: 4px; cursor: pointer; display: block; margin-left: auto; margin-right: auto; }
-        .status-msg { margin-top: 15px; font-size: 14px; font-weight: 500; text-align: center; }
+        
+        .btn-logout { background: #d93025; color: white; border: none; font-size: 12px; padding: 6px 10px; width: auto; margin-top: 15px; border-radius: 4px; cursor: pointer; }
+        .btn-logout:hover { background: #a51d12; }
+        
+        .status-msg { margin-top: 15px; font-size: 14px; font-weight: 500; }
+        
+        /* Controle de Telas */
         .hidden { display: none; }
 
+        /* REGRAS PARA TELEMÓVEIS / TELAS PEQUENAS */
         @media (max-width: 768px) {
-            .container { flex-direction: column; align-items: center; gap: 20px; }
-            .logo-area { max-width: 280px; }
+            .container {
+                flex-direction: column; 
+                gap: 20px;
+            }
+            .logo-area {
+                max-width: 220px; 
+                padding: 10px;
+            }
+            .card {
+                padding: 20px;
+            }
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <!-- URL DO LOGOTIPO CORRIGIDA PARA O SERVIDOR DE PRODUÇÃO DO GITHUB PAGES -->
+    
+    <!-- ÁREA DO LOGOTIPO -->
     <div class="logo-area">
-        <img src="https://github.io" alt="Logotipo UESP" id="imgLogo">
+        <img src="https://github.com" alt="Logotipo UESP" id="imgLogo">
     </div>
 
     <!-- TELA 1: LOGIN -->
     <div class="card" id="telaLogin">
         <h2>ACESSO AO PAINEL DE ENVIO</h2>
         <p>Insira suas credenciais pré-configuradas para continuar.</p>
+        
         <div class="form-group">
             <label for="loginUsuario">Usuário:</label>
             <input type="text" id="loginUsuario" placeholder="Digite seu usuário">
         </div>
+        
         <div class="form-group">
             <label for="loginSenha">Senha:</label>
             <input type="password" id="loginSenha" placeholder="Digite sua senha">
         </div>
-        <button class="btn-primary" onclick="efetuarLogin()">Entrar</button>
+        
+        <button onclick="efetuarLogin()">Entrar</button>
         <div id="loginStatus" class="status-msg"></div>
     </div>
 
-    <!-- TELA 2: ÁREA DO USUÁRIO -->
+    <!-- TELA 2: UPLOAD (APÓS O LOGIN) -->
     <div class="card hidden" id="telaUpload">
-        <h2>PAINEL DO USUÁRIO - CARNAVAL 2027</h2>
-        <p>Olá, <strong id="nomeUsuarioLogado"></strong>! Gerencie os seus documentos abaixo.</p>
+        <h2>SISTEMA DE ENVIO - DOCUMENTAÇÃO CARNAVAL 2027</h2>
+        <p>Olá, <strong id="nomeUsuarioLogado"></strong>! Preencha as informações do arquivo.</p>
         
         <div class="form-group">
             <label for="nomePastaCustom">Nome da Pasta no Drive:</label>
-            <input type="text" id="nomePastaCustom" placeholder="Ex: Nome_da_Agremiacao" onchange="listarArquivosDoUsuario()">
+            <input type="text" id="nomePastaCustom" placeholder="Ex: Nome_da_Agremiacao">
         </div>
+
         <div class="form-group">
             <label for="nomeArquivoCustom">Nome do Arquivo / Identificação:</label>
             <input type="text" id="nomeArquivoCustom" placeholder="Ex: Oficio_Diretoria_01">
         </div>
 
-        <input type="file" id="arquivoInput">
-        <button id="btnEnviar" class="btn-primary" onclick="enviarArquivo('upload')">Enviar Novo Arquivo</button>
-        <div id="status" class="status-msg"></div>
+        <!-- SELETOR DE ARQUIVOS -->
+        <input type="file" id="arquivoInput" onchange="mostrarPreview()">
 
-        <div class="file-manager">
-            <h3>🗂️ Arquivos na Pasta</h3>
-            <table class="file-table">
-                <thead>
-                    <tr>
-                        <th>Nome do Documento</th>
-                        <th>Tamanho</th>
-                        <th>Ações</th>
-                    </tr>
-                </thead>
-                <tbody id="corpoTabelaArquivos">
-                    <tr>
-                        <td colspan="3" style="text-align: center; color: #888;">Digite o nome da pasta acima para carregar arquivos...</td>
-                    </tr>
-                </tbody>
-            </table>
+        <!-- ÁREA PARA MINIATURA DA PRÉ-VISUALIZAÇÃO -->
+        <div id="previewContainer" class="preview-container">
+            <div id="previewConteudo"></div>
+            <div id="previewFilename" class="preview-filename"></div>
         </div>
+
+        <button id="btnEnviar" onclick="enviarArquivo()">Enviar Arquivo</button>
+        
+        <div id="status" class="status-msg"></div>
+        
         <button class="btn-logout" onclick="efetuarLogout()">Sair da Conta</button>
     </div>
+
 </div>
 
 <script>
-    const BASE_DE_DADOS = { 'adm': '123', 'joao': 'senha987', 'maria': 'google2026', 'suporte': 'token#44' };
-    const URL_SCRIPT = 'https://script.google.com/macros/s/AKfycbwsxIMj1VVekYs3KPS1j7GyuBZ9xMa3NvVrlEAMGeu4D3Gg72JJVUydU2U_5pNCOVQ53Q/exec';
+    // BASE DE DADOS DE USUÁRIOS
+    const BASE_DE_DADOS = {
+        'adm': '123',
+        'joao': 'senha987',
+        'maria': 'google2026',
+        'suporte': 'token#44'
+    };
+
+    // URL do seu Google Apps Script integrada
+    const URL_SCRIPT = 'https://script.google.com/macros/s/AKfycbyZYszUTOmkFoWnSjvfrN-AyGS6U4OxPwmqGBnKuJg_SbsPhmV3ly5MpHzyMHrQcGZv2g/exec';
 
     function efetuarLogin() {
         const usuarioInput = document.getElementById('loginUsuario').value.trim();
@@ -162,8 +237,9 @@
             document.getElementById('nomeUsuarioLogado').innerText = usuarioInput;
             document.getElementById('telaLogin').classList.add('hidden');
             document.getElementById('telaUpload').classList.remove('hidden');
+            document.getElementById('loginUsuario').value = '';
+            document.getElementById('loginSenha').value = '';
             loginStatus.innerHTML = '';
-            listarArquivosDoUsuario();
         } else {
             loginStatus.innerHTML = '❌ Usuário ou senha incorretos.';
             loginStatus.style.color = '#d93025';
@@ -177,39 +253,32 @@
         document.getElementById('arquivoInput').value = '';
         document.getElementById('nomeArquivoCustom').value = '';
         document.getElementById('nomePastaCustom').value = '';
+        limparPreview();
     }
 
-    function listarArquivosDoUsuario() {
-        const nomePasta = document.getElementById('nomePastaCustom').value.trim();
-        const tabela = document.getElementById('corpoTabelaArquivos');
-        
-        if(nomePasta === "") {
-            tabela.innerHTML = '<tr><td colspan="3" style="text-align: center; color: #888;">Digite o nome da pasta acima para carregar arquivos...</td></tr>';
+    // GERA A MINIATURA DINÂMICA NA TELA
+    function mostrarPreview() {
+        const input = document.getElementById('arquivoInput');
+        const container = document.getElementById('previewContainer');
+        const conteudo = document.getElementById('previewConteudo');
+        const filename = document.getElementById('previewFilename');
+
+        if (input.files.length === 0) {
+            limparPreview();
             return;
         }
 
-        tabela.innerHTML = '<tr><td colspan="3" style="text-align: center; color: #1a73e8;">⏳ Carregando lista de documentos...</td></tr>';
+        const arquivo = input.files[0];
+        filename.innerText = arquivo.name;
+        container.style.display = 'flex';
 
-        fetch(`${URL_SCRIPT}?action=list&nomePasta=${encodeURIComponent(nomePasta)}`, { method: 'POST' })
-        .then(response => response.json())
-        .then(data => {
-            tabela.innerHTML = '';
-            if (!data || data.length === 0) {
-                tabela.innerHTML = '<tr><td colspan="3" style="text-align: center; color: #888;">Nenhum arquivo encontrado nesta pasta.</td></tr>';
-                return;
-            }
-            data.forEach(arq => {
-                tabela.innerHTML += `
-                    <tr>
-                        <td>${arq.name}</td>
-                        <td>${arq.size}</td>
-                        <td class="actions-cell">
-                            <a href="${arq.url}" target="_blank" class="btn-action btn-download">Abrir</a>
-                            <button class="btn-action btn-replace" onclick="dispararSubstituicao('${arq.name}')">Substituir</button>
-                            <button class="btn-action btn-delete" onclick="deletarArquivoDoUsuario('${arq.id}')">Excluir</button>
-                        </td>
-                    </tr>
-                `;
-            });
-        })
-        .catch(() => {
+        if (arquivo.type.startsWith('image/')) {
+            const leitorPreview = new FileReader();
+            leitorPreview.onload = function (e) {
+                conteudo.innerHTML = `<img src="${e.target.result}" class="preview-image" alt="Miniatura">`;
+            };
+            leitorPreview.readAsDataURL(arquivo);
+        } else {
+            let icone = '📄'; 
+            if (arquivo.type === 'application/pdf') icone = '📕';
+            else if (arquivo.name.endsWith('.doc') || arquivo.name.endsWith('.docx')) icone = '📘';
