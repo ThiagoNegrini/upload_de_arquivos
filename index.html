@@ -2349,7 +2349,46 @@ async function carregarMeusArquivos() {
             item.className = 'arquivo-painel';
             const nome = document.createElement('div');
             nome.className = 'arquivo-nome';
-            nome.textContent = arquivo.nome;
+
+            // Ícone visual conforme a extensão do arquivo.
+            const extensao = (String(arquivo.nome || '').split('.').pop() || '').toLowerCase();
+            const tiposArquivo = {
+                pdf:  { simbolo: '📕', sigla: 'PDF', cor: '#c62828' },
+                png:  { simbolo: '🖼️', sigla: 'PNG', cor: '#16834a' },
+                jpg:  { simbolo: '🖼️', sigla: 'JPG', cor: '#16834a' },
+                jpeg: { simbolo: '🖼️', sigla: 'JPG', cor: '#16834a' },
+                gif:  { simbolo: '🖼️', sigla: 'GIF', cor: '#16834a' },
+                webp: { simbolo: '🖼️', sigla: 'WEBP', cor: '#16834a' },
+                svg:  { simbolo: '🖼️', sigla: 'SVG', cor: '#16834a' },
+                doc:  { simbolo: '📘', sigla: 'DOC', cor: '#185abd' },
+                docx: { simbolo: '📘', sigla: 'DOCX', cor: '#185abd' },
+                xls:  { simbolo: '📗', sigla: 'XLS', cor: '#188038' },
+                xlsx: { simbolo: '📗', sigla: 'XLSX', cor: '#188038' },
+                csv:  { simbolo: '📗', sigla: 'CSV', cor: '#188038' },
+                ppt:  { simbolo: '📙', sigla: 'PPT', cor: '#c6531a' },
+                pptx: { simbolo: '📙', sigla: 'PPTX', cor: '#c6531a' },
+                txt:  { simbolo: '📄', sigla: 'TXT', cor: '#5f6368' },
+                rtf:  { simbolo: '📄', sigla: 'RTF', cor: '#5f6368' },
+                zip:  { simbolo: '🗜️', sigla: 'ZIP', cor: '#6b7280' },
+                rar:  { simbolo: '🗜️', sigla: 'RAR', cor: '#6b7280' },
+                '7z': { simbolo: '🗜️', sigla: '7Z', cor: '#6b7280' },
+                mp3:  { simbolo: '🎵', sigla: 'MP3', cor: '#7e57c2' },
+                wav:  { simbolo: '🎵', sigla: 'WAV', cor: '#7e57c2' },
+                mp4:  { simbolo: '🎬', sigla: 'MP4', cor: '#7e57c2' },
+                mov:  { simbolo: '🎬', sigla: 'MOV', cor: '#7e57c2' }
+            };
+            const tipo = tiposArquivo[extensao] || { simbolo: '📄', sigla: extensao ? extensao.slice(0, 5).toUpperCase() : 'ARQ', cor: '#5f6368' };
+            const icone = document.createElement('span');
+            icone.className = 'arquivo-extensao-icone';
+            icone.setAttribute('aria-hidden', 'true');
+            icone.textContent = tipo.simbolo;
+            icone.style.cssText = 'display:inline-flex;align-items:center;justify-content:center;margin-right:8px;font-size:22px;vertical-align:middle;';
+            const etiqueta = document.createElement('span');
+            etiqueta.textContent = tipo.sigla;
+            etiqueta.style.cssText = 'display:inline-block;vertical-align:middle;margin-right:8px;padding:2px 5px;border-radius:4px;background:' + tipo.cor + ';color:#fff;font-size:10px;font-weight:700;line-height:1.4;';
+            nome.appendChild(icone);
+            nome.appendChild(etiqueta);
+            nome.appendChild(document.createTextNode(arquivo.nome || 'Arquivo sem nome'));
             const info = document.createElement('div');
             info.className = 'painel-vazio';
             info.textContent = [arquivo.pasta, arquivo.escola].filter(Boolean).join(' • ');
