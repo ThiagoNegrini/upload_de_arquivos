@@ -171,6 +171,9 @@ function doPost(e) {
       case 'listarArquivos':
         return json_(listarArquivosUsuario_(p));
 
+      case 'listarArquivosPastaSelecionada':
+        return json_(listarArquivosPastaSelecionada_(p));
+
       case 'listarPendencias':
         return json_(listarPendenciasUsuario_(p));
 
@@ -1523,6 +1526,45 @@ function validarSessaoPainel_(usuario, token) {
   if (!u || !t) return false;
   const dono = CacheService.getScriptCache().get('painel_sessao_' + t);
   return !!dono && dono.toLowerCase() === u;
+}
+
+function listarArquivosPastaSelecionada_(p) {
+  const usuario = String(p.usuario || '').trim();
+  if (!validarSessaoPainel_(usuario, p.token)) {
+    return { sucesso:false, mensagem:'Sessão expirada. Saia e entre novamente.' };
+  }
+
+  const grupo = String(p.grupo || '').trim();
+  const nomePasta = String(p.pasta || '').trim();
+  const idRaiz = PASTAS_CATEGORIAS[grupo];
+  if (!idRaiz || !nomePasta) {
+    return { sucesso:true, arquivos:[], mensagem:'Selecione um grupo e uma pasta para consultar os documentos.' };
+  }
+
+  const raiz = DriveApp.getFolderById(idRaiz);
+  const pastas = raiz.getFoldersByName(nomePasta);
+  if (!pastas.hasNext()) {
+    return { sucesso:true, arquivos:[], mensagem:'Não foram encontrados documentos para a pasta selecionada.' };
+  }
+
+  const pasta = pastas.next();
+  const arquivos = [];
+  const iter = pasta.getFiles();
+  while (iter.hasNext()) {
+    const f = iter.next();
+    if (f.isTrashed()) continue;
+    arquivos.push({
+      id:f.getId(),
+      nome:f.getName(),
+      url:f.getUrl(),
+      downloadUrl:f.getDownloadUrl(),
+      pasta:pasta.getName(),
+      escola:pasta.getName(),
+      data:Utilities.formatDate(f.getLastUpdated(), Session.getScriptTimeZone() || 'America/Sao_Paulo', "yyyy-MM-dd'T'HH:mm:ss")
+    });
+  }
+  arquivos.sort(function(a, b) { return a.nome.localeCompare(b.nome, 'pt-BR'); });
+  return { sucesso:true, grupo:grupo, pasta:pasta.getName(), arquivos:arquivos };
 }
 
 function listarArquivosUsuario_(p) {
