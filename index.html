@@ -2663,6 +2663,7 @@ async function salvarPrazoAdmin(indice) {
         status.style.color = '#188038';
         STATUS_ENVIO_GRUPOS[grupo] = { prazo:resultado.prazo, habilitado:resultado.habilitado };
         if (resultado.prazo) PRAZOS_GRUPOS[grupo] = new Date(resultado.prazo);
+        atualizarOpcoesExpiradas();
         atualizarContadorPrazo();
         carregarPendencias();
     } catch (erro) {
@@ -3494,46 +3495,23 @@ function atualizarContadorPrazo() {
 
 function atualizarOpcoesExpiradas() {
 
-    const select =
-        document.getElementById(
-            'categoriaPasta'
-        );
+    const select = document.getElementById('categoriaPasta');
 
+    if (!select) return;
 
-    if (!select) {
+    Array.from(select.options).forEach(function(opcao) {
 
-        return;
+        if (!opcao.value) return;
 
-    }
+        // Recalcula sempre com o prazo mais recente recebido do Apps Script.
+        const expirado = grupoEstaExpirado(opcao.value);
 
+        // Recria o rótulo a partir do valor original para remover
+        // o texto antigo "PRAZO EXPIRADO" quando o prazo for prorrogado.
+        opcao.textContent = opcao.value + (expirado ? ' — PRAZO EXPIRADO' : '');
+        opcao.disabled = expirado;
 
-    Array.from(select.options).forEach(
-        function(opcao) {
-
-            if (!opcao.value) {
-
-                return;
-
-            }
-
-
-            const expirado =
-                grupoEstaExpirado(opcao.value);
-
-
-            opcao.disabled = expirado;
-
-
-            if (expirado) {
-
-                opcao.textContent =
-                    opcao.value +
-                    ' — PRAZO EXPIRADO';
-
-            }
-
-        }
-    );
+    });
 
 }
 
