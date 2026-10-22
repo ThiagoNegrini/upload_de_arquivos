@@ -1610,6 +1610,10 @@
         <section class="painel-arquivos" aria-labelledby="tituloMeusArquivos">
             <h3 id="tituloMeusArquivos">Meus arquivos enviados</h3>
             <p>Baixe um arquivo ou selecione uma nova versão para substituí-lo.</p>
+            <label for="filtroPastaMeusArquivos">Filtrar por pasta / entidade:</label>
+            <select id="filtroPastaMeusArquivos" onchange="filtrarMeusArquivos()" aria-label="Filtrar documentos por pasta ou entidade">
+                <option value="">Todas as pastas</option>
+            </select>
             <button type="button" id="btnAtualizarArquivos" onclick="carregarMeusArquivos()">Atualizar lista</button>
             <div id="statusMeusArquivos" class="status-msg" aria-live="polite"></div>
             <div id="listaMeusArquivos"><p class="painel-vazio">Faça login para consultar seus arquivos.</p></div>
@@ -2445,94 +2449,139 @@ document.addEventListener('DOMContentLoaded', function () {
 // PAINEL: LISTAR, BAIXAR E SUBSTITUIR ARQUIVOS
 // ==========================================
 
+let arquivosMeusArquivosCache = [];
+
 async function carregarMeusArquivos() {
     const lista = document.getElementById('listaMeusArquivos');
     const status = document.getElementById('statusMeusArquivos');
+    const filtro = document.getElementById('filtroPastaMeusArquivos');
     if (!usuarioLogado) return;
     lista.innerHTML = '<p class="painel-vazio">Carregando seus arquivos...</p>';
     status.textContent = '';
     try {
         const resultado = await enviarRequisicao(new URLSearchParams({acao:'listarArquivos', usuario:usuarioLogado, token:tokenSessao}));
         if (!resultado.sucesso) throw new Error(resultado.mensagem || 'Não foi possível carregar os arquivos.');
-        lista.innerHTML = '';
-        if (!resultado.arquivos || !resultado.arquivos.length) {
-            lista.innerHTML = '<p class="painel-vazio">Nenhum arquivo enviado encontrado para esta conta.</p>';
-            return;
-        }
-        resultado.arquivos.forEach(arquivo => {
-            const item = document.createElement('div');
-            item.className = 'arquivo-painel';
-            const nome = document.createElement('div');
-            nome.className = 'arquivo-nome';
+        arquivosMeusArquivosCache = Array.isArray(resultado.arquivos) ? resultado.arquivos : [];
 
-            // Ícone visual conforme a extensão do arquivo.
-            const extensao = (String(arquivo.nome || '').split('.').pop() || '').toLowerCase();
-            const tiposArquivo = {
-                pdf:  { simbolo: '📕', sigla: 'PDF', cor: '#c62828' },
-                png:  { simbolo: '🖼️', sigla: 'PNG', cor: '#16834a' },
-                jpg:  { simbolo: '🖼️', sigla: 'JPG', cor: '#16834a' },
-                jpeg: { simbolo: '🖼️', sigla: 'JPG', cor: '#16834a' },
-                gif:  { simbolo: '🖼️', sigla: 'GIF', cor: '#16834a' },
-                webp: { simbolo: '🖼️', sigla: 'WEBP', cor: '#16834a' },
-                svg:  { simbolo: '🖼️', sigla: 'SVG', cor: '#16834a' },
-                doc:  { simbolo: '📘', sigla: 'DOC', cor: '#185abd' },
-                docx: { simbolo: '📘', sigla: 'DOCX', cor: '#185abd' },
-                xls:  { simbolo: '📗', sigla: 'XLS', cor: '#188038' },
-                xlsx: { simbolo: '📗', sigla: 'XLSX', cor: '#188038' },
-                csv:  { simbolo: '📗', sigla: 'CSV', cor: '#188038' },
-                ppt:  { simbolo: '📙', sigla: 'PPT', cor: '#c6531a' },
-                pptx: { simbolo: '📙', sigla: 'PPTX', cor: '#c6531a' },
-                txt:  { simbolo: '📄', sigla: 'TXT', cor: '#5f6368' },
-                rtf:  { simbolo: '📄', sigla: 'RTF', cor: '#5f6368' },
-                zip:  { simbolo: '🗜️', sigla: 'ZIP', cor: '#6b7280' },
-                rar:  { simbolo: '🗜️', sigla: 'RAR', cor: '#6b7280' },
-                '7z': { simbolo: '🗜️', sigla: '7Z', cor: '#6b7280' },
-                mp3:  { simbolo: '🎵', sigla: 'MP3', cor: '#7e57c2' },
-                wav:  { simbolo: '🎵', sigla: 'WAV', cor: '#7e57c2' },
-                mp4:  { simbolo: '🎬', sigla: 'MP4', cor: '#7e57c2' },
-                mov:  { simbolo: '🎬', sigla: 'MOV', cor: '#7e57c2' }
-            };
-            const tipo = tiposArquivo[extensao] || { simbolo: '📄', sigla: extensao ? extensao.slice(0, 5).toUpperCase() : 'ARQ', cor: '#5f6368' };
-            const icone = document.createElement('span');
-            icone.className = 'arquivo-extensao-icone';
-            icone.setAttribute('aria-hidden', 'true');
-            icone.textContent = tipo.simbolo;
-            icone.style.cssText = 'display:inline-flex;align-items:center;justify-content:center;margin-right:8px;font-size:22px;vertical-align:middle;';
-            const etiqueta = document.createElement('span');
-            etiqueta.textContent = tipo.sigla;
-            etiqueta.style.cssText = 'display:inline-block;vertical-align:middle;margin-right:8px;padding:2px 5px;border-radius:4px;background:' + tipo.cor + ';color:#fff;font-size:10px;font-weight:700;line-height:1.4;';
-            nome.appendChild(icone);
-            nome.appendChild(etiqueta);
-            nome.appendChild(document.createTextNode(arquivo.nome || 'Arquivo sem nome'));
-            const info = document.createElement('div');
-            info.className = 'painel-vazio';
-            info.textContent = [arquivo.pasta, arquivo.escola].filter(Boolean).join(' • ');
-            const acoes = document.createElement('div');
-            acoes.className = 'arquivo-acoes';
-            const link = document.createElement('button');
-            link.type = 'button';
-            link.textContent = 'Baixar arquivo';
-            link.addEventListener('click', () => baixarArquivoUsuario(arquivo));
-            acoes.appendChild(link);
-            const rotulo = document.createElement('label');
-            rotulo.textContent = 'Substituir por nova versão: ';
-            const input = document.createElement('input');
-            input.type = 'file';
-            input.addEventListener('change', () => {
-                if (input.files && input.files[0]) substituirArquivoEnviado(arquivo, input.files[0], input);
-            });
-            rotulo.appendChild(input);
-            acoes.appendChild(rotulo);
-            item.appendChild(nome);
-            if (info.textContent) item.appendChild(info);
-            item.appendChild(acoes);
-            lista.appendChild(item);
+        // Mantém o filtro selecionado após atualizar, quando a pasta ainda existir.
+        const selecaoAnterior = filtro.value;
+        const pastas = [...new Set(arquivosMeusArquivosCache
+            .map(arquivo => String(arquivo.escola || arquivo.pasta || '').trim())
+            .filter(Boolean))].sort((a, b) => a.localeCompare(b, 'pt-BR'));
+        filtro.innerHTML = '';
+        const todas = document.createElement('option');
+        todas.value = '';
+        todas.textContent = 'Todas as pastas';
+        filtro.appendChild(todas);
+        pastas.forEach(pasta => {
+            const opcao = document.createElement('option');
+            opcao.value = pasta;
+            opcao.textContent = pasta;
+            filtro.appendChild(opcao);
         });
+        filtro.value = pastas.includes(selecaoAnterior) ? selecaoAnterior : '';
+        renderizarMeusArquivos();
     } catch (erro) {
         lista.innerHTML = '<p class="painel-vazio">Não foi possível carregar os arquivos.</p>';
         status.textContent = erro.message || String(erro);
         status.style.color = '#d93025';
     }
+}
+
+function filtrarMeusArquivos() {
+    renderizarMeusArquivos();
+}
+
+function renderizarMeusArquivos() {
+    const lista = document.getElementById('listaMeusArquivos');
+    const status = document.getElementById('statusMeusArquivos');
+    const filtro = document.getElementById('filtroPastaMeusArquivos');
+    const pastaSelecionada = filtro ? filtro.value : '';
+    const arquivos = arquivosMeusArquivosCache.filter(arquivo =>
+        !pastaSelecionada || String(arquivo.escola || arquivo.pasta || '').trim() === pastaSelecionada
+    );
+
+    lista.innerHTML = '';
+    status.textContent = '';
+    status.style.color = '';
+    if (!arquivosMeusArquivosCache.length) {
+        lista.innerHTML = '<p class="painel-vazio">Nenhum arquivo enviado encontrado para esta conta.</p>';
+        return;
+    }
+    if (!arquivos.length) {
+        lista.innerHTML = '<p class="painel-vazio">Nenhum documento encontrado na pasta selecionada.</p>';
+        return;
+    }
+    status.textContent = arquivos.length + (arquivos.length === 1 ? ' arquivo encontrado.' : ' arquivos encontrados.');
+    arquivos.forEach(arquivo => {
+                    const item = document.createElement('div');
+                    item.className = 'arquivo-painel';
+                    const nome = document.createElement('div');
+                    nome.className = 'arquivo-nome';
+        
+                    // Ícone visual conforme a extensão do arquivo.
+                    const extensao = (String(arquivo.nome || '').split('.').pop() || '').toLowerCase();
+                    const tiposArquivo = {
+                        pdf:  { simbolo: '📕', sigla: 'PDF', cor: '#c62828' },
+                        png:  { simbolo: '🖼️', sigla: 'PNG', cor: '#16834a' },
+                        jpg:  { simbolo: '🖼️', sigla: 'JPG', cor: '#16834a' },
+                        jpeg: { simbolo: '🖼️', sigla: 'JPG', cor: '#16834a' },
+                        gif:  { simbolo: '🖼️', sigla: 'GIF', cor: '#16834a' },
+                        webp: { simbolo: '🖼️', sigla: 'WEBP', cor: '#16834a' },
+                        svg:  { simbolo: '🖼️', sigla: 'SVG', cor: '#16834a' },
+                        doc:  { simbolo: '📘', sigla: 'DOC', cor: '#185abd' },
+                        docx: { simbolo: '📘', sigla: 'DOCX', cor: '#185abd' },
+                        xls:  { simbolo: '📗', sigla: 'XLS', cor: '#188038' },
+                        xlsx: { simbolo: '📗', sigla: 'XLSX', cor: '#188038' },
+                        csv:  { simbolo: '📗', sigla: 'CSV', cor: '#188038' },
+                        ppt:  { simbolo: '📙', sigla: 'PPT', cor: '#c6531a' },
+                        pptx: { simbolo: '📙', sigla: 'PPTX', cor: '#c6531a' },
+                        txt:  { simbolo: '📄', sigla: 'TXT', cor: '#5f6368' },
+                        rtf:  { simbolo: '📄', sigla: 'RTF', cor: '#5f6368' },
+                        zip:  { simbolo: '🗜️', sigla: 'ZIP', cor: '#6b7280' },
+                        rar:  { simbolo: '🗜️', sigla: 'RAR', cor: '#6b7280' },
+                        '7z': { simbolo: '🗜️', sigla: '7Z', cor: '#6b7280' },
+                        mp3:  { simbolo: '🎵', sigla: 'MP3', cor: '#7e57c2' },
+                        wav:  { simbolo: '🎵', sigla: 'WAV', cor: '#7e57c2' },
+                        mp4:  { simbolo: '🎬', sigla: 'MP4', cor: '#7e57c2' },
+                        mov:  { simbolo: '🎬', sigla: 'MOV', cor: '#7e57c2' }
+                    };
+                    const tipo = tiposArquivo[extensao] || { simbolo: '📄', sigla: extensao ? extensao.slice(0, 5).toUpperCase() : 'ARQ', cor: '#5f6368' };
+                    const icone = document.createElement('span');
+                    icone.className = 'arquivo-extensao-icone';
+                    icone.setAttribute('aria-hidden', 'true');
+                    icone.textContent = tipo.simbolo;
+                    icone.style.cssText = 'display:inline-flex;align-items:center;justify-content:center;margin-right:8px;font-size:22px;vertical-align:middle;';
+                    const etiqueta = document.createElement('span');
+                    etiqueta.textContent = tipo.sigla;
+                    etiqueta.style.cssText = 'display:inline-block;vertical-align:middle;margin-right:8px;padding:2px 5px;border-radius:4px;background:' + tipo.cor + ';color:#fff;font-size:10px;font-weight:700;line-height:1.4;';
+                    nome.appendChild(icone);
+                    nome.appendChild(etiqueta);
+                    nome.appendChild(document.createTextNode(arquivo.nome || 'Arquivo sem nome'));
+                    const info = document.createElement('div');
+                    info.className = 'painel-vazio';
+                    info.textContent = [arquivo.pasta, arquivo.escola].filter(Boolean).join(' • ');
+                    const acoes = document.createElement('div');
+                    acoes.className = 'arquivo-acoes';
+                    const link = document.createElement('button');
+                    link.type = 'button';
+                    link.textContent = 'Baixar arquivo';
+                    link.addEventListener('click', () => baixarArquivoUsuario(arquivo));
+                    acoes.appendChild(link);
+                    const rotulo = document.createElement('label');
+                    rotulo.textContent = 'Substituir por nova versão: ';
+                    const input = document.createElement('input');
+                    input.type = 'file';
+                    input.addEventListener('change', () => {
+                        if (input.files && input.files[0]) substituirArquivoEnviado(arquivo, input.files[0], input);
+                    });
+                    rotulo.appendChild(input);
+                    acoes.appendChild(rotulo);
+                    item.appendChild(nome);
+                    if (info.textContent) item.appendChild(info);
+                    item.appendChild(acoes);
+                    lista.appendChild(item);
+    });
 }
 
 async function baixarArquivoUsuario(arquivo) {
