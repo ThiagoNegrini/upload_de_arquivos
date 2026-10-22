@@ -100,6 +100,52 @@ const PASTAS_CATEGORIAS = {
    WEB APP
 ===================================================== */
 
+
+/**
+ * Lista escolas cadastradas em COMPOSICAO DE GRUPOS e seus pavilhões.
+ * Aba LOGOTIPOS: coluna A = nome exato da escola; coluna B = ID do arquivo
+ * Google Drive ou URL da imagem. Para URL do Drive, o arquivo deve permitir
+ * visualização por qualquer pessoa com o link.
+ */
+function listarEscolasLogin_() {
+  const ss = SpreadsheetApp.openById(CONFIG.ID_PLANILHA_USUARIOS);
+  const composicao = ss.getSheetByName('COMPOSICAO DE GRUPOS');
+  if (!composicao) {
+    return { sucesso: false, mensagem: 'A aba COMPOSICAO DE GRUPOS não foi encontrada.' };
+  }
+  const valores = composicao.getDataRange().getDisplayValues();
+  if (valores.length < 2) return { sucesso: true, escolas: [] };
+
+  const logos = {};
+  const abaLogos = ss.getSheetByName('LOGOTIPOS');
+  if (abaLogos && abaLogos.getLastRow() >= 2) {
+    abaLogos.getRange(2, 1, abaLogos.getLastRow() - 1, 2).getDisplayValues().forEach(function(row) {
+      const nome = String(row[0] || '').trim();
+      const valor = String(row[1] || '').trim();
+      if (!nome || !valor) return;
+      let url = valor;
+      const idMatch = valor.match(/[-\\w]{25,}/);
+      if (idMatch && /drive\\.google\\.com|^[-\\w]{25,}$/.test(valor)) {
+        url = 'https://drive.google.com/uc?export=view&id=' + idMatch[0];
+      }
+      logos[nome.toLocaleLowerCase('pt-BR')] = url;
+    });
+  }
+
+  const unicas = {};
+  for (let c = 0; c < valores[0].length; c++) {
+    for (let r = 1; r < valores.length; r++) {
+      const nome = String(valores[r][c] || '').trim();
+      if (!nome) continue;
+      const chave = nome.toLocaleLowerCase('pt-BR');
+      if (!unicas[chave]) unicas[chave] = { nome: nome, logoUrl: logos[chave] || '' };
+    }
+  }
+  const escolas = Object.keys(unicas).map(function(k) { return unicas[k]; })
+    .sort(function(a, b) { return a.nome.localeCompare(b.nome, 'pt-BR'); });
+  return { sucesso: true, escolas: escolas };
+}
+
 function doGet(e) {
 
   try {
@@ -154,6 +200,9 @@ function doPost(e) {
           cadastrarUsuario_(p)
         );
 
+
+      case 'listarEscolasLogin':
+        return json_(listarEscolasLogin_());
 
       case 'login':
 
