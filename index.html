@@ -2798,8 +2798,55 @@ async function carregarArquivosPastaAdmin() {
             const info=document.createElement('div'); const nome=document.createElement('strong'); nome.textContent=a.nome;
             const meta=document.createElement('div'); meta.className='painel-vazio'; meta.textContent=(a.atualizado?'Atualizado: '+a.atualizado+' • ':'')+(a.tamanho!=null?Math.round(a.tamanho/1024)+' KB':'');
             info.appendChild(nome);info.appendChild(meta);
-            const link=document.createElement('a');link.href=a.url;link.target='_blank';link.rel='noopener noreferrer';link.textContent='Abrir arquivo';
-            item.appendChild(info);item.appendChild(link);lista.appendChild(item);
+            const acoes=document.createElement('div');
+            acoes.style.display='flex'; acoes.style.gap='8px'; acoes.style.flexWrap='wrap'; acoes.style.alignItems='center';
+            const link=document.createElement('a');link.href=a.url;link.target='_blank';link.rel='noopener noreferrer';link.textContent='Ver / baixar';
+            acoes.appendChild(link);
+
+            const input=document.createElement('input');
+            input.type='file'; input.accept='*/*'; input.style.maxWidth='190px';
+            input.setAttribute('aria-label','Selecionar arquivo substituto para '+a.nome);
+            const btnSub=document.createElement('button'); btnSub.type='button'; btnSub.textContent='Substituir';
+            btnSub.onclick=async function(){
+                const novo=input.files && input.files[0];
+                if(!novo){alert('Selecione primeiro o novo arquivo.');return;}
+                if(!confirm('Substituir "'+a.nome+'" por "'+novo.name+'"? O arquivo atual irá para a lixeira.'))return;
+                btnSub.disabled=true;
+                try {
+                    const base64=await new Promise(function(resolve,reject){
+                        const reader=new FileReader();
+                        reader.onload=function(){const data=String(reader.result||'').split(',')[1]; data?resolve(data):reject(new Error('Falha ao ler arquivo.'));};
+                        reader.onerror=function(){reject(new Error('Falha ao ler arquivo.'));};
+                        reader.readAsDataURL(novo);
+                    });
+                    const resp=await enviarRequisicao(new URLSearchParams({
+                        acao:'adminSubstituirArquivo',usuario:usuarioLogado,token:tokenSessao,
+                        grupo:grupo,pastaId:pastaId,idArquivo:a.id,filenameOriginal:novo.name,
+                        mimeType:novo.type||'application/octet-stream',data:base64
+                    }));
+                    if(!resp||!resp.sucesso)throw new Error(resp&&resp.mensagem||'Não foi possível substituir.');
+                    alert(resp.mensagem||'Arquivo substituído.');
+                    await carregarArquivosPastaAdmin();
+                } catch(err){alert(err.message||String(err));}
+                finally{btnSub.disabled=false;}
+            };
+            const btnDel=document.createElement('button');btnDel.type='button';btnDel.textContent='Excluir';
+            btnDel.style.background='#b42318';btnDel.style.color='#fff';
+            btnDel.onclick=async function(){
+                if(!confirm('Tem certeza que deseja excluir "'+a.nome+'"? O arquivo será enviado para a lixeira do Drive.'))return;
+                btnDel.disabled=true;
+                try {
+                    const resp=await enviarRequisicao(new URLSearchParams({
+                        acao:'adminExcluirArquivo',usuario:usuarioLogado,token:tokenSessao,
+                        grupo:grupo,pastaId:pastaId,idArquivo:a.id
+                    }));
+                    if(!resp||!resp.sucesso)throw new Error(resp&&resp.mensagem||'Não foi possível excluir.');
+                    await carregarArquivosPastaAdmin();
+                } catch(err){alert(err.message||String(err));}
+                finally{btnDel.disabled=false;}
+            };
+            acoes.appendChild(input);acoes.appendChild(btnSub);acoes.appendChild(btnDel);
+            item.appendChild(info);item.appendChild(acoes);lista.appendChild(item);
         });
     } catch(e){status.textContent=e.message||String(e);status.style.color='#d93025';}
 }
