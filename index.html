@@ -2274,10 +2274,41 @@ async function efetuarLogin() {
                 selectGrupo.disabled = false;
                 campoNomeEscola.value = '';
                 campoNomeEscola.readOnly = false;
-                campoNomeEscola.placeholder = 'Selecione ou informe a pasta / entidade';
                 document.getElementById('nomeDocumento').value = '';
                 document.getElementById('arquivoInput').value = '';
                 document.getElementById('listaArquivos').innerHTML = '';
+
+                // Troca o campo de texto por uma lista de pastas reais do grupo selecionado.
+                let seletorPasta = document.getElementById('nomeEscola');
+                if (seletorPasta && seletorPasta.tagName !== 'SELECT') {
+                    const novo = document.createElement('select');
+                    novo.id = 'nomeEscola';
+                    novo.required = true;
+                    novo.innerHTML = '<option value="">Selecione primeiro um grupo</option>';
+                    seletorPasta.parentNode.replaceChild(novo, seletorPasta);
+                    seletorPasta = novo;
+                }
+                if (seletorPasta) {
+                    seletorPasta.disabled = true;
+                    seletorPasta.innerHTML = '<option value="">Selecione primeiro um grupo</option>';
+                }
+                selectGrupo.onchange = function() {
+                    atualizarContadorPrazo();
+                    carregarPastasEnvioAdmin();
+                };
+            } else {
+                // Restaura campo de texto para contas de entidades.
+                let seletorPasta = document.getElementById('nomeEscola');
+                if (seletorPasta && seletorPasta.tagName !== 'INPUT') {
+                    const novo = document.createElement('input');
+                    novo.type = 'text';
+                    novo.id = 'nomeEscola';
+                    novo.placeholder = 'INFORMAR O NOME DA ESCOLA';
+                    novo.autocomplete = 'off';
+                    novo.required = true;
+                    seletorPasta.parentNode.replaceChild(novo, seletorPasta);
+                }
+                selectGrupo.onchange = function() { atualizarContadorPrazo(); };
             }
 
             if (!ehAdministrador && grupoVinculado) {
@@ -2690,6 +2721,45 @@ async function carregarPainelAdmin() {
     }
 }
 
+
+async function carregarPastasEnvioAdmin() {
+    const grupo = document.getElementById('categoriaPasta').value;
+    const select = document.getElementById('nomeEscola');
+    const status = document.getElementById('status');
+    if (!select || select.tagName !== 'SELECT') return;
+    select.innerHTML = '<option value="">Carregando pastas...</option>';
+    select.disabled = true;
+    if (!grupo) {
+        select.innerHTML = '<option value="">Selecione primeiro um grupo</option>';
+        return;
+    }
+    try {
+        const r = await enviarRequisicao(new URLSearchParams({
+            acao: 'adminListarPastas',
+            usuario: usuarioLogado,
+            token: tokenSessao,
+            grupo: grupo
+        }));
+        if (!r || !r.sucesso) throw new Error(r && r.mensagem || 'Não foi possível carregar as pastas do grupo.');
+        select.innerHTML = '<option value="">Selecione uma pasta / entidade</option>';
+        (r.pastas || []).forEach(function(p) {
+            const o = document.createElement('option');
+            o.value = p.nome;
+            o.textContent = p.nome;
+            select.appendChild(o);
+        });
+        select.disabled = false;
+        if (!(r.pastas || []).length) {
+            select.innerHTML = '<option value="">Nenhuma pasta encontrada neste grupo</option>';
+            status.textContent = 'Não foram encontradas pastas dentro do grupo selecionado.';
+            status.style.color = '#b45309';
+        }
+    } catch (e) {
+        select.innerHTML = '<option value="">Erro ao carregar pastas</option>';
+        status.textContent = e.message || String(e);
+        status.style.color = '#d93025';
+    }
+}
 
 async function carregarPastasAdmin() {
     const grupo = document.getElementById('adminGrupoArquivos').value;
