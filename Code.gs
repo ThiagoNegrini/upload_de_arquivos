@@ -180,6 +180,12 @@ function doPost(e) {
       case 'adminListarArquivosPasta':
         return json_(adminListarArquivosPasta_(p));
 
+      case 'adminExcluirArquivo':
+        return json_(adminExcluirArquivo_(p));
+
+      case 'adminSubstituirArquivo':
+        return json_(adminSubstituirArquivo_(p));
+
       case 'adminListarPrazos':
         return json_(adminListarPrazos_(p));
 
@@ -1345,6 +1351,55 @@ function adminListarArquivosPasta_(p) {
   }
   arquivos.sort(function(a,b){ return a.nome.localeCompare(b.nome, 'pt-BR'); });
   return { sucesso:true, grupo:grupo, pasta:pastaEncontrada.getName(), arquivos:arquivos };
+}
+
+/* Ações administrativas sobre arquivos: sempre valida CPF ADM e pertença ao grupo/pasta. */
+function adminValidarPastaArquivo_(p) {
+  const grupo = String(p.grupo || '').trim();
+  const pastaId = String(p.pastaId || '').trim();
+  const arquivoId = String(p.idArquivo || '').trim();
+  const idRaiz = PASTAS_CATEGORIAS[grupo];
+  if (!idRaiz || !pastaId || !arquivoId) throw new Error('Grupo, pasta ou arquivo inválidos.');
+  const raiz = DriveApp.getFolderById(idRaiz);
+  const itPastas = raiz.getFolders();
+  let pasta = null;
+  while (itPastas.hasNext()) { const item = itPastas.next(); if (item.getId() === pastaId) { pasta = item; break; } }
+  if (!pasta) throw new Error('A pasta não pertence ao grupo selecionado.');
+  const itArquivos = pasta.getFiles();
+  let arquivo = null;
+  while (itArquivos.hasNext()) { const item = itArquivos.next(); if (item.getId() === arquivoId) { arquivo = item; break; } }
+  if (!arquivo) throw new Error('O arquivo não pertence à pasta selecionada.');
+  return { pasta:pasta, arquivo:arquivo };
+}
+
+function adminExcluirArquivo_(p) {
+  const auth = exigirAdministrador_(p);
+  if (!auth.ok) return { sucesso:false, mensagem:auth.mensagem };
+  try {
+    const alvo = adminValidarPastaArquivo_(p);
+    alvo.arquivo.setTrashed(true);
+    registrarLog_('INFO', 'ADMIN_EXCLUIR_ARQUIVO', auth.usuario, alvo.arquivo.getName() + ' | ' + alvo.pasta.getName());
+    return { sucesso:true, mensagem:'Arquivo enviado para a lixeira.' };
+  } catch (e) { return { sucesso:false, mensagem:e.message || String(e) }; }
+}
+
+function adminSubstituirArquivo_(p) {
+  const auth = exigirAdministrador_(p);
+  if (!auth.ok) return { sucesso:false, mensagem:auth.mensagem };
+  try {
+    const alvo = adminValidarPastaArquivo_(p);
+    const nome = limparNome_(String(p.filenameOriginal || '').trim());
+    const mime = String(p.mimeType || 'application/octet-stream').trim();
+    const dados = String(p.data || '');
+    if (!nome || !dados) return { sucesso:false, mensagem:'Selecione o novo arquivo.' };
+    const bytes = Utilities.base64Decode(dados);
+    const blob = Utilities.newBlob(bytes, mime, nome);
+    const nova = alvo.pasta.createFile(blob);
+    // Só envia o arquivo antigo para a lixeira depois que a nova cópia foi criada.
+    alvo.arquivo.setTrashed(true);
+    registrarLog_('INFO', 'ADMIN_SUBSTITUIR_ARQUIVO', auth.usuario, alvo.arquivo.getName() + ' -> ' + nova.getName() + ' | ' + alvo.pasta.getName());
+    return { sucesso:true, mensagem:'Arquivo substituído com sucesso.', id:nova.getId(), nome:nova.getName() };
+  } catch (e) { return { sucesso:false, mensagem:'Não foi possível substituir o arquivo: ' + (e.message || String(e)) }; }
 }
 
 function formatarPrazoServidor_(data) {
