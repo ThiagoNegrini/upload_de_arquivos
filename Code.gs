@@ -658,6 +658,7 @@ function efetuarLogin_(p) {
       }
 
       const vinculo = obterVinculoUsuario_(usuarioPlanilha);
+      const ehAdministrador = cpfUsuarioEhAdmin_(aba.getRange(i + 2, 3).getDisplayValue());
       const tokenSessao = Utilities.getUuid();
       CacheService.getScriptCache().put('painel_sessao_' + tokenSessao, usuarioPlanilha, 21600);
 
@@ -666,11 +667,12 @@ function efetuarLogin_(p) {
         token: tokenSessao,
         usuario: usuarioPlanilha,
         nome: nome,
-        nomeEscola: vinculo.escola || nomeEscola,
-        grupoVinculado: vinculo.grupo,
-        nomeEscolaVinculada: vinculo.escola || nomeEscola,
-        escolasPorGrupo: escolasPorGrupo,
-        ehAdministrador: cpfUsuarioEhAdmin_(aba.getRange(i + 2, 3).getDisplayValue()),
+        // A conta ADM não recebe vínculo de grupo/pasta de entidade.
+        nomeEscola: ehAdministrador ? '' : (vinculo.escola || nomeEscola),
+        grupoVinculado: ehAdministrador ? '' : (vinculo.grupo || ''),
+        nomeEscolaVinculada: ehAdministrador ? '' : (vinculo.escola || nomeEscola),
+        escolasPorGrupo: ehAdministrador ? {} : escolasPorGrupo,
+        ehAdministrador: ehAdministrador,
         prazosGrupos: obterPrazosPublicos_()
       };
     }
