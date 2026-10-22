@@ -1178,6 +1178,28 @@
     </div>
 
 
+    <!-- Seleção da escola e pavilhão -->
+    <div class="card" id="telaEscolhaEscola">
+        <h2>UESP 2027</h2>
+        <p>Selecione sua escola ou bloco para acessar o sistema.</p>
+        <div class="form-group">
+            <label for="escolaInicial">Escola / Bloco:</label>
+            <select id="escolaInicial" style="width:100%;padding:12px;border:1px solid #d0d5dd;border-radius:8px">
+                <option value="">Carregando escolas...</option>
+            </select>
+        </div>
+        <div style="text-align:center;margin:16px 0">
+            <img id="pavilhaoEscola" alt="Pavilhão da escola selecionada"
+                 style="display:none;max-width:180px;max-height:180px;object-fit:contain;margin:auto">
+            <p id="nomePavilhao" style="font-weight:600;margin-top:8px"></p>
+        </div>
+        <div id="escolaInicialStatus" class="status-msg"></div>
+        <button id="btnContinuarEscola" onclick="continuarParaLogin()" disabled>Continuar para o login</button>
+        <p style="text-align:center;margin-top:12px">
+            <span class="link" onclick="mostrarCadastro()">Ainda não possui cadastro? Criar conta</span>
+        </p>
+    </div>
+
     <!-- ==========================================
          LOGIN
     =========================================== -->
@@ -1772,6 +1794,80 @@ let grupoVinculado = '';
 let escolaVinculada = '';
 let STATUS_ENVIO_GRUPOS = {};
 
+
+// ==========================================
+// ESCOLHA DA ESCOLA / PAVILHÃO
+// ==========================================
+let escolaSelecionadaLogin = '';
+
+async function carregarEscolasLogin() {
+    const select = document.getElementById('escolaInicial');
+    const status = document.getElementById('escolaInicialStatus');
+    try {
+        const params = new URLSearchParams({ acao: 'listarEscolasLogin' });
+        const response = await fetch(URL_SCRIPT, { method: 'POST', mode: 'cors', body: params });
+        const data = await response.json();
+        if (!data.sucesso || !Array.isArray(data.escolas)) throw new Error(data.mensagem || 'Não foi possível carregar a lista.');
+        select.innerHTML = '<option value="">Selecione sua escola ou bloco...</option>';
+        data.escolas.forEach(item => {
+            const option = document.createElement('option');
+            option.value = item.nome;
+            option.textContent = item.nome;
+            option.dataset.logo = item.logoUrl || '';
+            select.appendChild(option);
+        });
+        if (!data.escolas.length) {
+            status.textContent = 'Nenhuma escola encontrada na aba COMPOSICAO DE GRUPOS.';
+        }
+    } catch (e) {
+        select.innerHTML = '<option value="">Falha ao carregar escolas</option>';
+        status.textContent = 'Não foi possível carregar as escolas. Tente atualizar a página.';
+    }
+}
+
+function atualizarPavilhaoSelecionado() {
+    const select = document.getElementById('escolaInicial');
+    const option = select.options[select.selectedIndex];
+    const img = document.getElementById('pavilhaoEscola');
+    const nome = document.getElementById('nomePavilhao');
+    const btn = document.getElementById('btnContinuarEscola');
+    escolaSelecionadaLogin = select.value || '';
+    nome.textContent = escolaSelecionadaLogin;
+    img.onerror = () => { img.style.display = 'none'; };
+    if (option && option.dataset.logo) {
+        img.src = option.dataset.logo;
+        img.style.display = 'block';
+    } else {
+        img.removeAttribute('src');
+        img.style.display = 'none';
+    }
+    btn.disabled = !escolaSelecionadaLogin;
+}
+
+function continuarParaLogin() {
+    if (!escolaSelecionadaLogin) return;
+    document.getElementById('telaEscolhaEscola').classList.add('hidden');
+    document.getElementById('telaLogin').classList.remove('hidden');
+    document.getElementById('loginStatus').textContent = '';
+    const title = document.querySelector('#telaLogin h2');
+    if (title) title.textContent = 'ACESSO AO PAINEL DE ENVIO DE DOCUMENTOS';
+    const old = document.getElementById('escolaLoginSelecionada');
+    if (old) old.remove();
+    const p = document.createElement('p');
+    p.id = 'escolaLoginSelecionada';
+    p.style.cssText = 'text-align:center;font-weight:600;margin:8px 0 16px';
+    p.textContent = 'Escola/Bloco: ' + escolaSelecionadaLogin;
+    document.getElementById('telaLogin').insertBefore(p, document.getElementById('telaLogin').children[1]);
+    const opt = document.querySelector('#escolaInicial option:checked');
+    const logo = opt ? opt.dataset.logo : '';
+    const img = document.getElementById('imgLogo');
+    if (logo) { img.src = logo; img.alt = 'Pavilhão de ' + escolaSelecionadaLogin; }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('escolaInicial').addEventListener('change', atualizarPavilhaoSelecionado);
+    carregarEscolasLogin();
+});
 
 // ==========================================
 // MOSTRAR LOGIN
