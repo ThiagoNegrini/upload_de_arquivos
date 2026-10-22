@@ -2456,16 +2456,24 @@ async function carregarMeusArquivos() {
     const status = document.getElementById('statusMeusArquivos');
     const filtro = document.getElementById('filtroPastaMeusArquivos');
     const campoPastaEnvio = document.getElementById('nomeEscola');
+    const campoGrupoEnvio = document.getElementById('categoriaPasta');
+    if (campoGrupoEnvio && !campoGrupoEnvio.dataset.filtroArquivosVinculado) {
+        campoGrupoEnvio.addEventListener('change', carregarMeusArquivos);
+        campoGrupoEnvio.dataset.filtroArquivosVinculado = '1';
+    }
     if (campoPastaEnvio && !campoPastaEnvio.dataset.filtroArquivosVinculado) {
-        campoPastaEnvio.addEventListener('change', renderizarMeusArquivos);
-        campoPastaEnvio.addEventListener('input', renderizarMeusArquivos);
+        campoPastaEnvio.addEventListener('change', carregarMeusArquivos);
+        campoPastaEnvio.addEventListener('input', function() {
+            window.clearTimeout(campoPastaEnvio._timerCarregarArquivos);
+            campoPastaEnvio._timerCarregarArquivos = window.setTimeout(carregarMeusArquivos, 350);
+        });
         campoPastaEnvio.dataset.filtroArquivosVinculado = '1';
     }
     if (!usuarioLogado) return;
     lista.innerHTML = '<p class="painel-vazio">Carregando seus arquivos...</p>';
     status.textContent = '';
     try {
-        const resultado = await enviarRequisicao(new URLSearchParams({acao:'listarArquivos', usuario:usuarioLogado, token:tokenSessao}));
+        const resultado = await enviarRequisicao(new URLSearchParams({acao:'listarArquivosPastaSelecionada', usuario:usuarioLogado, token:tokenSessao, grupo:(document.getElementById('categoriaPasta') || {}).value || '', pasta:(document.getElementById('nomeEscola') || {}).value || ''}));
         if (!resultado.sucesso) throw new Error(resultado.mensagem || 'Não foi possível carregar os arquivos.');
         arquivosMeusArquivosCache = Array.isArray(resultado.arquivos) ? resultado.arquivos : [];
 
