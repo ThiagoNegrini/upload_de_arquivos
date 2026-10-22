@@ -1328,6 +1328,42 @@
 
         <div class="form-group">
 
+            <label for="cadastroGrupo">
+                Grupo:
+            </label>
+
+            <select id="cadastroGrupo" required>
+                <option value="">Selecione o grupo</option>
+                <option value="GRUPO ESPECIAL DE BAIRROS">GRUPO ESPECIAL DE BAIRROS</option>
+                <option value="GRUPO ACESSO I">GRUPO ACESSO I</option>
+                <option value="GRUPO ACESSO II">GRUPO ACESSO II</option>
+                <option value="GRUPO ACESSO III">GRUPO ACESSO III</option>
+                <option value="ACESSO DE BLOCOS">ACESSO DE BLOCOS</option>
+                <option value="BLOCOS ESPECIAIS">BLOCOS ESPECIAIS</option>
+            </select>
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label for="cadastroEscola">
+                Nome da Escola / Pasta:
+            </label>
+
+            <input
+                type="text"
+                id="cadastroEscola"
+                placeholder="Digite o nome da escola ou entidade"
+                autocomplete="organization"
+                required
+            >
+
+        </div>
+
+
+        <div class="form-group">
+
             <label for="cadastroSenha">
                 Senha:
             </label>
@@ -1851,6 +1887,18 @@ async function cadastrarUsuario() {
             .value
             .trim();
 
+    const grupo =
+        document
+            .getElementById('cadastroGrupo')
+            .value
+            .trim();
+
+    const escola =
+        document
+            .getElementById('cadastroEscola')
+            .value
+            .trim();
+
 
     const status =
         document.getElementById(
@@ -1864,10 +1912,10 @@ async function cadastrarUsuario() {
         );
 
 
-    if (!nome || !usuario || !cpf || !senha) {
+    if (!nome || !usuario || !cpf || !senha || !grupo || !escola) {
 
         status.innerHTML =
-            '⚠️ Preencha todos os campos.';
+            '⚠️ Preencha todos os campos, incluindo grupo e nome da escola/pasta.';
 
         status.style.color =
             '#d93025';
@@ -1925,7 +1973,11 @@ async function cadastrarUsuario() {
 
                 cpf: cpf,
 
-                senha: senha
+                senha: senha,
+
+                grupo: grupo,
+
+                nomeEscola: escola
 
             });
 
@@ -1983,6 +2035,9 @@ async function cadastrarUsuario() {
                     'cadastroSenha'
                 )
                 .value = '';
+
+            document.getElementById('cadastroGrupo').value = '';
+            document.getElementById('cadastroEscola').value = '';
 
 
             setTimeout(
