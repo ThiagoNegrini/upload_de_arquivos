@@ -2218,17 +2218,35 @@ async function efetuarLogin() {
             escolasPorGrupo =
                 resultado.escolasPorGrupo || {};
 
-            grupoVinculado =
-                String(resultado.grupoVinculado || '').trim();
+            const ehAdministrador = resultado.ehAdministrador === true;
 
-            escolaVinculada =
-                String(resultado.nomeEscolaVinculada || resultado.nomeEscola || '').trim();
+            // Contas ADM não herdam nem usam vínculo de grupo/pasta de entidade.
+            grupoVinculado = ehAdministrador
+                ? ''
+                : String(resultado.grupoVinculado || '').trim();
+
+            escolaVinculada = ehAdministrador
+                ? ''
+                : String(resultado.nomeEscolaVinculada || resultado.nomeEscola || '').trim();
 
             const painelAdmin = document.getElementById('painelAdministrativo');
             if (painelAdmin) {
-                if (resultado.ehAdministrador === true) {
+                if (ehAdministrador) {
                     painelAdmin.classList.remove('hidden');
                     carregarPainelAdmin();
+                    // Sempre começa sem grupo/pasta selecionados; o ADM escolhe livremente.
+                    const grupoAdmin = document.getElementById('adminGrupoArquivos');
+                    const pastaAdmin = document.getElementById('adminPastaArquivos');
+                    if (grupoAdmin) grupoAdmin.value = '';
+                    if (pastaAdmin) {
+                        pastaAdmin.innerHTML = '<option value="">Selecione primeiro um grupo</option>';
+                        pastaAdmin.value = '';
+                        pastaAdmin.disabled = true;
+                    }
+                    const listaAdmin = document.getElementById('listaArquivosAdmin');
+                    const statusAdmin = document.getElementById('statusArquivosAdmin');
+                    if (listaAdmin) listaAdmin.innerHTML = '';
+                    if (statusAdmin) statusAdmin.textContent = '';
                 } else {
                     painelAdmin.classList.add('hidden');
                     document.getElementById('listaPrazosAdmin').innerHTML = '';
