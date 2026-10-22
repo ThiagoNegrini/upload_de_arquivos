@@ -2218,7 +2218,7 @@ async function efetuarLogin() {
             escolasPorGrupo =
                 resultado.escolasPorGrupo || {};
 
-            const ehAdministrador = resultado.ehAdministrador === true;
+            const ehAdministrador = resultado.ehAdministrador === true || String(resultado.ehAdministrador || '').trim().toLowerCase() === 'true' || String(resultado.ehAdministrador || '').trim() === '1';
 
             // Contas ADM não herdam nem usam vínculo de grupo/pasta de entidade.
             grupoVinculado = ehAdministrador
