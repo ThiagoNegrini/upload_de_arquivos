@@ -1630,6 +1630,28 @@
             <p id="statusPainelAdmin" class="status-msg" aria-live="polite"></p>
             <div id="listaPrazosAdmin"></div>
             <button type="button" id="btnAtualizarPrazosAdmin" onclick="carregarPainelAdmin()">Atualizar prazos</button>
+
+            <hr style="margin:24px 0;border:0;border-top:1px solid #d8e1ed">
+            <h3>Consulta administrativa de arquivos</h3>
+            <p>O perfil ADM pode consultar todos os grupos e pastas, sem vínculo a uma entidade.</p>
+            <div class="form-group">
+                <label for="adminGrupoArquivos">Grupo</label>
+                <select id="adminGrupoArquivos" onchange="carregarPastasAdmin()">
+                    <option value="">Selecione um grupo</option>
+                    <option>GRUPO ESPECIAL DE BAIRROS</option><option>GRUPO ACESSO I</option>
+                    <option>GRUPO ACESSO II</option><option>GRUPO ACESSO III</option>
+                    <option>ACESSO DE BLOCOS</option><option>BLOCOS ESPECIAIS</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="adminPastaArquivos">Pasta / Entidade</label>
+                <select id="adminPastaArquivos" onchange="carregarArquivosPastaAdmin()" disabled>
+                    <option value="">Selecione primeiro um grupo</option>
+                </select>
+            </div>
+            <p id="statusArquivosAdmin" class="status-msg" aria-live="polite"></p>
+            <div id="listaArquivosAdmin"></div>
+
         </section>
 
         <!-- SAIR -->
@@ -2636,6 +2658,50 @@ async function carregarPainelAdmin() {
         status.textContent = erro.message || String(erro);
         status.style.color = '#d93025';
     }
+}
+
+
+async function carregarPastasAdmin() {
+    const grupo = document.getElementById('adminGrupoArquivos').value;
+    const select = document.getElementById('adminPastaArquivos');
+    const status = document.getElementById('statusArquivosAdmin');
+    const lista = document.getElementById('listaArquivosAdmin');
+    select.innerHTML = '<option value="">Carregando pastas...</option>'; select.disabled = true; lista.innerHTML = '';
+    if (!grupo) { select.innerHTML = '<option value="">Selecione primeiro um grupo</option>'; status.textContent = ''; return; }
+    status.textContent = 'Carregando pastas do grupo...'; status.style.color = '';
+    try {
+        const r = await enviarRequisicao(new URLSearchParams({acao:'adminListarPastas',usuario:usuarioLogado,token:tokenSessao,grupo:grupo}));
+        if (!r || !r.sucesso) throw new Error(r && r.mensagem || 'Não foi possível carregar as pastas.');
+        select.innerHTML = '<option value="">Selecione uma pasta</option>';
+        (r.pastas || []).forEach(function(p) { const o=document.createElement('option'); o.value=p.id; o.textContent=p.nome; select.appendChild(o); });
+        select.disabled = false;
+        status.textContent = (r.pastas || []).length ? 'Selecione uma pasta para listar os arquivos.' : 'Não há pastas dentro deste grupo.';
+    } catch(e) { select.innerHTML='<option value="">Falha ao carregar pastas</option>'; status.textContent=e.message||String(e); status.style.color='#d93025'; }
+}
+
+async function carregarArquivosPastaAdmin() {
+    const grupo=document.getElementById('adminGrupoArquivos').value;
+    const pastaId=document.getElementById('adminPastaArquivos').value;
+    const status=document.getElementById('statusArquivosAdmin');
+    const lista=document.getElementById('listaArquivosAdmin');
+    lista.innerHTML='';
+    if(!grupo||!pastaId){status.textContent='';return;}
+    status.textContent='Carregando arquivos da pasta...'; status.style.color='';
+    try {
+        const r=await enviarRequisicao(new URLSearchParams({acao:'adminListarArquivosPasta',usuario:usuarioLogado,token:tokenSessao,grupo:grupo,pastaId:pastaId}));
+        if(!r||!r.sucesso) throw new Error(r&&r.mensagem||'Não foi possível listar os arquivos.');
+        status.textContent=(r.arquivos||[]).length+' arquivo(s) encontrado(s) em "'+r.pasta+'".';
+        if(!(r.arquivos||[]).length){lista.innerHTML='<p class="painel-vazio">Esta pasta não contém arquivos.</p>';return;}
+        r.arquivos.forEach(function(a){
+            const item=document.createElement('div'); item.className='arquivo-painel';
+            item.style.display='flex'; item.style.alignItems='center'; item.style.justifyContent='space-between'; item.style.gap='12px'; item.style.flexWrap='wrap';
+            const info=document.createElement('div'); const nome=document.createElement('strong'); nome.textContent=a.nome;
+            const meta=document.createElement('div'); meta.className='painel-vazio'; meta.textContent=(a.atualizado?'Atualizado: '+a.atualizado+' • ':'')+(a.tamanho!=null?Math.round(a.tamanho/1024)+' KB':'');
+            info.appendChild(nome);info.appendChild(meta);
+            const link=document.createElement('a');link.href=a.url;link.target='_blank';link.rel='noopener noreferrer';link.textContent='Abrir arquivo';
+            item.appendChild(info);item.appendChild(link);lista.appendChild(item);
+        });
+    } catch(e){status.textContent=e.message||String(e);status.style.color='#d93025';}
 }
 
 async function salvarPrazoAdmin(indice) {
