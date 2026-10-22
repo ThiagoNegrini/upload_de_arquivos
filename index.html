@@ -999,7 +999,6 @@
 
             }
 
-
             .container {
 
                 width:
@@ -1616,6 +1615,23 @@
             <div id="listaMeusArquivos"><p class="painel-vazio">Faça login para consultar seus arquivos.</p></div>
         </section>
 
+        <!-- PRAZOS E PENDÊNCIAS DE DOCUMENTOS -->
+        <section class="painel-arquivos" aria-labelledby="tituloPendencias">
+            <h3 id="tituloPendencias">Prazos e pendências</h3>
+            <p id="resumoPendencias" class="painel-vazio">Entre na conta para consultar os prazos e documentos pendentes.</p>
+            <button type="button" id="btnAtualizarPendencias" onclick="carregarPendencias()">Atualizar pendências</button>
+            <div id="listaPendencias" aria-live="polite"></div>
+        </section>
+
+        <!-- PAINEL ADMINISTRATIVO: somente aparece para CPF autorizado na aba adm -->
+        <section id="painelAdministrativo" class="painel-arquivos hidden" aria-labelledby="tituloPainelAdministrativo">
+            <h3 id="tituloPainelAdministrativo">Painel administrativo — prazos e abertura de envios</h3>
+            <p>Defina a data e hora limite de cada grupo e habilite ou bloqueie os envios. As alterações são validadas e gravadas no servidor.</p>
+            <p id="statusPainelAdmin" class="status-msg" aria-live="polite"></p>
+            <div id="listaPrazosAdmin"></div>
+            <button type="button" id="btnAtualizarPrazosAdmin" onclick="carregarPainelAdmin()">Atualizar prazos</button>
+        </section>
+
         <!-- SAIR -->
 
         <button
@@ -1680,7 +1696,7 @@
 // ==========================================
 
 const URL_SCRIPT =
-    'https://script.google.com/macros/s/AKfycbzxn2KmlBgMlTASsbuMP4bpZJOIFlXl1yJ-jvVCmbvHHgcff-DEagjor-upDvppWj-k/exec';
+    'https://script.google.com/macros/s/AKfycbyHiIJ9uh4Bw7B6pTuT4zBQxypC5UV61eoBuoEgQO2hI5ALretg6XJrrrbYZgaolZeK/exec';
 
 
 let usuarioLogado = '';
@@ -1688,6 +1704,7 @@ let tokenSessao = '';
 let escolasPorGrupo = {};
 let grupoVinculado = '';
 let escolaVinculada = '';
+let STATUS_ENVIO_GRUPOS = {};
 
 
 // ==========================================
@@ -1979,7 +1996,6 @@ async function cadastrarUsuario() {
 // ==========================================
 
 async function recuperarSenha() {
-
     const usuario =
         document
             .getElementById('recuperacaoUsuario')
@@ -2171,6 +2187,11 @@ async function efetuarLogin() {
             usuarioLogado =
                 resultado.usuario;
             tokenSessao = resultado.token || '';
+            STATUS_ENVIO_GRUPOS = resultado.prazosGrupos || {};
+            Object.keys(STATUS_ENVIO_GRUPOS).forEach(function(grupo) {
+                const cfgPrazo = STATUS_ENVIO_GRUPOS[grupo] || {};
+                if (cfgPrazo.prazo) PRAZOS_GRUPOS[grupo] = new Date(cfgPrazo.prazo);
+            });
 
             escolasPorGrupo =
                 resultado.escolasPorGrupo || {};
@@ -2181,6 +2202,16 @@ async function efetuarLogin() {
             escolaVinculada =
                 String(resultado.nomeEscolaVinculada || resultado.nomeEscola || '').trim();
 
+            const painelAdmin = document.getElementById('painelAdministrativo');
+            if (painelAdmin) {
+                if (resultado.ehAdministrador === true) {
+                    painelAdmin.classList.remove('hidden');
+                    carregarPainelAdmin();
+                } else {
+                    painelAdmin.classList.add('hidden');
+                    document.getElementById('listaPrazosAdmin').innerHTML = '';
+                }
+            }
 
             document
                 .getElementById(
@@ -2242,6 +2273,7 @@ async function efetuarLogin() {
 
             status.innerHTML = '';
             carregarMeusArquivos();
+            carregarPendencias();
 
         } else {
 
@@ -2479,6 +2511,167 @@ async function substituirArquivoEnviado(arquivoAntigo, arquivoNovo, input) {
 }
 
 // ==========================================
+// PRAZOS E PENDÊNCIAS
+// ==========================================
+
+async function carregarPendencias() {
+    const resumo = document.getElementById('resumoPendencias');
+    const lista = document.getElementById('listaPendencias');
+    if (!usuarioLogado || !tokenSessao) {
+        resumo.textContent = 'Faça login para consultar as pendências.';
+        lista.innerHTML = '';
+        return;
+    }
+    resumo.textContent = 'Consultando prazos e documentos...';
+    lista.innerHTML = '';
+    try {
+        const resultado = await enviarRequisicao(new URLSearchParams({
+            acao: 'listarPendencias', usuario: usuarioLogado, token: tokenSessao
+        }));
+        if (!resultado || !resultado.sucesso) throw new Error(resultado && resultado.mensagem || 'Não foi possível consultar as pendências.');
+        if (!resultado.grupo) {
+            resumo.textContent = resultado.mensagem || 'O grupo ainda não está vinculado à conta.';
+            return;
+        }
+        resumo.textContent = 'Grupo: ' + resultado.grupo + (resultado.escola ? ' • ' + resultado.escola : '') +
+            (resultado.prazo ? ' • Prazo final: ' + resultado.prazo : ' • Prazo não configurado') +
+            (resultado.prazoExpirado ? ' • PRAZO EXPIRADO' : '') +
+            (resultado.enviosHabilitados === false ? ' • ENVIOS DESABILITADOS PELA ADMINISTRAÇÃO' : '');
+        if (!resultado.requisitosConfigurados) {
+            const aviso = document.createElement('p');
+            aviso.className = 'painel-vazio';
+            aviso.textContent = 'A lista de documentos obrigatórios ainda não foi cadastrada pela UESP na aba “Requisitos” da planilha de envio.';
+            lista.appendChild(aviso);
+            const recebidos = document.createElement('p');
+            recebidos.className = 'painel-vazio';
+            recebidos.textContent = 'Arquivos recebidos registrados para este grupo: ' + (resultado.arquivosRecebidos || 0) + '.';
+            lista.appendChild(recebidos);
+            return;
+        }
+        const totais = document.createElement('p');
+        totais.className = 'painel-vazio';
+        totais.textContent = 'Documentos obrigatórios: ' + resultado.totalRequisitos + ' • Enviados: ' + resultado.totalEnviados + ' • Pendentes: ' + resultado.totalPendentes;
+        lista.appendChild(totais);
+        resultado.pendencias.forEach(function(p) {
+            const item = document.createElement('div');
+            item.className = 'arquivo-painel';
+            const nome = document.createElement('strong');
+            nome.textContent = p.documento;
+            const estado = document.createElement('div');
+            estado.className = 'painel-vazio';
+            estado.textContent = p.enviado ? '✓ ENVIADO' : '⚠ PENDENTE';
+            estado.style.color = p.enviado ? '#188038' : '#b45309';
+            item.appendChild(nome);
+            item.appendChild(estado);
+            if (p.prazoFinal) {
+                const prazo = document.createElement('div');
+                prazo.className = 'painel-vazio';
+                prazo.textContent = 'Prazo específico: ' + p.prazoFinal;
+                item.appendChild(prazo);
+            }
+            lista.appendChild(item);
+        });
+    } catch (erro) {
+        resumo.textContent = erro.message || String(erro);
+    }
+}
+
+// ==========================================
+// PAINEL ADMINISTRATIVO — PRAZOS E ENVIO
+// ==========================================
+
+const GRUPOS_ADMIN = [
+    'GRUPO ESPECIAL DE BAIRROS',
+    'GRUPO ACESSO I',
+    'GRUPO ACESSO II',
+    'GRUPO ACESSO III',
+    'ACESSO DE BLOCOS',
+    'BLOCOS ESPECIAIS'
+];
+
+function escaparHtmlAdmin(valor) {
+    return String(valor == null ? '' : valor).replace(/[&<>"']/g, function(c) {
+        return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+    });
+}
+
+async function carregarPainelAdmin() {
+    const painel = document.getElementById('painelAdministrativo');
+    const lista = document.getElementById('listaPrazosAdmin');
+    const status = document.getElementById('statusPainelAdmin');
+    if (!painel || painel.classList.contains('hidden')) return;
+    status.textContent = 'Carregando prazos configurados...';
+    lista.innerHTML = '';
+    try {
+        const resultado = await enviarRequisicao(new URLSearchParams({
+            acao:'adminListarPrazos', usuario:usuarioLogado, token:tokenSessao
+        }));
+        if (!resultado || !resultado.sucesso) throw new Error(resultado && resultado.mensagem || 'Não foi possível carregar os prazos.');
+        status.textContent = 'Fuso horário do servidor: ' + (resultado.fusoHorario || 'configuração do projeto Apps Script') + '. As alterações passam a valer imediatamente após salvar.';
+        (resultado.grupos || []).forEach(function(item, i) {
+            const valorPrazo = String(item.prazo || '').slice(0, 16);
+            const bloco = document.createElement('div');
+            bloco.className = 'arquivo-painel';
+            bloco.style.marginBottom = '14px';
+            bloco.style.padding = '16px';
+            bloco.style.border = '1px solid #d8e1ed';
+            bloco.style.borderRadius = '12px';
+            bloco.innerHTML = `
+                <strong>${escaparHtmlAdmin(item.grupo)}</strong>
+                <div class="form-group" style="margin-top:12px">
+                    <label for="adminPrazo${i}">Prazo final (data e hora)</label>
+                    <input type="datetime-local" id="adminPrazo${i}" value="${escaparHtmlAdmin(valorPrazo)}" required>
+                </div>
+                <label style="display:flex;align-items:center;gap:8px;margin:10px 0">
+                    <input type="checkbox" id="adminHabilitado${i}" ${item.habilitado ? 'checked' : ''}>
+                    Habilitar envios e substituições para este grupo
+                </label>
+                <button type="button" onclick="salvarPrazoAdmin(${i})">Salvar prazo deste grupo</button>
+                <span id="adminResultado${i}" class="status-msg" aria-live="polite"></span>
+            `;
+            bloco.dataset.grupo = item.grupo;
+            lista.appendChild(bloco);
+        });
+    } catch (erro) {
+        status.textContent = erro.message || String(erro);
+        status.style.color = '#d93025';
+    }
+}
+
+async function salvarPrazoAdmin(indice) {
+    const lista = document.getElementById('listaPrazosAdmin');
+    const bloco = lista && lista.children[indice];
+    const status = document.getElementById('adminResultado' + indice);
+    if (!bloco || !status) return;
+    const grupo = bloco.dataset.grupo || '';
+    const prazo = document.getElementById('adminPrazo' + indice).value;
+    const habilitado = document.getElementById('adminHabilitado' + indice).checked ? 'SIM' : 'NAO';
+    if (!prazo) {
+        status.textContent = 'Informe a data e hora final.';
+        status.style.color = '#d93025';
+        return;
+    }
+    status.textContent = 'Salvando...';
+    status.style.color = '#146fc1';
+    try {
+        const resultado = await enviarRequisicao(new URLSearchParams({
+            acao:'adminSalvarPrazo', usuario:usuarioLogado, token:tokenSessao,
+            grupo:grupo, prazo:prazo, habilitado:habilitado
+        }));
+        if (!resultado || !resultado.sucesso) throw new Error(resultado && resultado.mensagem || 'Não foi possível salvar a configuração.');
+        status.textContent = '✓ ' + resultado.mensagem;
+        status.style.color = '#188038';
+        STATUS_ENVIO_GRUPOS[grupo] = { prazo:resultado.prazo, habilitado:resultado.habilitado };
+        if (resultado.prazo) PRAZOS_GRUPOS[grupo] = new Date(resultado.prazo);
+        atualizarContadorPrazo();
+        carregarPendencias();
+    } catch (erro) {
+        status.textContent = '✕ ' + (erro.message || String(erro));
+        status.style.color = '#d93025';
+    }
+}
+
+// ==========================================
 // LOGOUT
 // ==========================================
 
@@ -2488,9 +2681,18 @@ function efetuarLogout() {
     tokenSessao = '';
     document.getElementById('listaMeusArquivos').innerHTML = '<p class="painel-vazio">Faça login para consultar seus arquivos.</p>';
     document.getElementById('statusMeusArquivos').textContent = '';
+    const resumoPendencias = document.getElementById('resumoPendencias');
+    const listaPendencias = document.getElementById('listaPendencias');
+    if (resumoPendencias) resumoPendencias.textContent = 'Entre na conta para consultar os prazos e documentos pendentes.';
+    if (listaPendencias) listaPendencias.innerHTML = '';
     escolasPorGrupo = {};
     grupoVinculado = '';
     escolaVinculada = '';
+    const painelAdminLogout = document.getElementById('painelAdministrativo');
+    if (painelAdminLogout) painelAdminLogout.classList.add('hidden');
+    const listaAdminLogout = document.getElementById('listaPrazosAdmin');
+    if (listaAdminLogout) listaAdminLogout.innerHTML = '';
+    STATUS_ENVIO_GRUPOS = {};
 
 
     document
@@ -2793,7 +2995,6 @@ function renderizarListaArquivos() {
                     item.classList.add(
                         'arrastando'
                     );
-
                 }
             );
 
@@ -3133,8 +3334,10 @@ function formatarDataPrazo(prazo) {
         prazo.getFullYear();
 
 
-    return dia + '/' + mes + '/' + ano +
-        ' às 23:59:59';
+    const hora = String(prazo.getHours()).padStart(2, '0');
+    const minuto = String(prazo.getMinutes()).padStart(2, '0');
+    const segundo = String(prazo.getSeconds()).padStart(2, '0');
+    return dia + '/' + mes + '/' + ano + ' às ' + hora + ':' + minuto + ':' + segundo;
 
 }
 
@@ -3180,7 +3383,15 @@ function atualizarContadorPrazo() {
 
     const categoria = select.value;
     const prazo = obterPrazoGrupo(categoria);
+    const configEnvio = STATUS_ENVIO_GRUPOS[categoria];
 
+    if (categoria && configEnvio && configEnvio.habilitado === false) {
+        contador.style.display = 'block';
+        tempo.textContent = 'Envios desabilitados pela administração';
+        tempo.style.color = '#d93025';
+        if (prazoFinal) prazoFinal.textContent = prazo ? 'Prazo configurado: ' + formatarDataPrazo(prazo) : 'Prazo não configurado';
+        return;
+    }
 
     if (!prazo) {
 
@@ -3655,6 +3866,9 @@ async function enviarArquivo() {
                     usuario:
                         usuarioLogado,
 
+                    token:
+                        tokenSessao,
+
                     categoria:
                         categoria,
 
@@ -3780,7 +3994,6 @@ async function enviarArquivo() {
     }
 
 }
-
 
 
 
