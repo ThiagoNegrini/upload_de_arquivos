@@ -2455,6 +2455,12 @@ async function carregarMeusArquivos() {
     const lista = document.getElementById('listaMeusArquivos');
     const status = document.getElementById('statusMeusArquivos');
     const filtro = document.getElementById('filtroPastaMeusArquivos');
+    const campoPastaEnvio = document.getElementById('nomeEscola');
+    if (campoPastaEnvio && !campoPastaEnvio.dataset.filtroArquivosVinculado) {
+        campoPastaEnvio.addEventListener('change', renderizarMeusArquivos);
+        campoPastaEnvio.addEventListener('input', renderizarMeusArquivos);
+        campoPastaEnvio.dataset.filtroArquivosVinculado = '1';
+    }
     if (!usuarioLogado) return;
     lista.innerHTML = '<p class="painel-vazio">Carregando seus arquivos...</p>';
     status.textContent = '';
@@ -2496,10 +2502,16 @@ function renderizarMeusArquivos() {
     const lista = document.getElementById('listaMeusArquivos');
     const status = document.getElementById('statusMeusArquivos');
     const filtro = document.getElementById('filtroPastaMeusArquivos');
-    const pastaSelecionada = filtro ? filtro.value : '';
-    const arquivos = arquivosMeusArquivosCache.filter(arquivo =>
-        !pastaSelecionada || String(arquivo.escola || arquivo.pasta || '').trim() === pastaSelecionada
-    );
+    const campoPastaEnvio = document.getElementById('nomeEscola');
+    // Usa a pasta escolhida no formulário como referência principal do painel.
+    const pastaFormulario = campoPastaEnvio ? String(campoPastaEnvio.value || '').trim() : '';
+    const pastaSelecionada = pastaFormulario || (filtro ? filtro.value : '');
+    if (filtro && pastaFormulario) {
+        const existeOpcao = Array.from(filtro.options).some(opcao => opcao.value === pastaFormulario);
+        if (existeOpcao) filtro.value = pastaFormulario;
+    }
+    const chavePasta = arquivo => String(arquivo.escola || arquivo.pasta || '').trim();
+    const arquivos = arquivosMeusArquivosCache.filter(arquivo => !pastaSelecionada || chavePasta(arquivo) === pastaSelecionada);
 
     lista.innerHTML = '';
     status.textContent = '';
