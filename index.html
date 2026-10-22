@@ -2268,6 +2268,33 @@ async function efetuarLogin() {
             const selectGrupo =
                 document.getElementById('categoriaPasta');
 
+            // O ADM usa os painéis de administração, não o formulário de envio de entidade.
+            const controlesEnvioAdm = [
+                selectGrupo && selectGrupo.closest('.form-group'),
+                document.getElementById('contadorPrazo'),
+                document.getElementById('nomeEscola') && document.getElementById('nomeEscola').closest('.form-group'),
+                document.getElementById('nomeDocumento') && document.getElementById('nomeDocumento').closest('.form-group'),
+                document.getElementById('arquivoInput'),
+                document.querySelector('#telaUpload .aviso-ordem'),
+                document.getElementById('listaArquivos'),
+                document.getElementById('btnEnviar'),
+                document.getElementById('status')
+            ].filter(Boolean);
+
+            controlesEnvioAdm.forEach(function(el) {
+                el.style.display = ehAdministrador ? 'none' : '';
+            });
+
+            if (ehAdministrador) {
+                selectGrupo.value = '';
+                selectGrupo.disabled = false;
+                campoNomeEscola.value = '';
+                campoNomeEscola.readOnly = false;
+                document.getElementById('nomeDocumento').value = '';
+                document.getElementById('arquivoInput').value = '';
+                document.getElementById('listaArquivos').innerHTML = '';
+            }
+
             if (grupoVinculado) {
                 // O primeiro envio já definiu o destino definitivo.
                 selectGrupo.value = grupoVinculado;
