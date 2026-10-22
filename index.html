@@ -1606,8 +1606,31 @@
         ></div>
 
 
+        <!-- CONSULTA DE ARQUIVOS: exibida somente para ADM -->
+        <section id="consultaArquivosAdmin" class="painel-arquivos hidden" aria-labelledby="tituloConsultaArquivosAdmin">
+            <h3 id="tituloConsultaArquivosAdmin">Consulta administrativa de arquivos</h3>
+            <p>O perfil ADM pode consultar todos os grupos e pastas, sem vínculo a uma entidade.</p>
+            <div class="form-group">
+                <label for="adminGrupoArquivos">Grupo</label>
+                <select id="adminGrupoArquivos" onchange="carregarPastasAdmin()">
+                    <option value="">Selecione um grupo</option>
+                    <option>GRUPO ESPECIAL DE BAIRROS</option><option>GRUPO ACESSO I</option>
+                    <option>GRUPO ACESSO II</option><option>GRUPO ACESSO III</option>
+                    <option>ACESSO DE BLOCOS</option><option>BLOCOS ESPECIAIS</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="adminPastaArquivos">Pasta / Entidade</label>
+                <select id="adminPastaArquivos" onchange="carregarArquivosPastaAdmin()" disabled>
+                    <option value="">Selecione primeiro um grupo</option>
+                </select>
+            </div>
+            <p id="statusArquivosAdmin" class="status-msg" aria-live="polite"></p>
+            <div id="listaArquivosAdmin"></div>
+        </section>
+
         <!-- PAINEL DE ARQUIVOS DO USUÁRIO -->
-        <section class="painel-arquivos" aria-labelledby="tituloMeusArquivos">
+        <section id="painelMeusArquivosUsuario" class="painel-arquivos" aria-labelledby="tituloMeusArquivos">
             <h3 id="tituloMeusArquivos">Meus arquivos enviados</h3>
             <p>Baixe um arquivo ou selecione uma nova versão para substituí-lo.</p>
             <label for="filtroPastaMeusArquivos">Filtrar por pasta / entidade:</label>
@@ -1635,26 +1658,7 @@
             <div id="listaPrazosAdmin"></div>
             <button type="button" id="btnAtualizarPrazosAdmin" onclick="carregarPainelAdmin()">Atualizar prazos</button>
 
-            <hr style="margin:24px 0;border:0;border-top:1px solid #d8e1ed">
-            <h3>Consulta administrativa de arquivos</h3>
-            <p>O perfil ADM pode consultar todos os grupos e pastas, sem vínculo a uma entidade.</p>
-            <div class="form-group">
-                <label for="adminGrupoArquivos">Grupo</label>
-                <select id="adminGrupoArquivos" onchange="carregarPastasAdmin()">
-                    <option value="">Selecione um grupo</option>
-                    <option>GRUPO ESPECIAL DE BAIRROS</option><option>GRUPO ACESSO I</option>
-                    <option>GRUPO ACESSO II</option><option>GRUPO ACESSO III</option>
-                    <option>ACESSO DE BLOCOS</option><option>BLOCOS ESPECIAIS</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="adminPastaArquivos">Pasta / Entidade</label>
-                <select id="adminPastaArquivos" onchange="carregarArquivosPastaAdmin()" disabled>
-                    <option value="">Selecione primeiro um grupo</option>
-                </select>
-            </div>
-            <p id="statusArquivosAdmin" class="status-msg" aria-live="polite"></p>
-            <div id="listaArquivosAdmin"></div>
+
 
         </section>
 
@@ -2223,6 +2227,12 @@ async function efetuarLogin() {
                 resultado.escolasPorGrupo || {};
 
             const ehAdministrador = resultado.ehAdministrador === true || String(resultado.ehAdministrador || '').trim().toLowerCase() === 'true' || String(resultado.ehAdministrador || '').trim() === '1';
+
+            // Mostra a consulta administrativa no lugar de "Meus arquivos enviados" para ADM.
+            const consultaAdminArquivos = document.getElementById('consultaArquivosAdmin');
+            const painelMeusArquivos = document.getElementById('painelMeusArquivosUsuario');
+            if (consultaAdminArquivos) consultaAdminArquivos.classList.toggle('hidden', !ehAdministrador);
+            if (painelMeusArquivos) painelMeusArquivos.classList.toggle('hidden', ehAdministrador);
 
             // Contas ADM não herdam nem usam vínculo de grupo/pasta de entidade.
             grupoVinculado = ehAdministrador
@@ -2971,6 +2981,10 @@ function efetuarLogout() {
     escolasPorGrupo = {};
     grupoVinculado = '';
     escolaVinculada = '';
+    const consultaAdminLogout = document.getElementById('consultaArquivosAdmin');
+    const meusArquivosLogout = document.getElementById('painelMeusArquivosUsuario');
+    if (consultaAdminLogout) consultaAdminLogout.classList.add('hidden');
+    if (meusArquivosLogout) meusArquivosLogout.classList.remove('hidden');
     const painelAdminLogout = document.getElementById('painelAdministrativo');
     if (painelAdminLogout) painelAdminLogout.classList.add('hidden');
     const listaAdminLogout = document.getElementById('listaPrazosAdmin');
