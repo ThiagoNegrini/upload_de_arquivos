@@ -305,6 +305,9 @@ function doPost(e) {
           cadastrarUsuario_(p)
         );
 
+      case 'listarEscolasCadastro':
+        return json_(listarEscolasCadastro_(p));
+
 
       case 'obterLogoEscola':
         return json_(obterLogoEscola_(p));
@@ -660,6 +663,42 @@ function validarCPF_(cpf) {
   let digito2 = resto < 2 ? 0 : 11 - resto;
 
   return digito2 === Number(numero.charAt(10));
+}
+
+
+function listarEscolasCadastro_(p) {
+  const grupoSolicitado = String(p.grupo || '').trim();
+  const planilha = SpreadsheetApp.openById(CONFIG.ID_PLANILHA_USUARIOS);
+  const aba = planilha.getSheetByName('COMPOSICAO DE GRUPOS');
+  if (!aba) {
+    return { sucesso:false, mensagem:'A aba "COMPOSICAO DE GRUPOS" não foi encontrada na planilha de controle.' };
+  }
+
+  const ultimaLinha = aba.getLastRow();
+  const ultimaColuna = aba.getLastColumn();
+  if (ultimaLinha < 2 || ultimaColuna < 1) return { sucesso:true, escolas:[] };
+
+  const dados = aba.getRange(1, 1, ultimaLinha, ultimaColuna).getDisplayValues();
+  let colunaGrupo = -1;
+  for (let c = 0; c < dados[0].length; c++) {
+    if (String(dados[0][c] || '').trim().toLocaleUpperCase('pt-BR') === grupoSolicitado.toLocaleUpperCase('pt-BR')) {
+      colunaGrupo = c;
+      break;
+    }
+  }
+  if (colunaGrupo < 0) return { sucesso:false, mensagem:'Grupo não encontrado na composição oficial.' };
+
+  const escolas = [];
+  const vistos = {};
+  for (let r = 1; r < dados.length; r++) {
+    const escola = String(dados[r][colunaGrupo] || '').trim();
+    const chave = normalizarNomeLogo_(escola);
+    if (!escola || !chave || vistos[chave]) continue;
+    vistos[chave] = true;
+    escolas.push(escola);
+  }
+  escolas.sort((a, b) => a.localeCompare(b, 'pt-BR'));
+  return { sucesso:true, escolas:escolas };
 }
 
 
