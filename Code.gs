@@ -709,21 +709,21 @@ function cadastrarUsuario_(p) {
 
     if (ultimaLinha >= 2) {
 
+      // Lê também as colunas de escola (F) e grupo (G) para impedir
+      // que uma mesma escola receba um segundo cadastro de responsável.
       const dados = aba
-        .getRange(2, 1, ultimaLinha - 1, 6)
+        .getRange(2, 1, ultimaLinha - 1, 7)
         .getValues();
 
       const chaveUsuario = usuario.toLowerCase();
+      const escolaSolicitada = normalizarNomeLogo_(p.nomeEscola || p.escola || '');
 
       for (let i = 0; i < dados.length; i++) {
-
-        const usuarioExistente = String(
-          dados[i][1] || ''
-        ).trim().toLowerCase();
-
-        const cpfExistente = normalizarCPF_(
-          dados[i][2]
-        );
+        const nomeExistente = String(dados[i][0] || '').trim();
+        const usuarioExistente = String(dados[i][1] || '').trim().toLowerCase();
+        const cpfExistente = normalizarCPF_(dados[i][2]);
+        const escolaExistente = String(dados[i][5] || '').trim();
+        const escolaExistenteNormalizada = normalizarNomeLogo_(escolaExistente);
 
         if (usuarioExistente === chaveUsuario) {
           return {
@@ -735,7 +735,17 @@ function cadastrarUsuario_(p) {
         if (cpfExistente && cpfExistente === cpf) {
           return {
             sucesso: false,
-            mensagem: 'Este CPF já está cadastrado.'
+            mensagem: 'Este CPF já está cadastrado. Se você já possui acesso, utilize seu login ou a recuperação de senha.'
+          };
+        }
+
+        if (escolaSolicitada && escolaExistenteNormalizada &&
+            escolaSolicitada === escolaExistenteNormalizada) {
+          return {
+            sucesso: false,
+            mensagem: 'Esta escola já está vinculada ao cadastro de "' +
+              nomeExistente + '". Por favor, procure ' + nomeExistente +
+              ' para solicitar acesso. Não é necessário criar outro cadastro para esta escola.'
           };
         }
       }
