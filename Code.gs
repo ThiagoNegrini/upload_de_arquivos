@@ -848,6 +848,43 @@ function cadastrarUsuario_(p) {
 }
 
 
+/**
+ * Resolve o grupo vigente pela composição oficial, sempre no login.
+ * Retorna grupo apenas quando a escola aparece em uma única coluna de grupo.
+ * Se houver duplicidade, mantém o vínculo existente para evitar troca indevida.
+ */
+function obterGrupoAtualDaComposicao_(nomeEscola) {
+  const escolaChave = normalizarNomeLogo_(nomeEscola);
+  if (!escolaChave) return { grupo: '', duplicado: false };
+
+  const planilha = SpreadsheetApp.openById(CONFIG.ID_PLANILHA_USUARIOS);
+  const aba = planilha.getSheetByName('COMPOSICAO DE GRUPOS');
+  if (!aba || aba.getLastRow() < 2 || aba.getLastColumn() < 1) {
+    return { grupo: '', duplicado: false };
+  }
+
+  const dados = aba.getRange(1, 1, aba.getLastRow(), aba.getLastColumn()).getDisplayValues();
+  const gruposEncontrados = [];
+
+  for (let c = 0; c < dados[0].length; c++) {
+    const cabecalho = String(dados[0][c] || '').trim();
+    const grupoOficial = Object.keys(PASTAS_CATEGORIAS).find(
+      grupo => grupo.toLocaleUpperCase('pt-BR') === cabecalho.toLocaleUpperCase('pt-BR')
+    );
+    if (!grupoOficial) continue;
+
+    for (let linha = 1; linha < dados.length; linha++) {
+      if (normalizarNomeLogo_(dados[linha][c]) === escolaChave) {
+        if (gruposEncontrados.indexOf(grupoOficial) === -1) gruposEncontrados.push(grupoOficial);
+        break;
+      }
+    }
+  }
+
+  if (gruposEncontrados.length === 1) return { grupo: gruposEncontrados[0], duplicado: false };
+  return { grupo: '', duplicado: gruposEncontrados.length > 1, grupos: gruposEncontrados };
+}
+
 function efetuarLogin_(p) {
 
   const usuario =
@@ -898,6 +935,21 @@ function efetuarLogin_(p) {
 
       const vinculo = obterVinculoUsuario_(usuarioPlanilha);
       const ehAdministrador = cpfUsuarioEhAdmin_(aba.getRange(i + 2, 3).getDisplayValue());
+
+      // Atualiza o grupo salvo com base na composição oficial mais recente.
+      // Isso continua funcionando após o prazo expirar, pois o prazo controla
+      // envios, não a identificação do grupo ao qual a escola pertence.
+      if (!ehAdministrador && vinculo.escola) {
+        const grupoAtual = obterGrupoAtualDaComposicao_(vinculo.escola);
+        if (grupoAtual.grupo && grupoAtual.grupo !== vinculo.grupo) {
+          aba.getRange(vinculo.linha, 7).setValue(grupoAtual.grupo);
+          vinculo.grupo = grupoAtual.grupo;
+        } else if (grupoAtual.duplicado) {
+          registrarLog_('AVISO', 'LOGIN_GRUPO_DUPLICADO', usuarioPlanilha,
+            'A escola "' + vinculo.escola + '" aparece em mais de um grupo na COMPOSICAO DE GRUPOS: ' +
+            grupoAtual.grupos.join(', ') + '. O vínculo salvo foi mantido.');
+        }
+      }
       const tokenSessao = Utilities.getUuid();
       CacheService.getScriptCache().put('painel_sessao_' + tokenSessao, usuarioPlanilha, 21600);
 
