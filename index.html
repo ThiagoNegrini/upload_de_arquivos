@@ -1390,13 +1390,9 @@
                 Nome da Escola / Pasta:
             </label>
 
-            <input
-                type="text"
-                id="cadastroEscola"
-                placeholder="Digite o nome da escola ou entidade"
-                autocomplete="organization"
-                required
-            >
+            <select id="cadastroEscola" required disabled>
+                <option value="">Primeiro, selecione o grupo</option>
+            </select>
 
         </div>
 
@@ -1812,6 +1808,53 @@ let escolasPorGrupo = {};
 let grupoVinculado = '';
 let escolaVinculada = '';
 let STATUS_ENVIO_GRUPOS = {};
+
+// Carrega os nomes oficiais da aba "COMPOSICAO DE GRUPOS" conforme o grupo.
+async function carregarEscolasCadastro() {
+    const campoGrupo = document.getElementById('cadastroGrupo');
+    const campoEscola = document.getElementById('cadastroEscola');
+    const status = document.getElementById('cadastroStatus');
+    const grupo = campoGrupo.value.trim();
+
+    campoEscola.disabled = true;
+    campoEscola.innerHTML = '<option value="">Carregando escolas...</option>';
+    if (!grupo) {
+        campoEscola.innerHTML = '<option value="">Primeiro, selecione o grupo</option>';
+        return;
+    }
+
+    try {
+        const parametros = new URLSearchParams({ acao: 'listarEscolasCadastro', grupo: grupo });
+        const resposta = await fetch(URL_SCRIPT, { method: 'POST', mode: 'cors', body: parametros });
+        const resultado = await resposta.json();
+        if (!resultado.sucesso) throw new Error(resultado.mensagem || 'Não foi possível carregar as escolas.');
+
+        campoEscola.innerHTML = '';
+        const instrucao = document.createElement('option');
+        instrucao.value = '';
+        instrucao.textContent = resultado.escolas.length ? 'Selecione a escola / pasta' : 'Nenhuma escola cadastrada neste grupo';
+        campoEscola.appendChild(instrucao);
+
+        resultado.escolas.forEach(nome => {
+            const opcao = document.createElement('option');
+            opcao.value = nome;
+            opcao.textContent = nome;
+            campoEscola.appendChild(opcao);
+        });
+        campoEscola.disabled = resultado.escolas.length === 0;
+    } catch (erro) {
+        campoEscola.innerHTML = '<option value="">Erro ao carregar. Tente selecionar o grupo novamente.</option>';
+        if (status) {
+            status.textContent = erro.message || 'Não foi possível carregar as escolas.';
+            status.style.color = '#d93025';
+        }
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    const campoGrupo = document.getElementById('cadastroGrupo');
+    if (campoGrupo) campoGrupo.addEventListener('change', carregarEscolasCadastro);
+});
 
 
 // ==========================================
