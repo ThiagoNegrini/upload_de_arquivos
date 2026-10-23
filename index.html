@@ -1145,9 +1145,9 @@
         /* Cabeçalho do painel: pavilhão no espaço indicado pelo usuário */
         .upload-header {
             display: grid;
-            grid-template-columns: 200px minmax(0, 1fr);
+            grid-template-columns: 230px minmax(0, 1fr);
             align-items: center;
-            gap: 20px;
+            gap: 22px;
             margin: 0 0 24px;
         }
         .upload-logo-area {
@@ -1159,8 +1159,8 @@
         .upload-logo-area img {
             display: none;
             width: 100%;
-            max-width: 200px;
-            max-height: 130px;
+            max-width: 230px;
+            max-height: 150px;
             height: auto;
             object-fit: contain;
             padding: 0;
@@ -1170,16 +1170,18 @@
             box-shadow: none;
         }
         .upload-cabecalho-texto { min-width: 0; text-align: center; }
-        .upload-cabecalho-texto h2 { margin: 0 0 12px; }
+        .upload-cabecalho-texto h2 { margin: 0 0 10px; line-height: 1.25; }
+        .upload-cabecalho-texto .cabecalho-linha { display: block; }
+        .upload-cabecalho-texto .cabecalho-subtitulo { margin-bottom: 8px; font-size: 1.05em; }
         .upload-cabecalho-texto p { margin: 0; }
 
         @media (max-width: 900px) {
-            .upload-header { grid-template-columns: 190px minmax(0, 1fr); gap: 14px; }
-            .upload-logo-area img { max-width: 190px; max-height: 120px; }
+            .upload-header { grid-template-columns: 210px minmax(0, 1fr); gap: 16px; }
+            .upload-logo-area img { max-width: 210px; max-height: 140px; }
         }
         @media (max-width: 560px) {
             .upload-header { grid-template-columns: 1fr; gap: 12px; }
-            .upload-logo-area img { max-width: 180px; max-height: 110px; }
+            .upload-logo-area img { max-width: 200px; max-height: 130px; }
             .upload-cabecalho-texto h2 { font-size: 20px; }
         }
 
@@ -1547,7 +1549,10 @@
                 >
             </div>
             <div class="upload-cabecalho-texto">
-                <h2>SISTEMA DE ENVIO DOCUMENTAÇÃO CARNAVAL - UESP - MATRIZ DO SAMBA</h2>
+                <h2>
+                    <span class="cabecalho-linha">SISTEMA DE ENVIO DOCUMENTAÇÃO CARNAVAL</span>
+                    <span class="cabecalho-linha">UESP - MATRIZ DO SAMBA</span>
+                </h2>
                 <p>
                     Olá, <strong id="nomeUsuarioLogado"></strong>! Seja bem vindo(a)!
                 </p>
