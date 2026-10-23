@@ -2181,30 +2181,48 @@ async function recuperarSenha() {
 async function atualizarLogoAposLogin(resultado) {
     const img = document.getElementById('imgLogo');
     if (!img) return;
+    const logoUESP = 'https://github.com/ThiagoNegrini/upload_de_arquivos/blob/main/LOGO_SITE.PNG?raw=true';
     const ehAdmin = resultado.ehAdministrador === true ||
         String(resultado.ehAdministrador || '').trim().toLowerCase() === 'true' ||
         String(resultado.ehAdministrador || '').trim() === '1';
+
     if (ehAdmin) {
-        img.src = 'https://github.com/ThiagoNegrini/upload_de_arquivos/blob/main/LOGO_SITE.PNG?raw=true';
+        img.src = logoUESP;
         img.alt = 'Logotipo UESP';
         return;
     }
+
     const escola = String(resultado.nomeEscolaVinculada || resultado.nomeEscola || '').trim();
-    if (!escola) return;
+    const grupo = String(resultado.grupoVinculado || '').trim();
+    if (!escola) {
+        img.src = logoUESP;
+        img.alt = 'Logotipo UESP';
+        return;
+    }
+
     try {
-        const params = new URLSearchParams({ acao: 'listarEscolasLogin' });
-        const response = await fetch(URL_SCRIPT, { method: 'POST', mode: 'cors', body: params });
+        const params = new URLSearchParams({
+            acao: 'obterLogoEscola',
+            escola: escola,
+            grupo: grupo
+        });
+        const response = await fetch(URL_SCRIPT, {
+            method: 'POST',
+            mode: 'cors',
+            body: params
+        });
         const data = await response.json();
-        const item = (data.escolas || []).find(e =>
-            String(e.nome || '').trim().toLocaleLowerCase('pt-BR') === escola.toLocaleLowerCase('pt-BR'));
-        if (item && item.logoUrl) {
-            img.src = item.logoUrl;
+        if (data.sucesso && data.dataUri) {
+            img.src = data.dataUri;
             img.alt = 'Pavilhão de ' + escola;
         } else {
-            img.src = 'https://github.com/ThiagoNegrini/upload_de_arquivos/blob/main/LOGO_SITE.PNG?raw=true';
+            img.src = logoUESP;
             img.alt = 'Logotipo UESP';
+            console.warn('Pavilhão não localizado:', data.mensagem || escola);
         }
     } catch (e) {
+        img.src = logoUESP;
+        img.alt = 'Logotipo UESP';
         console.warn('Não foi possível carregar o pavilhão da escola.', e);
     }
 }
