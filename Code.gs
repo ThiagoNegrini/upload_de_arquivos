@@ -102,48 +102,91 @@ const PASTAS_CATEGORIAS = {
 
 
 /**
- * Lista escolas cadastradas em COMPOSICAO DE GRUPOS e seus pavilhões.
- * Aba LOGOTIPOS: coluna A = nome exato da escola; coluna B = ID do arquivo
- * Google Drive ou URL da imagem. Para URL do Drive, o arquivo deve permitir
- * visualização por qualquer pessoa com o link.
+ * Localiza o pavilhão na pasta do Drive organizada por grupo.
+ * Prioridade: JPG/JPEG da escola; alternativa: BMP da escola.
+ * A imagem é devolvida como data URI para não depender de compartilhamento público.
  */
-function listarEscolasLogin_() {
-  const ss = SpreadsheetApp.openById(CONFIG.ID_PLANILHA_USUARIOS);
-  const composicao = ss.getSheetByName('COMPOSICAO DE GRUPOS');
-  if (!composicao) {
-    return { sucesso: false, mensagem: 'A aba COMPOSICAO DE GRUPOS não foi encontrada.' };
-  }
-  const valores = composicao.getDataRange().getDisplayValues();
-  if (valores.length < 2) return { sucesso: true, escolas: [] };
+const LOGOTIPOS_ROOT_FOLDER_ID = '1lnl6ZHRSRQwUssDPJ-sgyURJ5FgSLn4c';
 
-  const logos = {};
-  const abaLogos = ss.getSheetByName('LOGOTIPOS');
-  if (abaLogos && abaLogos.getLastRow() >= 2) {
-    abaLogos.getRange(2, 1, abaLogos.getLastRow() - 1, 2).getDisplayValues().forEach(function(row) {
-      const nome = String(row[0] || '').trim();
-      const valor = String(row[1] || '').trim();
-      if (!nome || !valor) return;
-      let url = valor;
-      const idMatch = valor.match(/[-\\w]{25,}/);
-      if (idMatch && /drive\\.google\\.com|^[-\\w]{25,}$/.test(valor)) {
-        url = 'https://drive.google.com/uc?export=view&id=' + idMatch[0];
-      }
-      logos[nome.toLocaleLowerCase('pt-BR')] = url;
-    });
-  }
+function normalizarNomeLogo_(valor) {
+  return String(valor || '')
+    .trim()
+    .toLocaleLowerCase('pt-BR')
+    .normalize('NFD')
+    .replace(/[\\u0300-\\u036f]/g, '')
+    .replace(/\\.(jpe?g|bmp)$/i, '')
+    .replace(/[^a-z0-9]/g, '');
+}
 
-  const unicas = {};
-  for (let c = 0; c < valores[0].length; c++) {
-    for (let r = 1; r < valores.length; r++) {
-      const nome = String(valores[r][c] || '').trim();
-      if (!nome) continue;
-      const chave = nome.toLocaleLowerCase('pt-BR');
-      if (!unicas[chave]) unicas[chave] = { nome: nome, logoUrl: logos[chave] || '' };
+function localizarPastaGrupoLogo_(pasta, grupoNormalizado) {
+  if (normalizarNomeLogo_(pasta.getName()) === grupoNormalizado) return pasta;
+  const pastas = pasta.getFolders();
+  while (pastas.hasNext()) {
+    const encontrada = localizarPastaGrupoLogo_(pastas.next(), grupoNormalizado);
+    if (encontrada) return encontrada;
+  }
+  return null;
+}
+
+function localizarArquivoLogo_(pasta, nomeNormalizado, extensoes) {
+  const arquivos = pasta.getFiles();
+  while (arquivos.hasNext()) {
+    const arquivo = arquivos.next();
+    const nome = arquivo.getName();
+    const ext = (nome.match(/\\.([^.]+)$/) || [,''])[1].toLowerCase();
+    if (extensoes.indexOf(ext) !== -1 &&
+        normalizarNomeLogo_(nome) === nomeNormalizado) {
+      return arquivo;
     }
   }
-  const escolas = Object.keys(unicas).map(function(k) { return unicas[k]; })
-    .sort(function(a, b) { return a.nome.localeCompare(b.nome, 'pt-BR'); });
-  return { sucesso: true, escolas: escolas };
+  const pastas = pasta.getFolders();
+  while (pastas.hasNext()) {
+    const encontrado = localizarArquivoLogo_(pastas.next(), nomeNormalizado, extensoes);
+    if (encontrado) return encontrado;
+  }
+  return null;
+}
+
+function obterLogoEscola_(p) {
+  const escola = String(p.escola || p.nomeEscola || '').trim();
+  const grupo = String(p.grupo || p.grupoVinculado || '').trim();
+  if (!escola) return { sucesso: false, mensagem: 'Nome da escola não informado.' };
+
+  try {
+    const raiz = DriveApp.getFolderById(LOGOTIPOS_ROOT_FOLDER_ID);
+    let pastaBusca = raiz;
+    if (grupo) {
+      pastaBusca = localizarPastaGrupoLogo_(raiz, normalizarNomeLogo_(grupo));
+      if (!pastaBusca) {
+        return { sucesso: false, mensagem: 'Não foi encontrada a pasta do grupo: ' + grupo };
+      }
+    }
+
+    const nomeNormalizado = normalizarNomeLogo_(escola);
+    let arquivo = localizarArquivoLogo_(pastaBusca, nomeNormalizado, ['jpg', 'jpeg']);
+    if (!arquivo) arquivo = localizarArquivoLogo_(pastaBusca, nomeNormalizado, ['bmp']);
+    if (!arquivo) return { sucesso: false, mensagem: 'Logotipo não encontrado.' };
+
+    const blob = arquivo.getBlob();
+    const bytes = blob.getBytes();
+    if (bytes.length > 4 * 1024 * 1024) {
+      return { sucesso: false, mensagem: 'O arquivo do logotipo excede o limite de 4 MB.' };
+    }
+
+    let mime = blob.getContentType();
+    if (!mime || mime === 'application/octet-stream') {
+      const extensao = (arquivo.getName().match(/\\.([^.]+)$/) || [,''])[1].toLowerCase();
+      mime = extensao === 'bmp' ? 'image/bmp' : 'image/jpeg';
+    }
+    return {
+      sucesso: true,
+      nomeArquivo: arquivo.getName(),
+      dataUri: 'data:' + mime + ';base64,' + Utilities.base64Encode(bytes)
+    };
+  } catch (erro) {
+    console.error('Falha ao localizar logotipo:', erro);
+    return { sucesso: false, mensagem: 'Não foi possível consultar a pasta de logotipos do Drive.' };
+  }
 }
 
 function doGet(e) {
@@ -201,8 +244,8 @@ function doPost(e) {
         );
 
 
-      case 'listarEscolasLogin':
-        return json_(listarEscolasLogin_());
+      case 'obterLogoEscola':
+        return json_(obterLogoEscola_(p));
 
       case 'login':
 
