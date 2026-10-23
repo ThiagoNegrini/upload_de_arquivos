@@ -1157,7 +1157,7 @@
             min-width: 0;
         }
         .upload-logo-area img {
-            display: block;
+            display: none;
             width: 100%;
             max-width: 200px;
             max-height: 130px;
@@ -1172,7 +1172,6 @@
         .upload-cabecalho-texto { min-width: 0; text-align: center; }
         .upload-cabecalho-texto h2 { margin: 0 0 12px; }
         .upload-cabecalho-texto p { margin: 0; }
-        .container > .logo-area { display: none; }
 
         @media (max-width: 900px) {
             .upload-header { grid-template-columns: 190px minmax(0, 1fr); gap: 14px; }
@@ -1209,7 +1208,13 @@
          LOGO
     =========================================== -->
 
-    <div class="logo-area" aria-hidden="true"></div>
+    <div class="logo-area">
+        <img
+            src="https://github.com/ThiagoNegrini/upload_de_arquivos/blob/main/LOGO_SITE.PNG?raw=true"
+            alt="Logotipo UESP"
+            id="imgLogoUESP"
+        >
+    </div>
 
 
     <!-- ==========================================
@@ -1542,7 +1547,7 @@
                 <img
                     src="https://github.com/ThiagoNegrini/upload_de_arquivos/blob/main/LOGO_SITE.PNG?raw=true"
                     alt="Logotipo UESP"
-                    id="imgLogo"
+                    id="imgLogoEscola"
                 >
             </div>
             <div class="upload-cabecalho-texto">
@@ -2215,7 +2220,7 @@ async function recuperarSenha() {
 
 
 async function atualizarLogoAposLogin(resultado) {
-    const img = document.getElementById('imgLogo');
+    const img = document.getElementById('imgLogoEscola');
     if (!img) return;
     const logoUESP = 'https://github.com/ThiagoNegrini/upload_de_arquivos/blob/main/LOGO_SITE.PNG?raw=true';
     const ehAdmin = resultado.ehAdministrador === true ||
@@ -2223,16 +2228,15 @@ async function atualizarLogoAposLogin(resultado) {
         String(resultado.ehAdministrador || '').trim() === '1';
 
     if (ehAdmin) {
-        img.src = logoUESP;
-        img.alt = 'Logotipo UESP';
+        img.style.display = 'none';
         return;
     }
+    img.style.display = 'block';
 
     const escola = String(resultado.nomeEscolaVinculada || resultado.nomeEscola || '').trim();
     const grupo = String(resultado.grupoVinculado || '').trim();
     if (!escola) {
-        img.src = logoUESP;
-        img.alt = 'Logotipo UESP';
+        img.style.display = 'none';
         return;
     }
 
@@ -2252,13 +2256,11 @@ async function atualizarLogoAposLogin(resultado) {
             img.src = data.dataUri;
             img.alt = 'Pavilhão de ' + escola;
         } else {
-            img.src = logoUESP;
-            img.alt = 'Logotipo UESP';
+            img.style.display = 'none';
             console.warn('Pavilhão não localizado:', data.mensagem || escola);
         }
     } catch (e) {
-        img.src = logoUESP;
-        img.alt = 'Logotipo UESP';
+        img.style.display = 'none';
         console.warn('Não foi possível carregar o pavilhão da escola.', e);
     }
 }
