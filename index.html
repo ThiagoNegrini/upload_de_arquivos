@@ -1142,6 +1142,48 @@
         }
 
     
+        /* Cabeçalho do painel: pavilhão no espaço indicado pelo usuário */
+        .upload-header {
+            display: grid;
+            grid-template-columns: 200px minmax(0, 1fr);
+            align-items: center;
+            gap: 20px;
+            margin: 0 0 24px;
+        }
+        .upload-logo-area {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 0;
+        }
+        .upload-logo-area img {
+            display: block;
+            width: 100%;
+            max-width: 200px;
+            max-height: 130px;
+            height: auto;
+            object-fit: contain;
+            padding: 0;
+            border: 0;
+            border-radius: 0;
+            background: transparent;
+            box-shadow: none;
+        }
+        .upload-cabecalho-texto { min-width: 0; text-align: center; }
+        .upload-cabecalho-texto h2 { margin: 0 0 12px; }
+        .upload-cabecalho-texto p { margin: 0; }
+        .container > .logo-area { display: none; }
+
+        @media (max-width: 900px) {
+            .upload-header { grid-template-columns: 190px minmax(0, 1fr); gap: 14px; }
+            .upload-logo-area img { max-width: 190px; max-height: 120px; }
+        }
+        @media (max-width: 560px) {
+            .upload-header { grid-template-columns: 1fr; gap: 12px; }
+            .upload-logo-area img { max-width: 180px; max-height: 110px; }
+            .upload-cabecalho-texto h2 { font-size: 20px; }
+        }
+
         .painel-arquivos { margin: 24px 0 18px; text-align:left; border:1px solid #d0d5dd; border-radius:10px; padding:14px; background:#fff; }
         .painel-arquivos h3 { margin:0 0 8px; color:#17365d; }
         .painel-arquivos .arquivo-painel { padding:12px 0; border-bottom:1px solid #eaecf0; }
@@ -1167,15 +1209,7 @@
          LOGO
     =========================================== -->
 
-    <div class="logo-area">
-
-        <img
-            src="https://github.com/ThiagoNegrini/upload_de_arquivos/blob/main/LOGO_SITE.PNG?raw=true"
-            alt="Logotipo da Empresa"
-            id="imgLogo"
-        >
-
-    </div>
+    <div class="logo-area" aria-hidden="true"></div>
 
 
     <!-- ==========================================
@@ -1503,21 +1537,23 @@
         id="telaUpload"
     >
 
-        <h2>
-            SISTEMA DE ENVIO
-        </h2>
-
-
-        <p>
-
-            Olá,
-            <strong id="nomeUsuarioLogado"></strong>!
-
-            <br>
-
-            DOCUMENTAÇÃO CARNAVAL 2027
-
-        </p>
+        <div class="upload-header">
+            <div class="upload-logo-area">
+                <img
+                    src="https://github.com/ThiagoNegrini/upload_de_arquivos/blob/main/LOGO_SITE.PNG?raw=true"
+                    alt="Logotipo UESP"
+                    id="imgLogo"
+                >
+            </div>
+            <div class="upload-cabecalho-texto">
+                <h2>SISTEMA DE ENVIO</h2>
+                <p>
+                    Olá, <strong id="nomeUsuarioLogado"></strong>!
+                    <br>
+                    DOCUMENTAÇÃO CARNAVAL 2027
+                </p>
+            </div>
+        </div>
 
 
         <!-- GRUPO / CATEGORIA -->
@@ -1762,7 +1798,7 @@
 // ==========================================
 
 const URL_SCRIPT =
-    'https://script.google.com/macros/s/AKfycbxn2B2O3GP38naW7VWjx4GsmuI18ZphwgRHe_7dLoUqpuMpTOgF16uRsCEGCY9WMqbHrg/exec';
+    'https://script.google.com/macros/s/AKfycbwpkVJBCpAHePkp-mE5coJKb3Mnly2-EZkYaMYVgD5eW7qNhQDATYIykygQeVWCaA0vTA/exec';
 
 
 let usuarioLogado = '';
