@@ -120,6 +120,8 @@ function normalizarNomeLogo_(valor) {
 
 // Busca direta primeiro; só percorre subpastas como alternativa para a estrutura antiga.
 function localizarPastaGrupoLogo_(pasta, grupoNormalizado, buscaRecursiva) {
+  if (normalizarNomeLogo_(pasta.getName()) === grupoNormalizado) return pasta;
+
   const pastasDiretas = pasta.getFolders();
   while (pastasDiretas.hasNext()) {
     const subpasta = pastasDiretas.next();
@@ -151,7 +153,7 @@ function localizarArquivoLogo_(pasta, nomeNormalizado, extensoes, buscaRecursiva
 
   const pastas = pasta.getFolders();
   while (pastas.hasNext()) {
-    const encontrado = localizarArquivoLogo_(pastas.next(), nomeNormalizado, true === buscaRecursiva ? extensoes : extensoes, true);
+    const encontrado = localizarArquivoLogo_(pastas.next(), nomeNormalizado, extensoes, true);
     if (encontrado) return encontrado;
   }
   return null;
