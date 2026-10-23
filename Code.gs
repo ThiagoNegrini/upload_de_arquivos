@@ -113,8 +113,8 @@ function normalizarNomeLogo_(valor) {
     .trim()
     .toLocaleLowerCase('pt-BR')
     .normalize('NFD')
-    .replace(/[\\u0300-\\u036f]/g, '')
-    .replace(/\\.(jpe?g|bmp)$/i, '')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/\.(jpe?g|bmp)$/i, '')
     .replace(/[^a-z0-9]/g, '');
 }
 
@@ -133,7 +133,7 @@ function localizarArquivoLogo_(pasta, nomeNormalizado, extensoes) {
   while (arquivos.hasNext()) {
     const arquivo = arquivos.next();
     const nome = arquivo.getName();
-    const ext = (nome.match(/\\.([^.]+)$/) || [,''])[1].toLowerCase();
+    const ext = (nome.match(/\.([^.]+)$/) || [,''])[1].toLowerCase();
     if (extensoes.indexOf(ext) !== -1 &&
         normalizarNomeLogo_(nome) === nomeNormalizado) {
       return arquivo;
@@ -175,7 +175,7 @@ function obterLogoEscola_(p) {
 
     let mime = blob.getContentType();
     if (!mime || mime === 'application/octet-stream') {
-      const extensao = (arquivo.getName().match(/\\.([^.]+)$/) || [,''])[1].toLowerCase();
+      const extensao = (arquivo.getName().match(/\.([^.]+)$/) || [,''])[1].toLowerCase();
       mime = extensao === 'bmp' ? 'image/bmp' : 'image/jpeg';
     }
     return {
