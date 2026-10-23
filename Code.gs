@@ -162,13 +162,13 @@ function obterLogoEscola_(p) {
         'grupoespecialdebairros': ['especialdebairros'],
         'acessodeblocos': ['acessoblocos'],
         'grupoacessoi': ['acessoi'],
-        'grupoacessoii': ['acesso ii'.replace(/[^a-z0-9]/g, '')],
-        'grupoacessoiii': ['acesso iii'.replace(/[^a-z0-9]/g, '')],
+        'grupoacessoii': ['acessoii'],
+        'grupoacessoiii': ['acessoiii'],
         'especialdebairros': ['especialdebairros'],
         'acessoblocos': ['acessoblocos'],
         'acessoi': ['acessoi'],
-        'acesso ii'.replace(/[^a-z0-9]/g, ''): ['acesso ii'.replace(/[^a-z0-9]/g, '')],
-        'acesso iii'.replace(/[^a-z0-9]/g, ''): ['acesso iii'.replace(/[^a-z0-9]/g, '')],
+        'acessoii': ['acessoii'],
+        'acessoiii': ['acessoiii'],
         'blocosespeciais': ['blocosespeciais']
       };
       const nomesPossiveis = [grupoNormalizado].concat(aliasesGrupo[grupoNormalizado] || []);
