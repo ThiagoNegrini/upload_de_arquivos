@@ -159,6 +159,36 @@ function localizarArquivoLogo_(pasta, nomeNormalizado, extensoes, buscaRecursiva
   return null;
 }
 
+function obterLogoUESP_() {
+  try {
+    const pastas = DriveApp.getFoldersByName('LOGO UESP');
+    while (pastas.hasNext()) {
+      const pasta = pastas.next();
+      const arquivos = pasta.getFilesByName('CAPA_UESP.JPG');
+      if (!arquivos.hasNext()) continue;
+
+      const arquivo = arquivos.next();
+      if (arquivo.getSize() > 4 * 1024 * 1024) {
+        return { sucesso:false, mensagem:'O arquivo CAPA_UESP.JPG ultrapassa o limite de 4 MB.' };
+      }
+
+      const blob = arquivo.getBlob();
+      const mime = blob.getContentType() || 'image/jpeg';
+      const base64 = Utilities.base64Encode(blob.getBytes());
+      return {
+        sucesso:true,
+        dataUri:'data:' + mime + ';base64,' + base64,
+        nome:arquivo.getName()
+      };
+    }
+    return { sucesso:false, mensagem:'Não foi encontrado CAPA_UESP.JPG dentro da pasta LOGO UESP.' };
+  } catch (erro) {
+    console.error('Erro ao localizar logotipo UESP:', erro);
+    return { sucesso:false, mensagem:'Não foi possível consultar o logotipo UESP no Drive.' };
+  }
+}
+
+
 function obterLogoEscola_(p) {
   const escola = String(p.escola || p.nomeEscola || '').trim();
   const grupo = String(p.grupo || p.grupoVinculado || '').trim();
@@ -311,6 +341,9 @@ function doPost(e) {
 
       case 'obterLogoEscola':
         return json_(obterLogoEscola_(p));
+
+      case 'obterLogoUESP':
+        return json_(obterLogoUESP_());
 
       case 'login':
 
