@@ -2280,8 +2280,37 @@ async function atualizarLogoAposLogin(resultado) {
         String(resultado.ehAdministrador || '').trim().toLowerCase() === 'true' ||
         String(resultado.ehAdministrador || '').trim() === '1';
 
-    // Administrador mantém somente o logotipo UESP no local original.
-    if (ehAdmin) return;
+    // Para ADM, carrega a capa oficial UESP da pasta "LOGO UESP" no Drive.
+    if (ehAdmin) {
+        try {
+            const params = new URLSearchParams({ acao: 'obterLogoUESP' });
+            const response = await fetch(URL_SCRIPT, {
+                method: 'POST',
+                mode: 'cors',
+                body: params
+            });
+            const data = await response.json();
+            if (minhaRequisicao !== requisicaoLogoEscola) return;
+            if (response.ok && data.sucesso && data.dataUri) {
+                img.onload = function() {
+                    if (minhaRequisicao === requisicaoLogoEscola) img.style.display = 'block';
+                };
+                img.onerror = function() {
+                    if (minhaRequisicao === requisicaoLogoEscola) {
+                        img.style.display = 'none';
+                        img.removeAttribute('src');
+                    }
+                };
+                img.alt = 'Logotipo UESP';
+                img.src = data.dataUri;
+            } else {
+                console.warn('Logotipo UESP não localizado:', data.mensagem || '');
+            }
+        } catch (e) {
+            console.warn('Não foi possível carregar o logotipo UESP para ADM.', e);
+        }
+        return;
+    }
 
     const escola = String(resultado.nomeEscolaVinculada || resultado.nomeEscola || '').trim();
     const grupo = String(resultado.grupoVinculado || '').trim();
