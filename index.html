@@ -2219,26 +2219,30 @@ async function recuperarSenha() {
 }
 
 
+let requisicaoLogoEscola = 0;
+
 async function atualizarLogoAposLogin(resultado) {
     const img = document.getElementById('imgLogoEscola');
     if (!img) return;
-    const logoUESP = 'https://github.com/ThiagoNegrini/upload_de_arquivos/blob/main/LOGO_SITE.PNG?raw=true';
+
+    // Cada login invalida qualquer busca anterior e limpa a imagem imediatamente.
+    const minhaRequisicao = ++requisicaoLogoEscola;
+    img.onload = null;
+    img.onerror = null;
+    img.removeAttribute('src');
+    img.alt = '';
+    img.style.display = 'none';
+
     const ehAdmin = resultado.ehAdministrador === true ||
         String(resultado.ehAdministrador || '').trim().toLowerCase() === 'true' ||
         String(resultado.ehAdministrador || '').trim() === '1';
 
-    if (ehAdmin) {
-        img.style.display = 'none';
-        return;
-    }
-    img.style.display = 'block';
+    // Administrador mantém somente o logotipo UESP no local original.
+    if (ehAdmin) return;
 
     const escola = String(resultado.nomeEscolaVinculada || resultado.nomeEscola || '').trim();
     const grupo = String(resultado.grupoVinculado || '').trim();
-    if (!escola) {
-        img.style.display = 'none';
-        return;
-    }
+    if (!escola) return;
 
     try {
         const params = new URLSearchParams({
@@ -2252,15 +2256,32 @@ async function atualizarLogoAposLogin(resultado) {
             body: params
         });
         const data = await response.json();
-        if (data.sucesso && data.dataUri) {
-            img.src = data.dataUri;
+
+        // Uma resposta antiga nunca pode substituir o pavilhão do login mais recente.
+        if (minhaRequisicao !== requisicaoLogoEscola) return;
+
+        if (response.ok && data.sucesso && data.dataUri) {
+            img.onload = function() {
+                if (minhaRequisicao === requisicaoLogoEscola) {
+                    img.style.display = 'block';
+                }
+            };
+            img.onerror = function() {
+                if (minhaRequisicao === requisicaoLogoEscola) {
+                    img.style.display = 'none';
+                    img.removeAttribute('src');
+                }
+            };
             img.alt = 'Pavilhão de ' + escola;
+            img.src = data.dataUri;
         } else {
-            img.style.display = 'none';
             console.warn('Pavilhão não localizado:', data.mensagem || escola);
         }
     } catch (e) {
-        img.style.display = 'none';
+        if (minhaRequisicao === requisicaoLogoEscola) {
+            img.style.display = 'none';
+            img.removeAttribute('src');
+        }
         console.warn('Não foi possível carregar o pavilhão da escola.', e);
     }
 }
