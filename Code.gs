@@ -118,17 +118,25 @@ function normalizarNomeLogo_(valor) {
     .replace(/[^a-z0-9]/g, '');
 }
 
-function localizarPastaGrupoLogo_(pasta, grupoNormalizado) {
-  if (normalizarNomeLogo_(pasta.getName()) === grupoNormalizado) return pasta;
+// Busca direta primeiro; só percorre subpastas como alternativa para a estrutura antiga.
+function localizarPastaGrupoLogo_(pasta, grupoNormalizado, buscaRecursiva) {
+  const pastasDiretas = pasta.getFolders();
+  while (pastasDiretas.hasNext()) {
+    const subpasta = pastasDiretas.next();
+    if (normalizarNomeLogo_(subpasta.getName()) === grupoNormalizado) return subpasta;
+  }
+  if (buscaRecursiva === false) return null;
+
   const pastas = pasta.getFolders();
   while (pastas.hasNext()) {
-    const encontrada = localizarPastaGrupoLogo_(pastas.next(), grupoNormalizado);
+    const encontrada = localizarPastaGrupoLogo_(pastas.next(), grupoNormalizado, true);
     if (encontrada) return encontrada;
   }
   return null;
 }
 
-function localizarArquivoLogo_(pasta, nomeNormalizado, extensoes) {
+// Procura arquivos na pasta atual primeiro. A busca recursiva fica como último recurso.
+function localizarArquivoLogo_(pasta, nomeNormalizado, extensoes, buscaRecursiva) {
   const arquivos = pasta.getFiles();
   while (arquivos.hasNext()) {
     const arquivo = arquivos.next();
@@ -139,9 +147,11 @@ function localizarArquivoLogo_(pasta, nomeNormalizado, extensoes) {
       return arquivo;
     }
   }
+  if (buscaRecursiva === false) return null;
+
   const pastas = pasta.getFolders();
   while (pastas.hasNext()) {
-    const encontrado = localizarArquivoLogo_(pastas.next(), nomeNormalizado, extensoes);
+    const encontrado = localizarArquivoLogo_(pastas.next(), nomeNormalizado, true === buscaRecursiva ? extensoes : extensoes, true);
     if (encontrado) return encontrado;
   }
   return null;
@@ -152,64 +162,69 @@ function obterLogoEscola_(p) {
   const grupo = String(p.grupo || p.grupoVinculado || '').trim();
   if (!escola) return { sucesso: false, mensagem: 'Nome da escola não informado.' };
 
+  const nomeNormalizado = normalizarNomeLogo_(escola);
+  const cache = CacheService.getScriptCache();
+  const chaveCache = 'logoId:' + normalizarNomeLogo_(grupo) + ':' + nomeNormalizado;
+
   try {
-    const raiz = DriveApp.getFolderById(LOGOTIPOS_ROOT_FOLDER_ID);
-    let pastaBusca = raiz;
-    if (grupo) {
-      // Os nomes das pastas no Drive são abreviados em relação aos nomes do sistema.
-      const grupoNormalizado = normalizarNomeLogo_(grupo);
-      const aliasesGrupo = {
-        'grupoespecialdebairros': ['especialdebairros'],
-        'acessodeblocos': ['acessoblocos'],
-        'grupoacessoi': ['acessoi'],
-        'grupoacessoii': ['acessoii'],
-        'grupoacessoiii': ['acessoiii'],
-        'especialdebairros': ['especialdebairros'],
-        'acessoblocos': ['acessoblocos'],
-        'acessoi': ['acessoi'],
-        'acessoii': ['acessoii'],
-        'acessoiii': ['acessoiii'],
-        'blocosespeciais': ['blocosespeciais']
-      };
-      const nomesPossiveis = [grupoNormalizado].concat(aliasesGrupo[grupoNormalizado] || []);
-      pastaBusca = null;
-      for (let i = 0; i < nomesPossiveis.length && !pastaBusca; i++) {
-        pastaBusca = localizarPastaGrupoLogo_(raiz, nomesPossiveis[i]);
-      }
-      if (!pastaBusca) {
-        return { sucesso: false, mensagem: 'Não foi encontrada a pasta do grupo: ' + grupo };
+    let arquivo = null;
+    const idEmCache = cache.get(chaveCache);
+    if (idEmCache) {
+      try {
+        arquivo = DriveApp.getFileById(idEmCache);
+        if (arquivo.isTrashed()) arquivo = null;
+      } catch (erroCache) {
+        arquivo = null;
       }
     }
 
-    // O cadastro pode trazer a sigla da agremiação (ex.: G.R.C.B.E.S. PASSO DE OURO),
-    // enquanto o arquivo de imagem usa apenas o nome curto (PASSO DE OURO.jpg).
-    const nomeNormalizado = normalizarNomeLogo_(escola);
-    const nomesEscolaPossiveis = [nomeNormalizado];
-    [
-      'grcbes', 'grces', 'grcesm', 'gresb', 'gres', 'grc', 'gremiode',
-      'escoladesamba', 'bloco carnavalesco', 'blococarnavalesco', 'bloco'
-    ].forEach(function(prefixo) {
-      const prefixoNormalizado = normalizarNomeLogo_(prefixo);
-      if (nomeNormalizado.indexOf(prefixoNormalizado) === 0) {
-        const nomeCurto = nomeNormalizado.substring(prefixoNormalizado.length);
-        if (nomeCurto && nomesEscolaPossiveis.indexOf(nomeCurto) === -1) {
-          nomesEscolaPossiveis.push(nomeCurto);
+    if (!arquivo) {
+      const raiz = DriveApp.getFolderById(LOGOTIPOS_ROOT_FOLDER_ID);
+      let pastaBusca = raiz;
+
+      if (grupo) {
+        const grupoNormalizado = normalizarNomeLogo_(grupo);
+        const aliasesGrupo = {
+          'grupoespecialdebairros': ['especialdebairros'],
+          'acessodeblocos': ['acessoblocos'],
+          'grupoacessoi': ['acessoi'],
+          'grupoacessoii': ['acessoii'],
+          'grupoacessoiii': ['acessoiii'],
+          'especialdebairros': ['especialdebairros'],
+          'acessoblocos': ['acessoblocos'],
+          'acessoi': ['acessoi'],
+          'acessoii': ['acessoii'],
+          'acessoiii': ['acessoiii'],
+          'blocosespeciais': ['blocosespeciais']
+        };
+        const nomesPossiveis = [grupoNormalizado].concat(aliasesGrupo[grupoNormalizado] || []);
+        pastaBusca = null;
+
+        // Os grupos costumam estar logo abaixo da pasta raiz; busca direta primeiro.
+        for (let i = 0; i < nomesPossiveis.length && !pastaBusca; i++) {
+          pastaBusca = localizarPastaGrupoLogo_(raiz, nomesPossiveis[i], false);
+        }
+        // Compatibilidade com estruturas antigas com grupos em subpastas.
+        for (let i = 0; i < nomesPossiveis.length && !pastaBusca; i++) {
+          pastaBusca = localizarPastaGrupoLogo_(raiz, nomesPossiveis[i], true);
+        }
+        if (!pastaBusca) {
+          return { sucesso: false, mensagem: 'Não foi encontrada a pasta do grupo: ' + grupo };
         }
       }
-    });
 
-    let arquivo = null;
-    for (let i = 0; i < nomesEscolaPossiveis.length && !arquivo; i++) {
-      arquivo = localizarArquivoLogo_(pastaBusca, nomesEscolaPossiveis[i], ['jpg', 'jpeg']);
-    }
-    for (let i = 0; i < nomesEscolaPossiveis.length && !arquivo; i++) {
-      arquivo = localizarArquivoLogo_(pastaBusca, nomesEscolaPossiveis[i], ['bmp']);
-    }
-    if (!arquivo) {
-      return {
-        sucesso: false,
-        mensagem: 'Logotipo não encontrado para "' + escola + '". Nomes pesquisados: ' + nomesEscolaPossiveis.join(', ')
-      };
+      // Se o nome no cadastro já está padronizado, procura o JPG na pasta do grupo sem percorrer toda a árvore.
+      arquivo = localizarArquivoLogo_(pastaBusca, nomeNormalizado, ['jpg', 'jpeg'], false);
+      if (!arquivo) arquivo = localizarArquivoLogo_(pastaBusca, nomeNormalizado, ['bmp'], false);
+
+      // Alternativas para imagens que ainda estejam dentro de subpastas.
+      if (!arquivo) arquivo = localizarArquivoLogo_(pastaBusca, nomeNormalizado, ['jpg', 'jpeg'], true);
+      if (!arquivo) arquivo = localizarArquivoLogo_(pastaBusca, nomeNormalizado, ['bmp'], true);
+
+      if (!arquivo) {
+        return { sucesso: false, mensagem: 'Logotipo não encontrado para "' + escola + '". Verifique o nome do arquivo e a pasta do grupo.' };
+      }
+      cache.put(chaveCache, arquivo.getId(), 21600); // 6 horas; guarda só o ID, não a imagem.
     }
 
     const blob = arquivo.getBlob();
