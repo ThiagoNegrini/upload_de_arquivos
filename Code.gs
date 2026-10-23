@@ -156,7 +156,26 @@ function obterLogoEscola_(p) {
     const raiz = DriveApp.getFolderById(LOGOTIPOS_ROOT_FOLDER_ID);
     let pastaBusca = raiz;
     if (grupo) {
-      pastaBusca = localizarPastaGrupoLogo_(raiz, normalizarNomeLogo_(grupo));
+      // Os nomes das pastas no Drive são abreviados em relação aos nomes do sistema.
+      const grupoNormalizado = normalizarNomeLogo_(grupo);
+      const aliasesGrupo = {
+        'grupoespecialdebairros': ['especialdebairros'],
+        'acessodeblocos': ['acessoblocos'],
+        'grupoacessoi': ['acessoi'],
+        'grupoacessoii': ['acesso ii'.replace(/[^a-z0-9]/g, '')],
+        'grupoacessoiii': ['acesso iii'.replace(/[^a-z0-9]/g, '')],
+        'especialdebairros': ['especialdebairros'],
+        'acessoblocos': ['acessoblocos'],
+        'acessoi': ['acessoi'],
+        'acesso ii'.replace(/[^a-z0-9]/g, ''): ['acesso ii'.replace(/[^a-z0-9]/g, '')],
+        'acesso iii'.replace(/[^a-z0-9]/g, ''): ['acesso iii'.replace(/[^a-z0-9]/g, '')],
+        'blocosespeciais': ['blocosespeciais']
+      };
+      const nomesPossiveis = [grupoNormalizado].concat(aliasesGrupo[grupoNormalizado] || []);
+      pastaBusca = null;
+      for (let i = 0; i < nomesPossiveis.length && !pastaBusca; i++) {
+        pastaBusca = localizarPastaGrupoLogo_(raiz, nomesPossiveis[i]);
+      }
       if (!pastaBusca) {
         return { sucesso: false, mensagem: 'Não foi encontrada a pasta do grupo: ' + grupo };
       }
