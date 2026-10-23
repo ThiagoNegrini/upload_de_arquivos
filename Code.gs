@@ -181,10 +181,36 @@ function obterLogoEscola_(p) {
       }
     }
 
+    // O cadastro pode trazer a sigla da agremiação (ex.: G.R.C.B.E.S. PASSO DE OURO),
+    // enquanto o arquivo de imagem usa apenas o nome curto (PASSO DE OURO.jpg).
     const nomeNormalizado = normalizarNomeLogo_(escola);
-    let arquivo = localizarArquivoLogo_(pastaBusca, nomeNormalizado, ['jpg', 'jpeg']);
-    if (!arquivo) arquivo = localizarArquivoLogo_(pastaBusca, nomeNormalizado, ['bmp']);
-    if (!arquivo) return { sucesso: false, mensagem: 'Logotipo não encontrado.' };
+    const nomesEscolaPossiveis = [nomeNormalizado];
+    [
+      'grcbes', 'grces', 'grcesm', 'gresb', 'gres', 'grc', 'gremiode',
+      'escoladesamba', 'bloco carnavalesco', 'blococarnavalesco', 'bloco'
+    ].forEach(function(prefixo) {
+      const prefixoNormalizado = normalizarNomeLogo_(prefixo);
+      if (nomeNormalizado.indexOf(prefixoNormalizado) === 0) {
+        const nomeCurto = nomeNormalizado.substring(prefixoNormalizado.length);
+        if (nomeCurto && nomesEscolaPossiveis.indexOf(nomeCurto) === -1) {
+          nomesEscolaPossiveis.push(nomeCurto);
+        }
+      }
+    });
+
+    let arquivo = null;
+    for (let i = 0; i < nomesEscolaPossiveis.length && !arquivo; i++) {
+      arquivo = localizarArquivoLogo_(pastaBusca, nomesEscolaPossiveis[i], ['jpg', 'jpeg']);
+    }
+    for (let i = 0; i < nomesEscolaPossiveis.length && !arquivo; i++) {
+      arquivo = localizarArquivoLogo_(pastaBusca, nomesEscolaPossiveis[i], ['bmp']);
+    }
+    if (!arquivo) {
+      return {
+        sucesso: false,
+        mensagem: 'Logotipo não encontrado para "' + escola + '". Nomes pesquisados: ' + nomesEscolaPossiveis.join(', ')
+      };
+    }
 
     const blob = arquivo.getBlob();
     const bytes = blob.getBytes();
