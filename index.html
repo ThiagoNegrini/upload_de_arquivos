@@ -8,21 +8,16 @@
     <title>Sistema de Envio de Documentos - UESP</title>
 
     <style>
-        /* ========== GERAL ========== */
         * { box-sizing: border-box; }
         html, body { margin: 0; padding: 0; min-height: 100%; }
-
         body {
             font-family: Arial, Helvetica, sans-serif;
             min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            display: flex; justify-content: center; align-items: center;
             padding: 30px;
             background: linear-gradient(120deg, #102b68 0%, #123f91 30%, #146fc1 65%, #25bfd3 100%);
             background-attachment: fixed;
         }
-
         .container {
             width: min(1240px, calc(100% - 48px));
             min-height: calc(100vh - 48px);
@@ -32,22 +27,16 @@
             grid-template-rows: auto 1fr;
             align-items: start;
             justify-content: center;
-            column-gap: 48px;
-            row-gap: 24px;
+            column-gap: 48px; row-gap: 24px;
         }
-
-        /* ========== LOGO ========== */
         .logo-area {
-            grid-column: 1; grid-row: 1;
-            width: 100%;
+            grid-column: 1; grid-row: 1; width: 100%;
             display: flex; align-items: flex-start; justify-content: flex-start;
             padding-top: 4px;
         }
         .logo-area img {
-            display: block;
-            width: 100%; max-width: 288px; height: auto;
-            object-fit: contain;
-            padding: 18px;
+            display: block; width: 100%; max-width: 288px; height: auto;
+            object-fit: contain; padding: 18px;
             background: rgba(255, 255, 255, 0.97);
             border: 1px solid rgba(255, 255, 255, 0.90);
             border-radius: 22px;
@@ -55,20 +44,14 @@
             transition: transform 0.25s ease, box-shadow 0.25s ease;
         }
         .logo-area img:hover { transform: translateY(-4px); box-shadow: 0 25px 55px rgba(0, 0, 0, 0.25); }
-
-        /* ========== COPYRIGHT ========== */
         .copyright {
-            width: 100%;
-            grid-column: 1 / span 2; grid-row: 3;
+            width: 100%; grid-column: 1 / span 2; grid-row: 3;
             text-align: center;
             color: rgba(255, 255, 255, 0.96);
-            font-size: 12px; font-weight: 700;
-            letter-spacing: 0.2px;
+            font-size: 12px; font-weight: 700; letter-spacing: 0.2px;
             text-shadow: 0 1px 3px rgba(0, 0, 0, 0.24);
             padding: 2px 0 4px;
         }
-
-        /* ========== CARD ========== */
         .card {
             grid-column: 2; grid-row: 1 / span 2;
             width: 100%; max-width: 760px;
@@ -77,24 +60,20 @@
             border-radius: 22px;
             box-shadow: 0 22px 50px rgba(0, 0, 0, 0.20);
             text-align: center;
-            position: relative;
-            overflow: hidden;
+            position: relative; overflow: hidden;
             animation: aparecer 0.4s ease;
         }
         .card::before {
-            content: "";
-            position: absolute; top: 0; left: 0; width: 100%; height: 5px;
+            content: ""; position: absolute;
+            top: 0; left: 0; width: 100%; height: 5px;
             background: linear-gradient(90deg, #102b68, #123f91, #146fc1, #25bfd3);
         }
         @keyframes aparecer {
             from { opacity: 0; transform: translateY(12px); }
             to   { opacity: 1; transform: translateY(0); }
         }
-
-        /* ========== LINKS MANUAL ========== */
         .manual-links {
-            grid-column: 1; grid-row: 2;
-            width: 100%;
+            grid-column: 1; grid-row: 2; width: 100%;
             display: flex; flex-direction: column; gap: 10px;
             align-self: start; padding: 0;
         }
@@ -116,8 +95,6 @@
         }
         .manual-link:hover { transform: translateY(-2px); box-shadow: 0 14px 28px rgba(0, 0, 0, 0.18); }
         .manual-link.video { background: linear-gradient(135deg, #146fc1, #25bfd3); color: #ffffff; }
-
-        /* ========== TÍTULOS ========== */
         h2 {
             margin-top: 0; margin-bottom: 12px;
             font-size: 23px; line-height: 1.25; font-weight: 800;
@@ -125,69 +102,48 @@
         }
         p { color: #667085; font-size: 14px; line-height: 1.5; margin-bottom: 24px; }
         p strong { color: #123f91; }
-
-        /* ========== FORMULÁRIOS ========== */
         .form-group { text-align: left; margin-bottom: 17px; }
         label {
             display: block; margin-bottom: 7px;
             font-size: 13px; font-weight: 700; color: #344054;
         }
-        input[type="text"],
-        input[type="password"],
-        select {
+        input[type="text"], input[type="password"], select {
             width: 100%; padding: 13px 14px;
-            border: 1px solid #d0d5dd;
-            border-radius: 10px;
+            border: 1px solid #d0d5dd; border-radius: 10px;
             background: #ffffff; color: #101828;
             font-size: 15px; outline: none;
             transition: border-color 0.2s ease, box-shadow 0.2s ease;
         }
         select { cursor: pointer; }
-        input[type="text"]:focus,
-        input[type="password"]:focus,
-        select:focus {
+        input[type="text"]:focus, input[type="password"]:focus, select:focus {
             border-color: #146fc1;
             box-shadow: 0 0 0 4px rgba(20, 111, 193, 0.12);
         }
         input::placeholder { color: #98a2b3; }
-
-        /* ========== CAMPO DE ARQUIVO ========== */
         .label-arquivo {
-            display: block;
-            margin: 12px 0 6px;
+            display: block; margin: 12px 0 6px;
             font-size: 13px; font-weight: 700; color: #344054;
             text-align: left;
         }
         input[type="file"] {
-            display: block; width: 100%;
-            margin: 0 0 18px;
+            display: block; width: 100%; margin: 0 0 18px;
             padding: 10px;
-            border: 1px dashed #b8c7d9;
-            border-radius: 10px;
+            border: 1px dashed #b8c7d9; border-radius: 10px;
             background: #f8fafc; color: #475467;
             font-size: 13px; cursor: pointer;
         }
         input[type="file"]:hover { border-color: #146fc1; background: #f1f8ff; }
-
-        /* ========== LISTA ARQUIVOS ========== */
         .lista-arquivos {
-            text-align: left;
-            margin: -5px 0 18px;
+            text-align: left; margin: -5px 0 18px;
             font-size: 13px; color: #344054;
         }
         .arquivo-item {
-            background: #f8fafc;
-            border: 1px solid #d0d5dd;
-            border-radius: 8px;
-            padding: 8px 10px;
-            margin-bottom: 6px;
+            background: #f8fafc; border: 1px solid #d0d5dd;
+            border-radius: 8px; padding: 8px 10px; margin-bottom: 6px;
             word-break: break-word;
-            display: grid;
-            grid-template-columns: 32px 1fr auto;
-            align-items: center;
-            gap: 10px;
-            cursor: grab;
-            user-select: none;
+            display: grid; grid-template-columns: 32px 1fr auto;
+            align-items: center; gap: 10px;
+            cursor: grab; user-select: none;
         }
         .arquivo-item strong { color: #123f91; }
         .arquivo-item:active { cursor: grabbing; }
@@ -200,8 +156,6 @@
         }
         .arquivo-remover:hover { transform: none; box-shadow: none; background: #fecdca; }
         .aviso-ordem { margin: -8px 0 16px; color: #667085; font-size: 12px; text-align: left; }
-
-        /* ========== BOTÕES ========== */
         button {
             width: 100%; padding: 13px 16px; margin-bottom: 10px;
             border: none; border-radius: 10px;
@@ -214,7 +168,6 @@
         button:hover { transform: translateY(-2px); box-shadow: 0 11px 25px rgba(18, 63, 145, 0.32); }
         button:active { transform: translateY(0); }
         button:disabled { background: #aab3bf; cursor: not-allowed; box-shadow: none; transform: none; }
-
         .btn-logout {
             width: auto; margin-top: 18px; margin-bottom: 0;
             padding: 8px 16px;
@@ -223,22 +176,15 @@
             box-shadow: 0 5px 12px rgba(217, 45, 32, 0.20);
         }
         .btn-logout:hover { background: linear-gradient(135deg, #912018, #b42318); }
-
-        /* ========== STATUS ========== */
         .status-msg {
             min-height: 20px; margin-top: 15px;
             font-size: 13px; font-weight: 600; line-height: 1.5;
         }
-
-        /* ========== CONTADOR ========== */
         .contador-prazo {
             display: none;
-            margin: -5px 0 18px;
-            padding: 13px 15px;
-            border: 1px solid #f5c26b;
-            border-radius: 10px;
-            background: #fff8e8;
-            color: #8a4b08;
+            margin: -5px 0 18px; padding: 13px 15px;
+            border: 1px solid #f5c26b; border-radius: 10px;
+            background: #fff8e8; color: #8a4b08;
             font-size: 13px; font-weight: 700; line-height: 1.5;
             text-align: center;
         }
@@ -256,8 +202,6 @@
             background: #fff1f0;
             color: #b42318;
         }
-
-        /* ========== LINKS ========== */
         .link {
             display: block; margin-top: 14px;
             color: #0b5cad;
@@ -266,10 +210,8 @@
             transition: color 0.2s ease;
         }
         .link:hover { color: #159db8; }
-
         .hidden { display: none !important; }
 
-        /* ========== CABEÇALHO DO PAINEL ========== */
         .upload-header {
             display: grid;
             grid-template-columns: 230px minmax(0, 1fr);
@@ -291,10 +233,8 @@
         .upload-cabecalho-texto { min-width: 0; text-align: center; }
         .upload-cabecalho-texto h2 { margin: 0 0 10px; line-height: 1.25; }
         .upload-cabecalho-texto .cabecalho-linha { display: block; }
-        .upload-cabecalho-texto .cabecalho-subtitulo { margin-bottom: 8px; font-size: 1.05em; }
         .upload-cabecalho-texto p { margin: 0; }
 
-        /* ========== PAINÉIS ========== */
         .painel-arquivos {
             margin: 24px 0 18px; text-align: left;
             border: 1px solid #d0d5dd; border-radius: 10px;
@@ -309,7 +249,42 @@
         .painel-arquivos input[type=file] { max-width: 100%; font-size: 12px; }
         .painel-arquivos .painel-vazio { color: #667085; font-size: 13px; }
 
-        /* ========== RESPONSIVO ========== */
+        /* FOTOS */
+        .foto-row {
+            display: grid;
+            grid-template-columns: 88px minmax(0, 1fr) 40px;
+            gap: 10px;
+            align-items: start;
+            padding: 10px;
+            border: 1px solid #d0d5dd;
+            border-radius: 10px;
+            margin-bottom: 8px;
+            background: #f8fafc;
+            text-align: left;
+        }
+        .foto-row.invalido { border-color: #f04438; background: #fff5f5; }
+        .foto-thumb {
+            width: 88px; height: 88px; object-fit: cover;
+            border-radius: 8px; border: 1px solid #d0d5dd; background: #fff;
+        }
+        .foto-info { min-width: 0; display: flex; flex-direction: column; gap: 6px; }
+        .foto-nome-original {
+            font-size: 12px; color: #475467;
+            overflow-wrap: anywhere; font-weight: 600;
+        }
+        .foto-selects { display: flex; flex-wrap: wrap; gap: 6px; }
+        .foto-selects select { flex: 1; min-width: 140px; padding: 8px 10px; font-size: 13px; }
+        .foto-preview {
+            font-size: 12px; color: #188038; font-weight: 700;
+            overflow-wrap: anywhere;
+        }
+        .foto-row.invalido .foto-preview { color: #b42318; }
+        .lista-fotos { text-align: left; }
+        @media (max-width: 560px) {
+            .foto-row { grid-template-columns: 1fr 40px; }
+            .foto-thumb { width: 100%; height: 140px; grid-column: 1 / -1; }
+        }
+
         @media (max-width: 900px) {
             body { align-items: flex-start; padding: 0; }
             .container {
@@ -325,9 +300,7 @@
             .upload-header { grid-template-columns: 210px minmax(0, 1fr); gap: 16px; }
             .upload-logo-area img { max-width: 210px; max-height: 140px; }
         }
-        @media (max-width: 700px) {
-            .card { padding: 20px; }
-        }
+        @media (max-width: 700px) { .card { padding: 20px; } }
         @media (max-width: 560px) {
             .upload-header { grid-template-columns: 1fr; gap: 12px; }
             .upload-logo-area img { max-width: 200px; max-height: 130px; }
@@ -358,7 +331,6 @@
     <div class="card" id="telaLogin">
         <h2>ACESSO AO PAINEL DE ENVIO DE DOCUMENTOS - ESCOLAS E BLOCOS</h2>
         <p>Entre com seu usuário(a) e senha.</p>
-
         <form id="formLogin" novalidate>
             <div class="form-group">
                 <label for="loginUsuario">Usuário(a):</label>
@@ -370,9 +342,7 @@
             </div>
             <button type="submit" id="btnLogin">Entrar</button>
         </form>
-
         <div id="loginStatus" class="status-msg" aria-live="polite"></div>
-
         <span class="link" id="linkRecuperarSenha">Esqueci minha senha</span>
         <span class="link" id="linkCadastro">Ainda não possui cadastro? Criar conta</span>
     </div>
@@ -381,7 +351,6 @@
     <div class="card hidden" id="telaCadastro">
         <h2>CRIAR CADASTRO</h2>
         <p>Preencha seus dados para criar seu acesso.</p>
-
         <form id="formCadastro" novalidate>
             <div class="form-group">
                 <label for="cadastroNome">Nome:</label>
@@ -419,7 +388,6 @@
             </div>
             <button type="submit" id="btnCadastro">Criar Cadastro</button>
         </form>
-
         <div id="cadastroStatus" class="status-msg" aria-live="polite"></div>
         <span class="link" id="linkVoltarLogin1">Já possui cadastro? Entrar</span>
     </div>
@@ -428,7 +396,6 @@
     <div class="card hidden" id="telaRecuperacaoSenha">
         <h2>RECUPERAR SENHA</h2>
         <p>Informe seu usuário e os 5 últimos números do CPF cadastrado.</p>
-
         <form id="formRecuperacao" novalidate>
             <div class="form-group">
                 <label for="recuperacaoUsuario">Usuário:</label>
@@ -444,7 +411,6 @@
             </div>
             <button type="submit" id="btnRecuperacaoSenha">Alterar Senha</button>
         </form>
-
         <div id="recuperacaoStatus" class="status-msg" aria-live="polite"></div>
         <span class="link" id="linkVoltarLogin2">Voltar para o login</span>
     </div>
@@ -468,7 +434,6 @@
             </div>
         </div>
 
-        <!-- GRUPO -->
         <div class="form-group">
             <label for="categoriaPasta">Grupo:</label>
             <select id="categoriaPasta">
@@ -482,14 +447,12 @@
             </select>
         </div>
 
-        <!-- CONTADOR -->
         <div id="contadorPrazo" class="contador-prazo" aria-live="polite">
             <span class="contador-titulo">Prazo de envio do grupo</span>
             <span id="contadorTempo" class="contador-tempo">Calculando...</span>
             <span class="contador-final">Prazo final: —</span>
         </div>
 
-        <!-- ESCOLA / PASTA -->
         <div class="form-group">
             <label for="nomeEscola">Nome da Escola / Pasta: <span aria-hidden="true">*</span></label>
             <input type="text" id="nomeEscola" placeholder="INFORMAR O NOME DA ESCOLA" autocomplete="off" required>
@@ -498,24 +461,20 @@
             </select>
         </div>
 
-        <!-- DOCUMENTO -->
         <div class="form-group">
             <label for="nomeDocumento">Nome do Arquivo / Documento: <span class="opcional">(opcional)</span></label>
             <input type="text" id="nomeDocumento" placeholder="DEIXE VAZIO PARA MANTER O NOME ORIGINAL" autocomplete="off">
         </div>
 
-        <!-- ARQUIVO -->
         <label for="arquivoInput" class="label-arquivo">Selecionar arquivos (limite: 25 MB por arquivo):</label>
         <input type="file" id="arquivoInput" multiple>
 
         <div class="aviso-ordem">Selecione os arquivos e, se necessário, arraste-os para ajustar a ordem.</div>
-
         <div id="listaArquivos" class="lista-arquivos"></div>
 
         <button type="button" id="btnEnviar">Enviar Arquivo</button>
         <div id="status" class="status-msg" aria-live="polite"></div>
 
-        <!-- CONSULTA ADMIN -->
         <section id="consultaArquivosAdmin" class="painel-arquivos hidden" aria-labelledby="tituloConsultaArquivosAdmin">
             <h3 id="tituloConsultaArquivosAdmin">Consulta administrativa de arquivos</h3>
             <p>O perfil ADM pode consultar todos os grupos e pastas.</p>
@@ -541,7 +500,6 @@
             <div id="listaArquivosAdmin"></div>
         </section>
 
-        <!-- MEUS ARQUIVOS -->
         <section id="painelMeusArquivosUsuario" class="painel-arquivos" aria-labelledby="tituloMeusArquivos">
             <h3 id="tituloMeusArquivos">Meus arquivos enviados</h3>
             <p>Baixe um arquivo ou selecione uma nova versão para substituí-lo.</p>
@@ -554,7 +512,6 @@
             <div id="listaMeusArquivos"><p class="painel-vazio">Faça login para consultar seus arquivos.</p></div>
         </section>
 
-        <!-- PENDÊNCIAS -->
         <section class="painel-arquivos" aria-labelledby="tituloPendencias">
             <h3 id="tituloPendencias">Prazos e pendências</h3>
             <p id="resumoPendencias" class="painel-vazio">Entre na conta para consultar os prazos e documentos pendentes.</p>
@@ -562,7 +519,6 @@
             <div id="listaPendencias" aria-live="polite"></div>
         </section>
 
-        <!-- PAINEL ADM -->
         <section id="painelAdministrativo" class="painel-arquivos hidden" aria-labelledby="tituloPainelAdministrativo">
             <h3 id="tituloPainelAdministrativo">Painel administrativo — prazos e abertura de envios</h3>
             <p>Defina a data e hora limite de cada grupo e habilite ou bloqueie os envios.</p>
@@ -572,6 +528,52 @@
         </section>
 
         <button type="button" class="btn-logout" id="btnSair">Sair da Conta</button>
+    </div>
+
+    <!-- FOTOS -->
+    <div class="card hidden" id="telaFotos">
+        <div class="upload-header">
+            <div class="upload-logo-area">
+                <img src="https://github.com/ThiagoNegrini/upload_de_arquivos/blob/main/LOGO_SITE.PNG?raw=true"
+                     alt="Logotipo UESP" id="imgLogoFotos">
+            </div>
+            <div class="upload-cabecalho-texto">
+                <h2>
+                    <span class="cabecalho-linha">ENVIO DE FOTOS — CASAL, PRESIDENTE E VICE</span>
+                    <span class="cabecalho-linha">UESP - MATRIZ DO SAMBA</span>
+                </h2>
+                <p>Olá, <strong id="nomeUsuarioFotos"></strong>! Selecione as fotos e preencha escola e cargo.</p>
+            </div>
+        </div>
+
+        <div id="contadorPrazoFotos" class="contador-prazo" aria-live="polite">
+            <span class="contador-titulo">Prazo de envio das fotos</span>
+            <span id="contadorTempoFotos" class="contador-tempo">Calculando...</span>
+            <span id="contadorFinalFotos" class="contador-final">Prazo final: —</span>
+        </div>
+
+        <label for="fotosInput" class="label-arquivo">
+            Selecione as fotos (até 15 por envio, máx. 25 MB cada):
+        </label>
+        <input type="file" id="fotosInput" multiple accept="image/*">
+
+        <div class="aviso-ordem">
+            Cada foto precisa ter <strong>Escola/Bloco</strong> e <strong>Cargo</strong> definidos.
+            O nome final é gerado automaticamente antes do envio.
+        </div>
+
+        <div id="listaFotos" class="lista-fotos"></div>
+
+        <button type="button" id="btnEnviarFotos" disabled>Enviar Fotos</button>
+        <div id="statusFotos" class="status-msg" aria-live="polite"></div>
+
+        <section class="painel-arquivos" aria-labelledby="tituloFotosEnviadas">
+            <h3 id="tituloFotosEnviadas">Fotos já enviadas</h3>
+            <button type="button" id="btnListarFotos">Atualizar lista</button>
+            <div id="listaFotosEnviadas"><p class="painel-vazio">Carregando...</p></div>
+        </section>
+
+        <button type="button" class="btn-logout" id="btnSairFotos">Sair da Conta</button>
     </div>
 
     <!-- MANUAL -->
@@ -592,8 +594,10 @@
 // ==========================================
 // CONFIG
 // ==========================================
-const URL_SCRIPT = 'https://script.google.com/macros/s/AKfycbwfzyij1WHWPnTEbPRqO2cmS5zGf7Vg7jOXN3anoscNj7dHyzXVV8XmllTYTeouykuItA/exec';
+const URL_SCRIPT = 'https://script.google.com/macros/s/AKfycbx0VsQyNkqIYslIeEW6d6VV-3hQQTpsqbFvJPWFbxjiTzbaZrGqj95LyUbFgTNJN6AUmg/exec';
 const LIMITE_BYTES_ARQUIVO = 25 * 1024 * 1024;
+const LIMITE_FOTOS_ENVIO = 15;
+const CHAVE_PRAZO_FOTOS = 'FOTOS_CAS_POT_PRE_VICE';
 
 let usuarioLogado = '';
 let tokenSessao = '';
@@ -605,9 +609,13 @@ let arquivosSelecionados = [];
 let itemArrastado = null;
 let arquivosMeusArquivosCache = [];
 let intervaloContadorPrazo = null;
+let intervaloContadorFotos = null;
+let fotosSelecionadas = [];
+let escolasFotosCache = [];
+let cargosFotosCache = ['CASAL', 'PRESIDENTE', 'VICE'];
 
 // ==========================================
-// HELPERS DE UI
+// HELPERS
 // ==========================================
 function getPastaEnvioEl() {
     const sel = document.getElementById('nomeEscolaSelect');
@@ -626,39 +634,35 @@ function trocarPastaParaInput() {
     document.getElementById('nomeEscolaSelect').classList.add('hidden');
     document.getElementById('nomeEscola').classList.remove('hidden');
 }
-
 function mostrarTela(id) {
-    ['telaLogin', 'telaCadastro', 'telaRecuperacaoSenha', 'telaUpload'].forEach(function (t) {
-        const el = document.getElementById(t);
-        if (el) el.classList.toggle('hidden', t !== id);
-    });
+    ['telaLogin', 'telaCadastro', 'telaRecuperacaoSenha', 'telaUpload', 'telaFotos']
+        .forEach(function (t) {
+            const el = document.getElementById(t);
+            if (el) el.classList.toggle('hidden', t !== id);
+        });
 }
 function mostrarLogin() { mostrarTela('telaLogin'); }
 function mostrarCadastro() { mostrarTela('telaCadastro'); }
 function mostrarRecuperacaoSenha() { mostrarTela('telaRecuperacaoSenha'); }
 
 // ==========================================
-// REQUISIÇÃO CENTRAL (detecta sessão expirada)
+// REQUISIÇÃO CENTRAL
 // ==========================================
 async function enviarRequisicao(parametros) {
     const resposta = await fetch(URL_SCRIPT, {
-        method: 'POST',
-        mode: 'cors',
-        body: parametros
+        method: 'POST', mode: 'cors', body: parametros
     });
     if (!resposta.ok) throw new Error('Servidor retornou HTTP ' + resposta.status);
     const texto = await resposta.text();
     let dados;
-    try {
-        dados = JSON.parse(texto);
-    } catch (erro) {
+    try { dados = JSON.parse(texto); }
+    catch (erro) {
         console.error('Resposta do servidor:', texto);
         throw new Error('O servidor não retornou JSON válido.');
     }
     if (dados && dados.mensagem &&
         String(dados.mensagem).toLowerCase().indexOf('sessão expirada') !== -1 &&
         usuarioLogado) {
-        // Força logout local e avisa o usuário no login
         const st = document.getElementById('loginStatus');
         efetuarLogoutLocal();
         if (st) {
@@ -685,57 +689,48 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 // ==========================================
-// CADASTRO — carga de escolas
+// CADASTRO
 // ==========================================
 async function carregarEscolasCadastro() {
     const campoGrupo = document.getElementById('cadastroGrupo');
     const campoEscola = document.getElementById('cadastroEscola');
     const status = document.getElementById('cadastroStatus');
     const grupo = campoGrupo.value.trim();
-
     campoEscola.disabled = true;
     campoEscola.innerHTML = '<option value="">Carregando escolas...</option>';
     if (!grupo) {
         campoEscola.innerHTML = '<option value="">Primeiro, selecione o grupo</option>';
         return;
     }
-
     try {
         const parametros = new URLSearchParams({ acao: 'listarEscolasCadastro', grupo: grupo });
         const resposta = await fetch(URL_SCRIPT, { method: 'POST', mode: 'cors', body: parametros });
         const resultado = await resposta.json();
-        if (!resultado.sucesso) throw new Error(resultado.mensagem || 'Não foi possível carregar as escolas.');
-
+        if (!resultado.sucesso) throw new Error(resultado.mensagem || 'Não foi possível carregar.');
         campoEscola.innerHTML = '';
-        const instrucao = document.createElement('option');
-        instrucao.value = '';
-        instrucao.textContent = resultado.escolas.length ? 'Selecione a escola / pasta' : 'Nenhuma escola cadastrada neste grupo';
-        campoEscola.appendChild(instrucao);
-
+        const inst = document.createElement('option');
+        inst.value = '';
+        inst.textContent = resultado.escolas.length ? 'Selecione a escola / pasta' : 'Nenhuma escola cadastrada neste grupo';
+        campoEscola.appendChild(inst);
         resultado.escolas.forEach(function (nome) {
-            const opcao = document.createElement('option');
-            opcao.value = nome;
-            opcao.textContent = nome;
-            campoEscola.appendChild(opcao);
+            const o = document.createElement('option');
+            o.value = nome; o.textContent = nome;
+            campoEscola.appendChild(o);
         });
         campoEscola.disabled = resultado.escolas.length === 0;
     } catch (erro) {
         campoEscola.innerHTML = '<option value="">Erro ao carregar. Tente novamente.</option>';
         if (status) {
-            status.textContent = erro.message || 'Não foi possível carregar as escolas.';
+            status.textContent = erro.message || 'Não foi possível carregar.';
             status.style.color = '#d93025';
         }
     }
 }
-
 document.addEventListener('DOMContentLoaded', function () {
-    const campoGrupo = document.getElementById('cadastroGrupo');
-    if (campoGrupo) campoGrupo.addEventListener('change', carregarEscolasCadastro);
+    const g = document.getElementById('cadastroGrupo');
+    if (g) g.addEventListener('change', carregarEscolasCadastro);
 });
 
-// ==========================================
-// CADASTRO
-// ==========================================
 async function cadastrarUsuario() {
     const nome    = document.getElementById('cadastroNome').value.trim();
     const usuario = document.getElementById('cadastroUsuario').value.trim();
@@ -747,25 +742,20 @@ async function cadastrarUsuario() {
     const botao   = document.getElementById('btnCadastro');
 
     if (!nome || !usuario || !cpf || !senha || !grupo || !escola) {
-        status.innerHTML = '⚠️ Preencha todos os campos, incluindo grupo e escola.';
-        status.style.color = '#d93025';
-        return;
+        status.innerHTML = '⚠️ Preencha todos os campos.';
+        status.style.color = '#d93025'; return;
     }
     if (cpf.length !== 11) {
-        status.innerHTML = '⚠️ Informe um CPF válido com 11 números.';
-        status.style.color = '#d93025';
-        return;
+        status.innerHTML = '⚠️ Informe um CPF válido.';
+        status.style.color = '#d93025'; return;
     }
     if (senha.length < 6) {
         status.innerHTML = '⚠️ A senha deve possuir pelo menos 6 caracteres.';
-        status.style.color = '#d93025';
-        return;
+        status.style.color = '#d93025'; return;
     }
-
     botao.disabled = true;
     status.innerHTML = '⏳ Criando cadastro...';
     status.style.color = '#146fc1';
-
     try {
         const parametros = new URLSearchParams({
             acao: 'cadastro', nome: nome, usuario: usuario, cpf: cpf,
@@ -773,14 +763,12 @@ async function cadastrarUsuario() {
         });
         const resposta = await fetch(URL_SCRIPT, { method: 'POST', mode: 'cors', body: parametros });
         const resultado = await resposta.json();
-
         if (resultado.sucesso) {
-            status.innerHTML = '✅ Cadastro realizado com sucesso!';
+            status.innerHTML = '✅ Cadastro realizado!';
             status.style.color = '#188038';
-            document.getElementById('cadastroNome').value = '';
-            document.getElementById('cadastroUsuario').value = '';
-            document.getElementById('cadastroCpf').value = '';
-            document.getElementById('cadastroSenha').value = '';
+            ['cadastroNome','cadastroUsuario','cadastroCpf','cadastroSenha'].forEach(function (id) {
+                document.getElementById(id).value = '';
+            });
             document.getElementById('cadastroGrupo').value = '';
             document.getElementById('cadastroEscola').value = '';
             setTimeout(mostrarLogin, 1500);
@@ -790,15 +778,13 @@ async function cadastrarUsuario() {
         }
     } catch (erro) {
         console.error(erro);
-        status.innerHTML = '❌ Erro de comunicação com o servidor.';
+        status.innerHTML = '❌ Erro de comunicação.';
         status.style.color = '#d93025';
-    } finally {
-        botao.disabled = false;
-    }
+    } finally { botao.disabled = false; }
 }
 
 // ==========================================
-// RECUPERAÇÃO DE SENHA
+// RECUPERAÇÃO
 // ==========================================
 async function recuperarSenha() {
     const usuario = document.getElementById('recuperacaoUsuario').value.trim();
@@ -808,20 +794,16 @@ async function recuperarSenha() {
     const botao = document.getElementById('btnRecuperacaoSenha');
 
     if (!usuario || ultimosCpf.length !== 5 || !novaSenha) {
-        status.innerHTML = '⚠️ Preencha usuário, os 5 últimos números do CPF e a nova senha.';
-        status.style.color = '#d93025';
-        return;
+        status.innerHTML = '⚠️ Preencha todos os campos.';
+        status.style.color = '#d93025'; return;
     }
     if (novaSenha.length < 6) {
         status.innerHTML = '⚠️ A nova senha deve possuir pelo menos 6 caracteres.';
-        status.style.color = '#d93025';
-        return;
+        status.style.color = '#d93025'; return;
     }
-
     botao.disabled = true;
-    status.innerHTML = '⏳ Verificando dados...';
+    status.innerHTML = '⏳ Verificando...';
     status.style.color = '#146fc1';
-
     try {
         const parametros = new URLSearchParams({
             acao: 'recuperarSenha', usuario: usuario,
@@ -829,9 +811,8 @@ async function recuperarSenha() {
         });
         const resposta = await fetch(URL_SCRIPT, { method: 'POST', mode: 'cors', body: parametros });
         const resultado = await resposta.json();
-
         if (resultado.sucesso) {
-            status.innerHTML = '✅ Senha alterada com sucesso!';
+            status.innerHTML = '✅ Senha alterada!';
             status.style.color = '#188038';
             document.getElementById('recuperacaoUsuario').value = '';
             document.getElementById('recuperacaoCpf').value = '';
@@ -843,18 +824,15 @@ async function recuperarSenha() {
         }
     } catch (erro) {
         console.error(erro);
-        status.innerHTML = '❌ Erro de comunicação com o servidor.';
+        status.innerHTML = '❌ Erro de comunicação.';
         status.style.color = '#d93025';
-    } finally {
-        botao.disabled = false;
-    }
+    } finally { botao.disabled = false; }
 }
 
 // ==========================================
-// LOGO APÓS LOGIN
+// LOGO
 // ==========================================
 let requisicaoLogoEscola = 0;
-
 async function atualizarLogoAposLogin(resultado) {
     const img = document.getElementById('imgLogoEscola');
     if (!img) return;
@@ -878,7 +856,7 @@ async function atualizarLogoAposLogin(resultado) {
                 img.alt = 'Logotipo UESP';
                 img.src = data.dataUri;
             }
-        } catch (e) { console.warn('Falha ao carregar logotipo UESP:', e); }
+        } catch (e) { console.warn(e); }
         return;
     }
 
@@ -897,10 +875,7 @@ async function atualizarLogoAposLogin(resultado) {
             img.alt = 'Pavilhão de ' + escola;
             img.src = data.dataUri;
         }
-    } catch (e) {
-        if (minha === requisicaoLogoEscola) { img.style.display = 'none'; img.removeAttribute('src'); }
-        console.warn('Falha ao carregar pavilhão:', e);
-    }
+    } catch (e) { console.warn(e); }
 }
 
 // ==========================================
@@ -914,10 +889,8 @@ async function efetuarLogin() {
 
     if (!usuario || !senha) {
         status.innerHTML = '⚠️ Informe usuário e senha.';
-        status.style.color = '#d93025';
-        return;
+        status.style.color = '#d93025'; return;
     }
-
     botao.disabled = true;
     status.innerHTML = '⏳ Verificando acesso...';
     status.style.color = '#146fc1';
@@ -947,7 +920,25 @@ async function efetuarLogin() {
             String(resultado.ehAdministrador || '').trim() === '1';
         ehAdminAtual = ehAdministrador;
 
-        // Painéis admin vs. usuário
+        const ehFotosUploader = resultado.ehFotosUploader === true ||
+            String(resultado.ehFotosUploader || '').trim().toLowerCase() === 'true' ||
+            String(resultado.ehFotosUploader || '').trim() === '1';
+
+        // Redireciona para tela de fotos se for uploader de fotos e não for admin.
+        if (ehFotosUploader && !ehAdministrador) {
+            document.getElementById('nomeUsuarioFotos').innerText =
+                resultado.nome || resultado.usuario;
+            document.getElementById('loginUsuario').value = '';
+            document.getElementById('loginSenha').value = '';
+            status.innerHTML = '';
+            await carregarEscolasFotos();
+            iniciarContadorFotos();
+            carregarFotosEnviadas();
+            mostrarTela('telaFotos');
+            return;
+        }
+
+        // Painéis admin/usuário
         const consultaAdmin = document.getElementById('consultaArquivosAdmin');
         const painelMeus = document.getElementById('painelMeusArquivosUsuario');
         if (consultaAdmin) consultaAdmin.classList.toggle('hidden', !ehAdministrador);
@@ -956,24 +947,22 @@ async function efetuarLogin() {
         grupoVinculado = ehAdministrador ? '' : String(resultado.grupoVinculado || '').trim();
         escolaVinculada = ehAdministrador ? '' : String(resultado.nomeEscolaVinculada || resultado.nomeEscola || '').trim();
 
-        // Painel administrativo
         const painelAdmin = document.getElementById('painelAdministrativo');
         if (painelAdmin) {
             if (ehAdministrador) {
                 painelAdmin.classList.remove('hidden');
                 carregarPainelAdmin();
-                const grupoAdmin = document.getElementById('adminGrupoArquivos');
-                const pastaAdmin = document.getElementById('adminPastaArquivos');
-                if (grupoAdmin) grupoAdmin.value = '';
-                if (pastaAdmin) {
-                    pastaAdmin.innerHTML = '<option value="">Selecione primeiro um grupo</option>';
-                    pastaAdmin.value = '';
-                    pastaAdmin.disabled = true;
+                const ga = document.getElementById('adminGrupoArquivos');
+                const pa = document.getElementById('adminPastaArquivos');
+                if (ga) ga.value = '';
+                if (pa) {
+                    pa.innerHTML = '<option value="">Selecione primeiro um grupo</option>';
+                    pa.value = ''; pa.disabled = true;
                 }
-                const lista = document.getElementById('listaArquivosAdmin');
-                const statA = document.getElementById('statusArquivosAdmin');
-                if (lista) lista.innerHTML = '';
-                if (statA) statA.textContent = '';
+                const l = document.getElementById('listaArquivosAdmin');
+                const s = document.getElementById('statusArquivosAdmin');
+                if (l) l.innerHTML = '';
+                if (s) s.textContent = '';
             } else {
                 painelAdmin.classList.add('hidden');
                 document.getElementById('listaPrazosAdmin').innerHTML = '';
@@ -991,10 +980,8 @@ async function efetuarLogin() {
             trocarPastaParaSelect();
             const sel = document.getElementById('nomeEscolaSelect');
             sel.innerHTML = '<option value="">Selecione primeiro um grupo</option>';
-            sel.value = '';
-            sel.disabled = true;
-            selectGrupo.value = '';
-            selectGrupo.disabled = false;
+            sel.value = ''; sel.disabled = true;
+            selectGrupo.value = ''; selectGrupo.disabled = false;
         } else {
             trocarPastaParaInput();
             const inp = document.getElementById('nomeEscola');
@@ -1021,7 +1008,7 @@ async function efetuarLogin() {
         carregarPendencias();
     } catch (erro) {
         console.error(erro);
-        status.innerHTML = '❌ Erro de comunicação com o servidor.';
+        status.innerHTML = '❌ Erro de comunicação.';
         status.style.color = '#d93025';
     } finally {
         botao.disabled = false;
@@ -1029,7 +1016,7 @@ async function efetuarLogin() {
 }
 
 // ==========================================
-// LOGOUT (local)
+// LOGOUT
 // ==========================================
 function efetuarLogoutLocal() {
     usuarioLogado = '';
@@ -1045,8 +1032,8 @@ function efetuarLogoutLocal() {
     if (stMeus) stMeus.textContent = '';
     const resumo = document.getElementById('resumoPendencias');
     if (resumo) resumo.textContent = 'Entre na conta para consultar os prazos e documentos pendentes.';
-    const listaPend = document.getElementById('listaPendencias');
-    if (listaPend) listaPend.innerHTML = '';
+    const lP = document.getElementById('listaPendencias');
+    if (lP) lP.innerHTML = '';
 
     const ca = document.getElementById('consultaArquivosAdmin');
     if (ca) ca.classList.add('hidden');
@@ -1054,8 +1041,8 @@ function efetuarLogoutLocal() {
     if (pm) pm.classList.remove('hidden');
     const pa = document.getElementById('painelAdministrativo');
     if (pa) pa.classList.add('hidden');
-    const listaPrazos = document.getElementById('listaPrazosAdmin');
-    if (listaPrazos) listaPrazos.innerHTML = '';
+    const lpz = document.getElementById('listaPrazosAdmin');
+    if (lpz) lpz.innerHTML = '';
 
     const st = document.getElementById('status');
     if (st) st.innerHTML = '';
@@ -1066,6 +1053,14 @@ function efetuarLogoutLocal() {
     document.getElementById('recuperacaoStatus').innerHTML = '';
 
     limparArquivosSelecionados();
+    fotosSelecionadas = [];
+    const lf = document.getElementById('listaFotos');
+    if (lf) lf.innerHTML = '';
+    const lfe = document.getElementById('listaFotosEnviadas');
+    if (lfe) lfe.innerHTML = '<p class="painel-vazio">Carregando...</p>';
+    const sfl = document.getElementById('statusFotos');
+    if (sfl) sfl.textContent = '';
+    pararContadorFotos();
 
     document.getElementById('categoriaPasta').value = '';
     document.getElementById('categoriaPasta').disabled = false;
@@ -1080,14 +1075,13 @@ function efetuarLogoutLocal() {
 }
 
 async function efetuarLogout() {
-    // Invalida token no servidor antes de limpar o estado local.
     if (tokenSessao) {
         try {
             await fetch(URL_SCRIPT, {
                 method: 'POST', mode: 'cors',
                 body: new URLSearchParams({ acao: 'logout', token: tokenSessao })
             });
-        } catch (e) { /* silencioso */ }
+        } catch (e) {}
     }
     efetuarLogoutLocal();
 }
@@ -1103,7 +1097,6 @@ async function carregarMeusArquivos() {
     const sel = document.getElementById('nomeEscolaSelect');
     const grupoEl = document.getElementById('categoriaPasta');
 
-    // Liga listeners nas duas variantes (uma única vez cada)
     [inp, sel].forEach(function (el) {
         if (!el || el.dataset.filtroArquivosVinculado) return;
         el.addEventListener('change', carregarMeusArquivos);
@@ -1121,7 +1114,7 @@ async function carregarMeusArquivos() {
     }
 
     if (!usuarioLogado) return;
-    lista.innerHTML = '<p class="painel-vazio">Carregando seus arquivos...</p>';
+    lista.innerHTML = '<p class="painel-vazio">Carregando...</p>';
     status.textContent = '';
 
     try {
@@ -1181,39 +1174,25 @@ function renderizarMeusArquivos() {
     status.style.color = '';
 
     if (!arquivosMeusArquivosCache.length) {
-        lista.innerHTML = '<p class="painel-vazio">Nenhum arquivo enviado encontrado para esta conta.</p>';
+        lista.innerHTML = '<p class="painel-vazio">Nenhum arquivo encontrado para esta conta.</p>';
         return;
     }
     if (!arquivos.length) {
-        lista.innerHTML = '<p class="painel-vazio">Nenhum documento encontrado na pasta selecionada.</p>';
+        lista.innerHTML = '<p class="painel-vazio">Nenhum documento na pasta selecionada.</p>';
         return;
     }
     status.textContent = arquivos.length + (arquivos.length === 1 ? ' arquivo encontrado.' : ' arquivos encontrados.');
 
-    const tiposArquivo = {
+    const tipos = {
         pdf: { s: '📕', t: 'PDF', c: '#c62828' },
         png: { s: '🖼️', t: 'PNG', c: '#16834a' },
         jpg: { s: '🖼️', t: 'JPG', c: '#16834a' },
         jpeg: { s: '🖼️', t: 'JPG', c: '#16834a' },
-        gif: { s: '🖼️', t: 'GIF', c: '#16834a' },
-        webp: { s: '🖼️', t: 'WEBP', c: '#16834a' },
-        svg: { s: '🖼️', t: 'SVG', c: '#16834a' },
         doc: { s: '📘', t: 'DOC', c: '#185abd' },
         docx: { s: '📘', t: 'DOCX', c: '#185abd' },
         xls: { s: '📗', t: 'XLS', c: '#188038' },
         xlsx: { s: '📗', t: 'XLSX', c: '#188038' },
-        csv: { s: '📗', t: 'CSV', c: '#188038' },
-        ppt: { s: '📙', t: 'PPT', c: '#c6531a' },
-        pptx: { s: '📙', t: 'PPTX', c: '#c6531a' },
-        txt: { s: '📄', t: 'TXT', c: '#5f6368' },
-        rtf: { s: '📄', t: 'RTF', c: '#5f6368' },
-        zip: { s: '🗜️', t: 'ZIP', c: '#6b7280' },
-        rar: { s: '🗜️', t: 'RAR', c: '#6b7280' },
-        '7z': { s: '🗜️', t: '7Z', c: '#6b7280' },
-        mp3: { s: '🎵', t: 'MP3', c: '#7e57c2' },
-        wav: { s: '🎵', t: 'WAV', c: '#7e57c2' },
-        mp4: { s: '🎬', t: 'MP4', c: '#7e57c2' },
-        mov: { s: '🎬', t: 'MOV', c: '#7e57c2' }
+        txt: { s: '📄', t: 'TXT', c: '#5f6368' }
     };
 
     arquivos.forEach(function (arquivo) {
@@ -1223,17 +1202,15 @@ function renderizarMeusArquivos() {
         nome.className = 'arquivo-nome';
 
         const ext = (String(arquivo.nome || '').split('.').pop() || '').toLowerCase();
-        const tipo = tiposArquivo[ext] || { s: '📄', t: ext ? ext.slice(0, 5).toUpperCase() : 'ARQ', c: '#5f6368' };
+        const tipo = tipos[ext] || { s: '📄', t: ext ? ext.slice(0, 5).toUpperCase() : 'ARQ', c: '#5f6368' };
 
         const icone = document.createElement('span');
         icone.setAttribute('aria-hidden', 'true');
         icone.textContent = tipo.s;
         icone.style.cssText = 'display:inline-flex;align-items:center;justify-content:center;margin-right:8px;font-size:22px;vertical-align:middle;';
-
         const etiqueta = document.createElement('span');
         etiqueta.textContent = tipo.t;
         etiqueta.style.cssText = 'display:inline-block;vertical-align:middle;margin-right:8px;padding:2px 5px;border-radius:4px;background:' + tipo.c + ';color:#fff;font-size:10px;font-weight:700;line-height:1.4;';
-
         nome.appendChild(icone);
         nome.appendChild(etiqueta);
         nome.appendChild(document.createTextNode(arquivo.nome || 'Arquivo sem nome'));
@@ -1244,10 +1221,8 @@ function renderizarMeusArquivos() {
 
         const acoes = document.createElement('div');
         acoes.className = 'arquivo-acoes';
-
         const link = document.createElement('button');
-        link.type = 'button';
-        link.textContent = 'Baixar arquivo';
+        link.type = 'button'; link.textContent = 'Baixar arquivo';
         link.addEventListener('click', function () { baixarArquivoUsuario(arquivo); });
         acoes.appendChild(link);
 
@@ -1256,9 +1231,7 @@ function renderizarMeusArquivos() {
         const input = document.createElement('input');
         input.type = 'file';
         input.addEventListener('change', function () {
-            if (input.files && input.files[0]) {
-                substituirArquivoEnviado(arquivo, input.files[0], input);
-            }
+            if (input.files && input.files[0]) substituirArquivoEnviado(arquivo, input.files[0], input);
         });
         rotulo.appendChild(input);
         acoes.appendChild(rotulo);
@@ -1278,8 +1251,7 @@ async function baixarArquivoUsuario(arquivo) {
         const resultado = await enviarRequisicao(new URLSearchParams({
             acao: 'baixarArquivo', usuario: usuarioLogado, token: tokenSessao, idArquivo: arquivo.id
         }));
-        if (!resultado || !resultado.sucesso) throw new Error(resultado && resultado.mensagem || 'Não foi possível baixar.');
-
+        if (!resultado || !resultado.sucesso) throw new Error(resultado && resultado.mensagem || 'Falha.');
         const bin = atob(resultado.data);
         const bytes = new Uint8Array(bin.length);
         for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
@@ -1288,8 +1260,7 @@ async function baixarArquivoUsuario(arquivo) {
         const a = document.createElement('a');
         a.href = url; a.download = resultado.nome || arquivo.nome;
         document.body.appendChild(a);
-        a.click();
-        a.remove();
+        a.click(); a.remove();
         setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
         status.textContent = 'Download iniciado.';
         status.style.color = '#188038';
@@ -1301,15 +1272,12 @@ async function baixarArquivoUsuario(arquivo) {
 
 async function substituirArquivoEnviado(arquivoAntigo, arquivoNovo, input) {
     const status = document.getElementById('statusMeusArquivos');
-    if (!confirm('Substituir "' + arquivoAntigo.nome + '" por "' + arquivoNovo.name + '"? O anterior irá para a lixeira.')) {
-        input.value = '';
-        return;
+    if (!confirm('Substituir "' + arquivoAntigo.nome + '" por "' + arquivoNovo.name + '"?')) {
+        input.value = ''; return;
     }
     if (arquivoNovo.size > LIMITE_BYTES_ARQUIVO) {
-        status.textContent = 'O arquivo excede o limite de 25 MB.';
-        status.style.color = '#d93025';
-        input.value = '';
-        return;
+        status.textContent = 'O arquivo excede 25 MB.';
+        status.style.color = '#d93025'; input.value = ''; return;
     }
     status.textContent = 'Enviando nova versão...';
     status.style.color = '#146fc1';
@@ -1322,7 +1290,7 @@ async function substituirArquivoEnviado(arquivoAntigo, arquivoNovo, input) {
             mimeType: arquivoNovo.type || 'application/octet-stream', data: base64
         });
         const resultado = await enviarRequisicao(parametros);
-        if (!resultado || !resultado.sucesso) throw new Error(resultado && resultado.mensagem || 'Falha ao substituir.');
+        if (!resultado || !resultado.sucesso) throw new Error(resultado && resultado.mensagem || 'Falha.');
         status.textContent = '✓ ' + resultado.mensagem;
         status.style.color = '#188038';
         await carregarMeusArquivos();
@@ -1342,23 +1310,22 @@ async function carregarPendencias() {
     const resumo = document.getElementById('resumoPendencias');
     const lista = document.getElementById('listaPendencias');
     if (!usuarioLogado || !tokenSessao) {
-        resumo.textContent = 'Faça login para consultar as pendências.';
-        lista.innerHTML = '';
-        return;
+        resumo.textContent = 'Faça login para consultar.';
+        lista.innerHTML = ''; return;
     }
-    resumo.textContent = 'Consultando prazos e documentos...';
+    resumo.textContent = 'Consultando...';
     lista.innerHTML = '';
     try {
         const resultado = await enviarRequisicao(new URLSearchParams({
             acao: 'listarPendencias', usuario: usuarioLogado, token: tokenSessao
         }));
-        if (!resultado || !resultado.sucesso) throw new Error(resultado && resultado.mensagem || 'Não foi possível consultar.');
-
+        if (!resultado || !resultado.sucesso) throw new Error(resultado && resultado.mensagem || 'Falha.');
         if (!resultado.grupo) {
-            resumo.textContent = resultado.mensagem || 'O grupo ainda não está vinculado à conta.';
+            resumo.textContent = resultado.mensagem || 'Grupo ainda não vinculado.';
             return;
         }
-        resumo.textContent = 'Grupo: ' + resultado.grupo + (resultado.escola ? ' • ' + resultado.escola : '') +
+        resumo.textContent = 'Grupo: ' + resultado.grupo +
+            (resultado.escola ? ' • ' + resultado.escola : '') +
             (resultado.prazo ? ' • Prazo final: ' + resultado.prazo : ' • Prazo não configurado') +
             (resultado.prazoExpirado ? ' • PRAZO EXPIRADO' : '') +
             (resultado.enviosHabilitados === false ? ' • ENVIOS DESABILITADOS' : '');
@@ -1366,7 +1333,7 @@ async function carregarPendencias() {
         if (!resultado.requisitosConfigurados) {
             const aviso = document.createElement('p');
             aviso.className = 'painel-vazio';
-            aviso.textContent = 'A lista de documentos obrigatórios ainda não foi cadastrada pela UESP.';
+            aviso.textContent = 'A lista de documentos obrigatórios ainda não foi cadastrada.';
             lista.appendChild(aviso);
             const rec = document.createElement('p');
             rec.className = 'painel-vazio';
@@ -1377,7 +1344,8 @@ async function carregarPendencias() {
         const totais = document.createElement('p');
         totais.className = 'painel-vazio';
         totais.textContent = 'Obrigatórios: ' + resultado.totalRequisitos +
-            ' • Enviados: ' + resultado.totalEnviados + ' • Pendentes: ' + resultado.totalPendentes;
+            ' • Enviados: ' + resultado.totalEnviados +
+            ' • Pendentes: ' + resultado.totalPendentes;
         lista.appendChild(totais);
 
         resultado.pendencias.forEach(function (p) {
@@ -1389,8 +1357,7 @@ async function carregarPendencias() {
             estado.className = 'painel-vazio';
             estado.textContent = p.enviado ? '✓ ENVIADO' : '⚠ PENDENTE';
             estado.style.color = p.enviado ? '#188038' : '#b45309';
-            item.appendChild(nome);
-            item.appendChild(estado);
+            item.appendChild(nome); item.appendChild(estado);
             if (p.prazoFinal) {
                 const prazo = document.createElement('div');
                 prazo.className = 'painel-vazio';
@@ -1405,10 +1372,10 @@ async function carregarPendencias() {
 }
 
 // ==========================================
-// PAINEL ADMIN — PRAZOS
+// PAINEL ADMIN
 // ==========================================
-function escaparHtmlAdmin(valor) {
-    return String(valor == null ? '' : valor).replace(/[&<>"']/g, function (c) {
+function escaparHtmlAdmin(v) {
+    return String(v == null ? '' : v).replace(/[&<>"']/g, function (c) {
         return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
     });
 }
@@ -1418,22 +1385,25 @@ async function carregarPainelAdmin() {
     const lista = document.getElementById('listaPrazosAdmin');
     const status = document.getElementById('statusPainelAdmin');
     if (!painel || painel.classList.contains('hidden')) return;
-    status.textContent = 'Carregando prazos configurados...';
+    status.textContent = 'Carregando prazos...';
     lista.innerHTML = '';
     try {
         const resultado = await enviarRequisicao(new URLSearchParams({
             acao: 'adminListarPrazos', usuario: usuarioLogado, token: tokenSessao
         }));
-        if (!resultado || !resultado.sucesso) throw new Error(resultado && resultado.mensagem || 'Não foi possível carregar.');
+        if (!resultado || !resultado.sucesso) throw new Error(resultado && resultado.mensagem || 'Falha.');
         status.textContent = 'Fuso horário: ' + (resultado.fusoHorario || 'configuração do projeto') + '.';
 
         (resultado.grupos || []).forEach(function (item, i) {
             const valorPrazo = String(item.prazo || '').slice(0, 16);
+            const rotulo = item.grupo === CHAVE_PRAZO_FOTOS
+                ? '📷 FOTOS — CASAL / PRESIDENTE / VICE'
+                : item.grupo;
             const bloco = document.createElement('div');
             bloco.className = 'arquivo-painel';
             bloco.style.cssText = 'margin-bottom:14px;padding:16px;border:1px solid #d8e1ed;border-radius:12px;';
             bloco.innerHTML =
-                '<strong>' + escaparHtmlAdmin(item.grupo) + '</strong>' +
+                '<strong>' + escaparHtmlAdmin(rotulo) + '</strong>' +
                 '<div class="form-group" style="margin-top:12px">' +
                     '<label for="adminPrazo' + i + '">Prazo final (data e hora)</label>' +
                     '<input type="datetime-local" id="adminPrazo' + i + '" value="' + escaparHtmlAdmin(valorPrazo) + '" required>' +
@@ -1461,7 +1431,7 @@ async function carregarPastasEnvioAdmin() {
     const select = document.getElementById('nomeEscolaSelect');
     const status = document.getElementById('status');
     if (!select) return;
-    select.innerHTML = '<option value="">Carregando pastas...</option>';
+    select.innerHTML = '<option value="">Carregando...</option>';
     select.disabled = true;
     if (!grupo) {
         select.innerHTML = '<option value="">Selecione primeiro um grupo</option>';
@@ -1471,7 +1441,7 @@ async function carregarPastasEnvioAdmin() {
         const r = await enviarRequisicao(new URLSearchParams({
             acao: 'adminListarPastas', usuario: usuarioLogado, token: tokenSessao, grupo: grupo
         }));
-        if (!r || !r.sucesso) throw new Error(r && r.mensagem || 'Não foi possível carregar.');
+        if (!r || !r.sucesso) throw new Error(r && r.mensagem || 'Falha.');
         select.innerHTML = '<option value="">Selecione uma pasta / entidade</option>';
         (r.pastas || []).forEach(function (p) {
             const o = document.createElement('option');
@@ -1480,8 +1450,8 @@ async function carregarPastasEnvioAdmin() {
         });
         select.disabled = false;
         if (!(r.pastas || []).length) {
-            select.innerHTML = '<option value="">Nenhuma pasta encontrada neste grupo</option>';
-            status.textContent = 'Não foram encontradas pastas dentro do grupo selecionado.';
+            select.innerHTML = '<option value="">Nenhuma pasta neste grupo</option>';
+            status.textContent = 'Não foram encontradas pastas dentro do grupo.';
             status.style.color = '#b45309';
         }
     } catch (e) {
@@ -1496,7 +1466,7 @@ async function carregarPastasAdmin() {
     const select = document.getElementById('adminPastaArquivos');
     const status = document.getElementById('statusArquivosAdmin');
     const lista = document.getElementById('listaArquivosAdmin');
-    select.innerHTML = '<option value="">Carregando pastas...</option>';
+    select.innerHTML = '<option value="">Carregando...</option>';
     select.disabled = true;
     lista.innerHTML = '';
     if (!grupo) {
@@ -1510,7 +1480,7 @@ async function carregarPastasAdmin() {
         const r = await enviarRequisicao(new URLSearchParams({
             acao: 'adminListarPastas', usuario: usuarioLogado, token: tokenSessao, grupo: grupo
         }));
-        if (!r || !r.sucesso) throw new Error(r && r.mensagem || 'Não foi possível carregar.');
+        if (!r || !r.sucesso) throw new Error(r && r.mensagem || 'Falha.');
         select.innerHTML = '<option value="">Selecione uma pasta</option>';
         (r.pastas || []).forEach(function (p) {
             const o = document.createElement('option');
@@ -1542,7 +1512,7 @@ async function carregarArquivosPastaAdmin() {
             acao: 'adminListarArquivosPasta', usuario: usuarioLogado, token: tokenSessao,
             grupo: grupo, pastaId: pastaId
         }));
-        if (!r || !r.sucesso) throw new Error(r && r.mensagem || 'Não foi possível listar.');
+        if (!r || !r.sucesso) throw new Error(r && r.mensagem || 'Falha.');
         status.textContent = (r.arquivos || []).length + ' arquivo(s) em "' + r.pasta + '".';
         if (!(r.arquivos || []).length) {
             lista.innerHTML = '<p class="painel-vazio">Esta pasta não contém arquivos.</p>';
@@ -1563,10 +1533,8 @@ async function carregarArquivosPastaAdmin() {
 
             const acoes = document.createElement('div');
             acoes.style.cssText = 'display:flex;gap:8px;flex-wrap:wrap;align-items:center;';
-
             const link = document.createElement('a');
-            link.href = a.url; link.target = '_blank';
-            link.rel = 'noopener noreferrer';
+            link.href = a.url; link.target = '_blank'; link.rel = 'noopener noreferrer';
             link.textContent = 'Ver / baixar';
             acoes.appendChild(link);
 
@@ -1581,9 +1549,7 @@ async function carregarArquivosPastaAdmin() {
             btnSub.addEventListener('click', async function () {
                 const novo = input.files && input.files[0];
                 if (!novo) { alert('Selecione primeiro o novo arquivo.'); return; }
-                if (novo.size > LIMITE_BYTES_ARQUIVO) {
-                    alert('Arquivo excede o limite de 25 MB.'); return;
-                }
+                if (novo.size > LIMITE_BYTES_ARQUIVO) { alert('Arquivo excede 25 MB.'); return; }
                 if (!confirm('Substituir "' + a.nome + '" por "' + novo.name + '"?')) return;
                 btnSub.disabled = true;
                 try {
@@ -1639,8 +1605,7 @@ async function salvarPrazoAdmin(indice) {
     const habilitado = document.getElementById('adminHabilitado' + indice).checked ? 'SIM' : 'NAO';
     if (!prazo) {
         status.textContent = 'Informe a data e hora final.';
-        status.style.color = '#d93025';
-        return;
+        status.style.color = '#d93025'; return;
     }
     status.textContent = 'Salvando...';
     status.style.color = '#146fc1';
@@ -1649,13 +1614,14 @@ async function salvarPrazoAdmin(indice) {
             acao: 'adminSalvarPrazo', usuario: usuarioLogado, token: tokenSessao,
             grupo: grupo, prazo: prazo, habilitado: habilitado
         }));
-        if (!resultado || !resultado.sucesso) throw new Error(resultado && resultado.mensagem || 'Não foi possível salvar.');
+        if (!resultado || !resultado.sucesso) throw new Error(resultado && resultado.mensagem || 'Falha.');
         status.textContent = '✓ ' + resultado.mensagem;
         status.style.color = '#188038';
         STATUS_ENVIO_GRUPOS[grupo] = { prazo: resultado.prazo, habilitado: resultado.habilitado };
         if (resultado.prazo) PRAZOS_GRUPOS[grupo] = new Date(resultado.prazo);
         atualizarOpcoesExpiradas();
         atualizarContadorPrazo();
+        atualizarContadorFotos();
         carregarPendencias();
     } catch (erro) {
         status.textContent = '✕ ' + (erro.message || String(erro));
@@ -1664,7 +1630,7 @@ async function salvarPrazoAdmin(indice) {
 }
 
 // ==========================================
-// UPLOAD — seleção de arquivos
+// UPLOAD
 // ==========================================
 function chaveArquivo(arquivo) {
     return arquivo.name + '|' + arquivo.size + '|' + arquivo.lastModified;
@@ -1677,22 +1643,16 @@ function adicionarArquivosSelecionados() {
     const rejeitados = [];
 
     novos.forEach(function (arquivo) {
-        if (arquivo.size > LIMITE_BYTES_ARQUIVO) {
-            rejeitados.push(arquivo.name);
-            return;
-        }
+        if (arquivo.size > LIMITE_BYTES_ARQUIVO) { rejeitados.push(arquivo.name); return; }
         if (!arquivosSelecionados.some(function (item) { return chaveArquivo(item) === chaveArquivo(arquivo); })) {
             arquivosSelecionados.push(arquivo);
         }
     });
-
     input.value = '';
-
     if (rejeitados.length) {
         status.innerHTML = '⚠️ Ignorados (acima de 25 MB): ' + rejeitados.join(', ');
         status.style.color = '#d93025';
     }
-
     renderizarListaArquivos();
 }
 
@@ -1704,14 +1664,11 @@ function renderizarListaArquivos() {
         item.className = 'arquivo-item';
         item.draggable = true;
         item.dataset.indice = indice;
-
         const numero = document.createElement('strong');
         numero.textContent = (indice + 1) + '.';
-
         const nome = document.createElement('div');
         nome.className = 'arquivo-nome';
         nome.textContent = arquivo.name + ' (' + formatarTamanho(arquivo.size) + ')';
-
         const remover = document.createElement('button');
         remover.type = 'button';
         remover.className = 'arquivo-remover';
@@ -1723,7 +1680,6 @@ function renderizarListaArquivos() {
             arquivosSelecionados.splice(indice, 1);
             renderizarListaArquivos();
         });
-
         item.appendChild(numero);
         item.appendChild(nome);
         item.appendChild(remover);
@@ -1744,7 +1700,6 @@ function renderizarListaArquivos() {
             arquivosSelecionados.splice(indice, 0, movido);
             renderizarListaArquivos();
         });
-
         lista.appendChild(item);
     });
 }
@@ -1767,11 +1722,11 @@ function lerArquivoBase64(arquivo) {
         leitor.onload = function () {
             try {
                 const dados = String(leitor.result).split(',')[1];
-                if (!dados) { reject(new Error('Não foi possível obter os dados do arquivo.')); return; }
+                if (!dados) { reject(new Error('Dados do arquivo vazios.')); return; }
                 resolve(dados);
             } catch (e) { reject(e); }
         };
-        leitor.onerror = function () { reject(new Error('Não foi possível ler o arquivo ' + arquivo.name)); };
+        leitor.onerror = function () { reject(new Error('Falha ao ler ' + arquivo.name)); };
         leitor.readAsDataURL(arquivo);
     });
 }
@@ -1785,7 +1740,8 @@ const PRAZOS_GRUPOS = {
     'BLOCOS ESPECIAIS':          new Date('2026-10-21T23:59:59'),
     'GRUPO ACESSO I':            new Date('2026-10-21T23:59:59'),
     'GRUPO ACESSO II':           new Date('2026-10-21T23:59:59'),
-    'GRUPO ACESSO III':          new Date('2026-10-21T23:59:59')
+    'GRUPO ACESSO III':          new Date('2026-10-21T23:59:59'),
+    'FOTOS_CAS_POT_PRE_VICE':    new Date('2026-10-21T23:59:59')
 };
 
 function obterPrazoGrupo(categoria) { return PRAZOS_GRUPOS[categoria] || null; }
@@ -1824,13 +1780,11 @@ function atualizarContadorPrazo() {
         if (prazoFinal) prazoFinal.textContent = prazo ? 'Prazo configurado: ' + formatarDataPrazo(prazo) : 'Prazo não configurado';
         return;
     }
-
     if (!prazo) {
         contador.style.display = 'none';
         contador.classList.remove('expirado');
         return;
     }
-
     contador.style.display = 'block';
     if (titulo) titulo.textContent = 'Prazo de envio do ' + categoria;
     if (prazoFinal) prazoFinal.textContent = 'Prazo final: ' + formatarDataPrazo(prazo);
@@ -1842,12 +1796,10 @@ function atualizarContadorPrazo() {
         return;
     }
     contador.classList.remove('expirado');
-
     const dias = Math.floor(diff / (1000 * 60 * 60 * 24));
     const horas = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
     const minutos = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
     const segundos = Math.floor((diff % (1000 * 60)) / 1000);
-
     tempo.textContent =
         String(dias).padStart(2, '0') + ' dias, ' +
         String(horas).padStart(2, '0') + ' horas, ' +
@@ -1867,7 +1819,7 @@ function atualizarOpcoesExpiradas() {
 }
 
 function informarPrazoExpirado(categoria) {
-    alert('O prazo para envio de documentos do ' + categoria + ' está expirado.');
+    alert('O prazo do ' + categoria + ' está expirado.');
 }
 
 function aplicarEscolaDoGrupo(categoria) {
@@ -1885,21 +1837,14 @@ function aplicarEscolaDoGrupo(categoria) {
 function iniciarContadorPrazo() {
     const select = document.getElementById('categoriaPasta');
     if (!select) return;
-
     select.addEventListener('change', function () {
         atualizarContadorPrazo();
-
-        if (ehAdminAtual) {
-            carregarPastasEnvioAdmin();
-            return;
-        }
-
+        if (ehAdminAtual) { carregarPastasEnvioAdmin(); return; }
         if (grupoVinculado) {
             select.value = grupoVinculado;
             aplicarEscolaDoGrupo(grupoVinculado);
             return;
         }
-
         const categoria = select.value;
         if (grupoEstaExpirado(categoria)) {
             informarPrazoExpirado(categoria);
@@ -1909,13 +1854,11 @@ function iniciarContadorPrazo() {
         }
         aplicarEscolaDoGrupo(categoria);
     });
-
     select.addEventListener('mousedown', atualizarOpcoesExpiradas);
     select.addEventListener('keydown', atualizarOpcoesExpiradas);
 
     atualizarOpcoesExpiradas();
     atualizarContadorPrazo();
-
     if (intervaloContadorPrazo) clearInterval(intervaloContadorPrazo);
     intervaloContadorPrazo = setInterval(function () {
         atualizarOpcoesExpiradas();
@@ -1923,8 +1866,72 @@ function iniciarContadorPrazo() {
     }, 1000);
 }
 
+function atualizarContadorFotos() {
+    const contador = document.getElementById('contadorPrazoFotos');
+    const tempo = document.getElementById('contadorTempoFotos');
+    const prazoFinal = document.getElementById('contadorFinalFotos');
+    const botao = document.getElementById('btnEnviarFotos');
+    if (!contador || !tempo) return;
+
+    const prazo = PRAZOS_GRUPOS[CHAVE_PRAZO_FOTOS];
+    const cfg = STATUS_ENVIO_GRUPOS[CHAVE_PRAZO_FOTOS];
+
+    if (cfg && cfg.habilitado === false) {
+        contador.style.display = 'block';
+        contador.classList.add('expirado');
+        tempo.textContent = 'Envios desabilitados pela administração';
+        tempo.style.color = '#d93025';
+        if (prazoFinal) prazoFinal.textContent = prazo
+            ? 'Prazo configurado: ' + formatarDataPrazo(prazo)
+            : 'Prazo não configurado';
+        if (botao) botao.disabled = true;
+        return;
+    }
+    if (!prazo) {
+        contador.style.display = 'none';
+        if (botao && fotosSelecionadas.every(function (f) { return f.escola && f.cargo; })) {
+            botao.disabled = fotosSelecionadas.length === 0;
+        }
+        return;
+    }
+    contador.style.display = 'block';
+    if (prazoFinal) prazoFinal.textContent = 'Prazo final: ' + formatarDataPrazo(prazo);
+
+    const diff = prazo.getTime() - new Date().getTime();
+    if (diff <= 0) {
+        tempo.textContent = 'PRAZO EXPIRADO';
+        tempo.style.color = '';
+        contador.classList.add('expirado');
+        if (botao) botao.disabled = true;
+        return;
+    }
+    contador.classList.remove('expirado');
+    const dias = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const horas = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutos = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    const segundos = Math.floor((diff % (1000 * 60)) / 1000);
+    tempo.textContent =
+        String(dias).padStart(2, '0') + ' dias, ' +
+        String(horas).padStart(2, '0') + ' horas, ' +
+        String(minutos).padStart(2, '0') + ' minutos e ' +
+        String(segundos).padStart(2, '0') + ' segundos';
+}
+
+function iniciarContadorFotos() {
+    if (intervaloContadorFotos) clearInterval(intervaloContadorFotos);
+    atualizarContadorFotos();
+    intervaloContadorFotos = setInterval(atualizarContadorFotos, 1000);
+}
+
+function pararContadorFotos() {
+    if (intervaloContadorFotos) {
+        clearInterval(intervaloContadorFotos);
+        intervaloContadorFotos = null;
+    }
+}
+
 // ==========================================
-// ENVIO DE ARQUIVOS
+// ENVIO DE ARQUIVOS (GRUPO)
 // ==========================================
 async function enviarArquivo() {
     const status = document.getElementById('status');
@@ -1935,12 +1942,10 @@ async function enviarArquivo() {
 
     if (!usuarioLogado) {
         status.innerHTML = '❌ Sessão expirada. Faça login novamente.';
-        status.style.color = '#d93025';
-        return;
+        status.style.color = '#d93025'; return;
     }
-
     if (grupoEstaExpirado(categoria)) {
-        status.innerHTML = '❌ O prazo para envio de documentos do ' + categoria + ' está expirado.';
+        status.innerHTML = '❌ O prazo do ' + categoria + ' está expirado.';
         status.style.color = '#d93025';
         document.getElementById('categoriaPasta').value = '';
         atualizarContadorPrazo();
@@ -1960,17 +1965,15 @@ async function enviarArquivo() {
     }
     if (arquivosSelecionados.length === 0) {
         status.innerHTML = '⚠️ Selecione pelo menos um arquivo.';
-        status.style.color = '#d93025';
-        return;
+        status.style.color = '#d93025'; return;
     }
 
     botao.disabled = true;
     const arquivos = arquivosSelecionados.slice();
-
     try {
         for (let i = 0; i < arquivos.length; i++) {
             const arquivo = arquivos[i];
-            status.innerHTML = '⏳ Enviando arquivo ' + (i + 1) + ' de ' + arquivos.length + ':<br>' + arquivo.name;
+            status.innerHTML = '⏳ Enviando ' + (i + 1) + ' de ' + arquivos.length + ':<br>' + arquivo.name;
             status.style.color = '#146fc1';
 
             const dadosBase64 = await lerArquivoBase64(arquivo);
@@ -1983,19 +1986,15 @@ async function enviarArquivo() {
                 quantidade: String(arquivos.length),
                 indice: String(i)
             });
-
             const resultado = await enviarRequisicao(parametros);
             if (!resultado || !resultado.sucesso) {
                 throw new Error(resultado && resultado.mensagem || ('Erro ao enviar ' + arquivo.name));
             }
         }
-
         status.innerHTML = '✅ ' + arquivos.length + ' arquivo(s) enviado(s) com sucesso!';
         status.style.color = '#188038';
-
         limparArquivosSelecionados();
 
-        // Vincula a sessão (não-ADM) ao grupo/escola do primeiro envio.
         if (!ehAdminAtual) {
             grupoVinculado = categoria;
             escolaVinculada = nomeEscola;
@@ -2006,19 +2005,15 @@ async function enviarArquivo() {
             inpEscola.value = escolaVinculada;
             if (inpEscola.tagName === 'SELECT') inpEscola.disabled = true; else inpEscola.readOnly = true;
         } else {
-            // ADM: mantém grupo/pasta escolhidos, limpa apenas o nome do documento.
-            const selGrupo = document.getElementById('categoriaPasta');
             const inpEscola = getPastaEnvioEl();
             inpEscola.value = '';
         }
-
         document.getElementById('nomeDocumento').value = '';
-        // FIX: garantir que o contador volte a aparecer após envio
         atualizarContadorPrazo();
         carregarMeusArquivos();
     } catch (erro) {
         console.error(erro);
-        status.innerHTML = '❌ ' + (erro.message || 'Falha na comunicação com o servidor.');
+        status.innerHTML = '❌ ' + (erro.message || 'Falha na comunicação.');
         status.style.color = '#d93025';
     } finally {
         botao.disabled = false;
@@ -2026,7 +2021,252 @@ async function enviarArquivo() {
 }
 
 // ==========================================
-// LISTENERS ESTÁTICOS
+// MÓDULO DE FOTOS
+// ==========================================
+async function carregarEscolasFotos() {
+    try {
+        const r = await enviarRequisicao(new URLSearchParams({ acao: 'listarTodasEscolas' }));
+        if (r && r.sucesso) {
+            escolasFotosCache = r.escolas || [];
+            cargosFotosCache = r.cargos || cargosFotosCache;
+        }
+    } catch (e) { console.warn('Não foi possível carregar escolas para fotos:', e); }
+}
+
+function adicionarFotosSelecionadas() {
+    const input = document.getElementById('fotosInput');
+    const status = document.getElementById('statusFotos');
+    const novas = Array.from(input.files || []);
+    const rejeitadas = [];
+
+    if (fotosSelecionadas.length + novas.length > LIMITE_FOTOS_ENVIO) {
+        status.textContent = 'Limite de ' + LIMITE_FOTOS_ENVIO + ' fotos por envio.';
+        status.style.color = '#d93025';
+        input.value = ''; return;
+    }
+    novas.forEach(function (arquivo) {
+        if (arquivo.size > LIMITE_BYTES_ARQUIVO) { rejeitadas.push(arquivo.name + ' (>25 MB)'); return; }
+        if (!/^image\//.test(arquivo.type)) { rejeitadas.push(arquivo.name + ' (não é imagem)'); return; }
+        fotosSelecionadas.push({ arquivo: arquivo, escola: '', cargo: '' });
+    });
+    input.value = '';
+    if (rejeitadas.length) {
+        status.innerHTML = '⚠️ Ignoradas: ' + rejeitadas.join(', ');
+        status.style.color = '#d93025';
+    } else {
+        status.textContent = '';
+    }
+    renderizarFotosSelecionadas();
+}
+
+function previewNomeFoto(item) {
+    if (!item.escola || !item.cargo) return '— (preencha escola e cargo)';
+    const ext = (item.arquivo.name.match(/\.[^.]+$/) || ['.jpg'])[0];
+    return item.escola + ' ' + item.cargo + ext;
+}
+
+function renderizarFotosSelecionadas() {
+    const lista = document.getElementById('listaFotos');
+    lista.innerHTML = '';
+    fotosSelecionadas.forEach(function (item, indice) {
+        const row = document.createElement('div');
+        row.className = 'foto-row';
+        if (!item.escola || !item.cargo) row.classList.add('invalido');
+
+        const thumb = document.createElement('img');
+        thumb.className = 'foto-thumb';
+        const objUrl = URL.createObjectURL(item.arquivo);
+        thumb.src = objUrl;
+        thumb.alt = '';
+        thumb.onload = function () { URL.revokeObjectURL(objUrl); };
+
+        const info = document.createElement('div');
+        info.className = 'foto-info';
+        const nomeOrig = document.createElement('div');
+        nomeOrig.className = 'foto-nome-original';
+        nomeOrig.textContent = item.arquivo.name + ' (' + formatarTamanho(item.arquivo.size) + ')';
+        info.appendChild(nomeOrig);
+
+        const selects = document.createElement('div');
+        selects.className = 'foto-selects';
+
+        const selEscola = document.createElement('select');
+        selEscola.innerHTML = '<option value="">Escola/Bloco…</option>';
+        escolasFotosCache.forEach(function (e) {
+            const o = document.createElement('option');
+            o.value = e.nome; o.textContent = e.nome;
+            if (e.nome === item.escola) o.selected = true;
+            selEscola.appendChild(o);
+        });
+        selEscola.addEventListener('change', function () {
+            item.escola = selEscola.value;
+            atualizarPreviewFoto(indice);
+        });
+        selects.appendChild(selEscola);
+
+        const selCargo = document.createElement('select');
+        selCargo.innerHTML = '<option value="">Cargo…</option>';
+        cargosFotosCache.forEach(function (c) {
+            const o = document.createElement('option');
+            o.value = c; o.textContent = c;
+            if (c === item.cargo) o.selected = true;
+            selCargo.appendChild(o);
+        });
+        selCargo.addEventListener('change', function () {
+            item.cargo = selCargo.value;
+            atualizarPreviewFoto(indice);
+        });
+        selects.appendChild(selCargo);
+        info.appendChild(selects);
+
+        const preview = document.createElement('div');
+        preview.className = 'foto-preview';
+        preview.textContent = previewNomeFoto(item);
+        info.appendChild(preview);
+
+        const remover = document.createElement('button');
+        remover.type = 'button';
+        remover.className = 'arquivo-remover';
+        remover.textContent = '×';
+        remover.setAttribute('aria-label', 'Remover ' + item.arquivo.name);
+        remover.addEventListener('click', function () {
+            fotosSelecionadas.splice(indice, 1);
+            renderizarFotosSelecionadas();
+        });
+
+        row.appendChild(thumb);
+        row.appendChild(info);
+        row.appendChild(remover);
+        lista.appendChild(row);
+    });
+    atualizarBotaoEnviarFotos();
+}
+
+function atualizarPreviewFoto(indice) {
+    const item = fotosSelecionadas[indice];
+    const row = document.getElementById('listaFotos').children[indice];
+    if (!row || !item) return;
+    const preview = row.querySelector('.foto-preview');
+    if (preview) preview.textContent = previewNomeFoto(item);
+    row.classList.toggle('invalido', !item.escola || !item.cargo);
+    atualizarBotaoEnviarFotos();
+}
+
+function atualizarBotaoEnviarFotos() {
+    const botao = document.getElementById('btnEnviarFotos');
+    if (!botao) return;
+    const prazoExpirado = grupoEstaExpirado(CHAVE_PRAZO_FOTOS);
+    const cfgOff = STATUS_ENVIO_GRUPOS[CHAVE_PRAZO_FOTOS] &&
+        STATUS_ENVIO_GRUPOS[CHAVE_PRAZO_FOTOS].habilitado === false;
+    if (prazoExpirado || cfgOff) { botao.disabled = true; return; }
+    const valido = fotosSelecionadas.length > 0 &&
+        fotosSelecionadas.every(function (f) { return f.escola && f.cargo; });
+    botao.disabled = !valido;
+}
+
+async function enviarFotos() {
+    const status = document.getElementById('statusFotos');
+    const botao = document.getElementById('btnEnviarFotos');
+
+    if (!fotosSelecionadas.length) return;
+    if (!fotosSelecionadas.every(function (f) { return f.escola && f.cargo; })) {
+        status.textContent = 'Todas as fotos precisam ter escola e cargo definidos.';
+        status.style.color = '#d93025'; return;
+    }
+
+    const prazoFotos = PRAZOS_GRUPOS[CHAVE_PRAZO_FOTOS];
+    const cfgFotos = STATUS_ENVIO_GRUPOS[CHAVE_PRAZO_FOTOS];
+    if (cfgFotos && cfgFotos.habilitado === false) {
+        status.textContent = 'Os envios de fotos estão desabilitados pela administração.';
+        status.style.color = '#d93025'; return;
+    }
+    if (prazoFotos && new Date().getTime() >= prazoFotos.getTime()) {
+        status.textContent = 'O prazo para envio de fotos expirou.';
+        status.style.color = '#d93025'; return;
+    }
+
+    botao.disabled = true;
+    const enviadas = fotosSelecionadas.slice();
+    let sucesso = 0;
+    const erros = [];
+
+    for (let i = 0; i < enviadas.length; i++) {
+        const item = enviadas[i];
+        status.textContent = 'Enviando ' + (i + 1) + ' de ' + enviadas.length + ': ' + item.arquivo.name;
+        status.style.color = '#146fc1';
+        try {
+            const base64 = await lerArquivoBase64(item.arquivo);
+            const params = new URLSearchParams({
+                acao: 'uploadFoto',
+                usuario: usuarioLogado,
+                token: tokenSessao,
+                escola: item.escola,
+                cargo: item.cargo,
+                filenameOriginal: item.arquivo.name,
+                mimeType: item.arquivo.type || 'image/jpeg',
+                data: base64
+            });
+            const r = await enviarRequisicao(params);
+            if (!r || !r.sucesso) throw new Error(r && r.mensagem || 'Falha no envio');
+            sucesso++;
+        } catch (e) {
+            erros.push(item.arquivo.name + ': ' + (e.message || e));
+        }
+    }
+
+    if (erros.length === 0) {
+        status.textContent = '✅ ' + sucesso + ' foto(s) enviada(s) com sucesso!';
+        status.style.color = '#188038';
+        fotosSelecionadas = [];
+        renderizarFotosSelecionadas();
+        carregarFotosEnviadas();
+    } else {
+        status.innerHTML = '⚠️ ' + sucesso + ' enviada(s), ' + erros.length + ' com erro:<br>' + erros.join('<br>');
+        status.style.color = '#d93025';
+    }
+    botao.disabled = false;
+}
+
+async function carregarFotosEnviadas() {
+    const lista = document.getElementById('listaFotosEnviadas');
+    if (!usuarioLogado) { lista.innerHTML = ''; return; }
+    lista.innerHTML = '<p class="painel-vazio">Carregando...</p>';
+    try {
+        const r = await enviarRequisicao(new URLSearchParams({
+            acao: 'listarFotos', usuario: usuarioLogado, token: tokenSessao
+        }));
+        if (!r || !r.sucesso) throw new Error(r && r.mensagem || 'Falha.');
+        if (!r.arquivos.length) {
+            lista.innerHTML = '<p class="painel-vazio">Nenhuma foto enviada ainda.</p>';
+            return;
+        }
+        lista.innerHTML = '';
+        r.arquivos.forEach(function (a) {
+            const item = document.createElement('div');
+            item.className = 'arquivo-painel';
+            item.style.cssText = 'display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap';
+            const nome = document.createElement('strong');
+            nome.textContent = a.nome;
+            const meta = document.createElement('span');
+            meta.className = 'painel-vazio';
+            meta.textContent = a.atualizado + ' • ' + Math.round((a.tamanho || 0) / 1024) + ' KB';
+            const link = document.createElement('a');
+            link.href = a.url;
+            link.target = '_blank';
+            link.rel = 'noopener noreferrer';
+            link.textContent = 'Ver / baixar';
+            item.appendChild(nome);
+            item.appendChild(meta);
+            item.appendChild(link);
+            lista.appendChild(item);
+        });
+    } catch (e) {
+        lista.innerHTML = '<p class="painel-vazio">Não foi possível carregar.</p>';
+    }
+}
+
+// ==========================================
+// LISTENERS FINAIS
 // ==========================================
 document.addEventListener('DOMContentLoaded', function () {
     // Forms
@@ -2040,14 +2280,12 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('linkVoltarLogin1').addEventListener('click', mostrarLogin);
     document.getElementById('linkVoltarLogin2').addEventListener('click', mostrarLogin);
 
-    // Arquivo
+    // Upload
     document.getElementById('arquivoInput').addEventListener('change', adicionarArquivosSelecionados);
-
-    // Envio + Logout
     document.getElementById('btnEnviar').addEventListener('click', enviarArquivo);
     document.getElementById('btnSair').addEventListener('click', efetuarLogout);
 
-    // Painéis admin / usuário
+    // Painéis admin/usuário
     document.getElementById('adminGrupoArquivos').addEventListener('change', carregarPastasAdmin);
     document.getElementById('adminPastaArquivos').addEventListener('change', carregarArquivosPastaAdmin);
     document.getElementById('filtroPastaMeusArquivos').addEventListener('change', filtrarMeusArquivos);
@@ -2055,7 +2293,13 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('btnAtualizarPendencias').addEventListener('click', carregarPendencias);
     document.getElementById('btnAtualizarPrazosAdmin').addEventListener('click', carregarPainelAdmin);
 
-    // Contador
+    // Fotos
+    document.getElementById('fotosInput').addEventListener('change', adicionarFotosSelecionadas);
+    document.getElementById('btnEnviarFotos').addEventListener('click', enviarFotos);
+    document.getElementById('btnListarFotos').addEventListener('click', carregarFotosEnviadas);
+    document.getElementById('btnSairFotos').addEventListener('click', efetuarLogout);
+
+    // Contador de prazo dos grupos
     iniciarContadorPrazo();
 });
 </script>
