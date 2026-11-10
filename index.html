@@ -327,13 +327,11 @@
 <body>
 <div class="container">
 
-    <!-- LOGO -->
     <div class="logo-area">
         <img src="https://github.com/ThiagoNegrini/upload_de_arquivos/blob/main/LOGO_SITE.PNG?raw=true"
              alt="Logotipo UESP" id="imgLogoUESP">
     </div>
 
-    <!-- LOGIN -->
     <div class="card" id="telaLogin">
         <h2>ACESSO AO PAINEL DE ENVIO DE DOCUMENTOS - ESCOLAS E BLOCOS</h2>
         <p>Entre com seu usuário(a) e senha.</p>
@@ -353,7 +351,6 @@
         <span class="link" id="linkCadastro">Ainda não possui cadastro? Criar conta</span>
     </div>
 
-    <!-- CADASTRO -->
     <div class="card hidden" id="telaCadastro">
         <h2>CRIAR CADASTRO</h2>
         <p>Preencha seus dados para criar seu acesso.</p>
@@ -398,7 +395,6 @@
         <span class="link" id="linkVoltarLogin1">Já possui cadastro? Entrar</span>
     </div>
 
-    <!-- RECUPERAÇÃO -->
     <div class="card hidden" id="telaRecuperacaoSenha">
         <h2>RECUPERAR SENHA</h2>
         <p>Informe seu usuário e os 5 últimos números do CPF cadastrado.</p>
@@ -421,7 +417,6 @@
         <span class="link" id="linkVoltarLogin2">Voltar para o login</span>
     </div>
 
-    <!-- UPLOAD (ADM e usuários de documentos) -->
     <div class="card hidden" id="telaUpload">
         <div class="upload-header">
             <div class="upload-logo-area">
@@ -478,7 +473,6 @@
         <button type="button" id="btnEnviar">Enviar Arquivo</button>
         <div id="status" class="status-msg" aria-live="polite"></div>
 
-        <!-- CONSULTA ADMIN - documentos -->
         <section id="consultaArquivosAdmin" class="painel-arquivos hidden">
             <h3>Consulta administrativa de arquivos</h3>
             <p>O perfil ADM pode consultar todos os grupos e pastas.</p>
@@ -504,7 +498,6 @@
             <div id="listaArquivosAdmin"></div>
         </section>
 
-        <!-- MEUS ARQUIVOS (usuários normais) -->
         <section id="painelMeusArquivosUsuario" class="painel-arquivos">
             <h3>Meus arquivos enviados</h3>
             <p>Baixe um arquivo ou selecione uma nova versão para substituí-lo.</p>
@@ -517,7 +510,6 @@
             <div id="listaMeusArquivos"><p class="painel-vazio">Faça login para consultar seus arquivos.</p></div>
         </section>
 
-        <!-- PENDÊNCIAS -->
         <section class="painel-arquivos">
             <h3>Prazos e pendências</h3>
             <p id="resumoPendencias" class="painel-vazio">Entre na conta para consultar os prazos e documentos pendentes.</p>
@@ -525,7 +517,6 @@
             <div id="listaPendencias" aria-live="polite"></div>
         </section>
 
-        <!-- PAINEL ADMIN - prazos -->
         <section id="painelAdministrativo" class="painel-arquivos hidden">
             <h3>Painel administrativo — prazos e abertura de envios</h3>
             <p>Defina a data e hora limite de cada grupo e habilite ou bloqueie os envios.</p>
@@ -534,10 +525,9 @@
             <button type="button" id="btnAtualizarPrazosAdmin">Atualizar prazos</button>
         </section>
 
-        <!-- PAINEL ADMIN - fotos (NOVO) -->
         <section id="painelFotosAdmin" class="painel-arquivos hidden">
             <h3>📷 Gerenciar fotos (CASAL / PRESIDENTE / VICE / PORTA ESTANDARTE)</h3>
-            <p>Todas as fotos enviadas pelos 6 grupos ficam na pasta FOTOS_CAS_POT_PRE_VICE. Baixe, substitua ou exclua.</p>
+            <p>Todas as fotos enviadas pelos 6 grupos ficam na pasta FOTOS_CAS_POT_PRE_VICE.</p>
             <button type="button" id="btnAtualizarFotosAdmin">Atualizar fotos</button>
             <p id="statusFotosAdmin" class="status-msg" aria-live="polite"></p>
             <div id="listaFotosAdmin"></div>
@@ -546,7 +536,6 @@
         <button type="button" class="btn-logout" id="btnSair">Sair da Conta</button>
     </div>
 
-    <!-- TELA DE FOTOS (exclusiva dos logins de grupo) -->
     <div class="card hidden" id="telaFotos">
         <div class="upload-header">
             <div class="upload-logo-area">
@@ -593,7 +582,6 @@
         <button type="button" class="btn-logout" id="btnSairFotos">Sair da Conta</button>
     </div>
 
-    <!-- MANUAL -->
     <div class="manual-links">
         <div class="manual-links-titulo">AJUDA AO USUÁRIO(A)</div>
         <a class="manual-link" href="./manual_usuario_envio_documentos.pdf" target="_blank" rel="noopener noreferrer">
@@ -608,7 +596,7 @@
 </div>
 
 <script>
-const URL_SCRIPT = 'https://script.google.com/macros/s/AKfycbxUVTzhSWINh1c-O6duGFzF4vJzjwxKm13nf93buI2VKW6O1iBZeUgURGceFYkH-xEkNQ/exec';
+const URL_SCRIPT = 'https://script.google.com/macros/s/AKfycbzauL-raHzrVwppXLTDmFMXqB2nBoFua8Rk2_j2WIIpoHDHBLGWNYK1C5-1eim0o1PJFA/exec';
 const LIMITE_BYTES_ARQUIVO = 25 * 1024 * 1024;
 const LIMITE_FOTOS_ENVIO = 15;
 const CHAVE_PRAZO_FOTOS = 'FOTOS_CAS_POT_PRE_VICE';
@@ -639,9 +627,6 @@ const PRAZOS_GRUPOS = {
     'FOTOS_CAS_POT_PRE_VICE':    new Date('2026-10-21T23:59:59')
 };
 
-// ==========================================
-// HELPERS
-// ==========================================
 function getPastaEnvioEl() {
     const sel = document.getElementById('nomeEscolaSelect');
     if (sel && !sel.classList.contains('hidden')) return sel;
@@ -695,9 +680,6 @@ async function enviarRequisicao(parametros) {
     return dados;
 }
 
-// ==========================================
-// CPF MASK
-// ==========================================
 document.addEventListener('DOMContentLoaded', function () {
     const campoCpf = document.getElementById('cadastroCpf');
     if (!campoCpf) return;
@@ -710,9 +692,6 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
-// ==========================================
-// CADASTRO
-// ==========================================
 async function carregarEscolasCadastro() {
     const campoGrupo = document.getElementById('cadastroGrupo');
     const campoEscola = document.getElementById('cadastroEscola');
@@ -848,9 +827,6 @@ async function recuperarSenha() {
     } finally { botao.disabled = false; }
 }
 
-// ==========================================
-// LOGO
-// ==========================================
 let requisicaoLogoEscola = 0;
 async function atualizarLogoAposLogin(resultado) {
     const img = document.getElementById('imgLogoEscola');
@@ -894,9 +870,6 @@ async function atualizarLogoAposLogin(resultado) {
     } catch (e) {}
 }
 
-// ==========================================
-// LOGIN
-// ==========================================
 async function efetuarLogin() {
     const usuario = document.getElementById('loginUsuario').value.trim();
     const senha   = document.getElementById('loginSenha').value.trim();
@@ -930,7 +903,6 @@ async function efetuarLogin() {
             if (cfg.prazo) PRAZOS_GRUPOS[grupo] = new Date(cfg.prazo);
         });
 
-        // =============== LOGIN DE FOTOS ===============
         const ehLoginFotos = resultado.ehLoginFotos === true ||
             String(resultado.ehLoginFotos || '').trim().toLowerCase() === 'true';
 
@@ -943,18 +915,14 @@ async function efetuarLogin() {
             document.getElementById('loginSenha').value = '';
             status.innerHTML = '';
 
-            // Carrega escolas e cargos do grupo
             await carregarEscolasDoMeuGrupo();
-            // Contagem inicial
             await carregarContagemFotosGrupo();
-            // Inicia contador de prazo das fotos
             iniciarContadorFotos();
 
             mostrarTela('telaFotos');
             return;
         }
 
-        // =============== FLUXO NORMAL (admin/usuário) ===============
         ehLoginFotosAtual = false;
         const ehAdministrador = resultado.ehAdministrador === true ||
             String(resultado.ehAdministrador || '').trim().toLowerCase() === 'true';
@@ -1041,9 +1009,6 @@ async function efetuarLogin() {
     }
 }
 
-// ==========================================
-// LOGOUT
-// ==========================================
 function efetuarLogoutLocal() {
     usuarioLogado = '';
     tokenSessao = '';
@@ -1119,9 +1084,6 @@ async function efetuarLogout() {
     efetuarLogoutLocal();
 }
 
-// ==========================================
-// MEUS ARQUIVOS (usuários normais)
-// ==========================================
 async function carregarMeusArquivos() {
     const lista = document.getElementById('listaMeusArquivos');
     const status = document.getElementById('statusMeusArquivos');
@@ -1336,9 +1298,6 @@ async function substituirArquivoEnviado(arquivoAntigo, arquivoNovo, input) {
     }
 }
 
-// ==========================================
-// PENDÊNCIAS
-// ==========================================
 async function carregarPendencias() {
     const resumo = document.getElementById('resumoPendencias');
     const lista = document.getElementById('listaPendencias');
@@ -1404,9 +1363,6 @@ async function carregarPendencias() {
     }
 }
 
-// ==========================================
-// PAINEL ADMIN - prazos
-// ==========================================
 function escaparHtmlAdmin(v) {
     return String(v == null ? '' : v).replace(/[&<>"']/g, function (c) {
         return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
@@ -1661,9 +1617,6 @@ async function salvarPrazoAdmin(indice) {
     }
 }
 
-// ==========================================
-// ADMIN - FOTOS (painel dentro da tela de upload)
-// ==========================================
 async function carregarFotosAdmin() {
     const lista = document.getElementById('listaFotosAdmin');
     const status = document.getElementById('statusFotosAdmin');
@@ -1764,9 +1717,6 @@ async function carregarFotosAdmin() {
     }
 }
 
-// ==========================================
-// UPLOAD de documentos
-// ==========================================
 function chaveArquivo(arquivo) {
     return arquivo.name + '|' + arquivo.size + '|' + arquivo.lastModified;
 }
@@ -1866,9 +1816,6 @@ function lerArquivoBase64(arquivo) {
     });
 }
 
-// ==========================================
-// CONTADOR DE PRAZO - grupos
-// ==========================================
 function obterPrazoGrupo(categoria) { return PRAZOS_GRUPOS[categoria] || null; }
 function grupoEstaExpirado(categoria) {
     const prazo = obterPrazoGrupo(categoria);
@@ -1990,9 +1937,6 @@ function iniciarContadorPrazo() {
     }, 1000);
 }
 
-// ==========================================
-// CONTADOR DE PRAZO - fotos (grupo login)
-// ==========================================
 function atualizarContadorFotos() {
     const contador = document.getElementById('contadorPrazoFotos');
     const tempo = document.getElementById('contadorTempoFotos');
@@ -2053,9 +1997,6 @@ function pararContadorFotos() {
     }
 }
 
-// ==========================================
-// ENVIO DE DOCUMENTOS
-// ==========================================
 async function enviarArquivo() {
     const status = document.getElementById('status');
     const botao = document.getElementById('btnEnviar');
@@ -2141,19 +2082,25 @@ async function enviarArquivo() {
     } finally { botao.disabled = false; }
 }
 
-// ==========================================
-// FOTOS - grupo login
-// ==========================================
 async function carregarEscolasDoMeuGrupo() {
     try {
         const r = await enviarRequisicao(new URLSearchParams({
             acao: 'obterEscolasDoMeuGrupo', token: tokenSessao
         }));
         if (r && r.sucesso) {
-            escolasFotosCache = r.escolas || [];
+            escolasFotosCache = (r.escolas || []).map(function (e) {
+                if (typeof e === 'string') return { nome: e };
+                if (e && e.nome) return e;
+                return { nome: String(e || '') };
+            }).filter(function (e) { return !!e.nome; });
             cargosFotosCache = r.cargos || cargosFotosCache;
         }
-    } catch (e) { console.warn('Não foi possível carregar escolas do grupo:', e); }
+        if (!escolasFotosCache.length) {
+            console.warn('Backend retornou zero escolas para este grupo. Verifique COMPOSICAO DE GRUPOS.');
+        }
+    } catch (e) {
+        console.error('Falha ao carregar escolas do grupo:', e);
+    }
 }
 
 async function carregarContagemFotosGrupo() {
@@ -2225,12 +2172,21 @@ function renderizarFotosSelecionadas() {
 
         const selEscola = document.createElement('select');
         selEscola.innerHTML = '<option value="">Escola/Bloco…</option>';
-        escolasFotosCache.forEach(function (e) {
+        if (!escolasFotosCache.length) {
             const o = document.createElement('option');
-            o.value = e.nome; o.textContent = e.nome;
-            if (e.nome === item.escola) o.selected = true;
+            o.value = ''; o.disabled = true;
+            o.textContent = '(Nenhuma escola retornada pelo servidor)';
             selEscola.appendChild(o);
-        });
+        } else {
+            escolasFotosCache.forEach(function (e) {
+                const nome = (typeof e === 'string') ? e : (e && e.nome) || '';
+                if (!nome) return;
+                const o = document.createElement('option');
+                o.value = nome; o.textContent = nome;
+                if (nome === item.escola) o.selected = true;
+                selEscola.appendChild(o);
+            });
+        }
         selEscola.addEventListener('change', function () {
             item.escola = selEscola.value;
             atualizarPreviewFoto(indice);
@@ -2360,9 +2316,6 @@ async function enviarFotos() {
     atualizarBotaoEnviarFotos();
 }
 
-// ==========================================
-// LISTENERS
-// ==========================================
 document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('formLogin').addEventListener('submit', function (e) { e.preventDefault(); efetuarLogin(); });
     document.getElementById('formCadastro').addEventListener('submit', function (e) { e.preventDefault(); cadastrarUsuario(); });
