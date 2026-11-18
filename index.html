@@ -564,6 +564,17 @@
             </strong>
         </div>
 
+        <!-- NOVOS CAMPOS: Nome completo e nome artístico -->
+        <div class="form-group">
+            <label for="fotoNomeCompleto">Nome completo: <span aria-hidden="true">*</span></label>
+            <input type="text" id="fotoNomeCompleto" placeholder="Digite o nome completo" autocomplete="name" required>
+        </div>
+
+        <div class="form-group">
+            <label for="fotoNomeArtistico">Nome artístico: <span aria-hidden="true">*</span></label>
+            <input type="text" id="fotoNomeArtistico" placeholder="Digite o nome artístico" autocomplete="off" required>
+        </div>
+
         <label for="fotosInput" class="label-arquivo">
             Selecione as fotos (até 15 por envio, máx. 25 MB cada):
         </label>
@@ -596,7 +607,7 @@
 </div>
 
 <script>
-const URL_SCRIPT = 'https://script.google.com/macros/s/AKfycbzauL-raHzrVwppXLTDmFMXqB2nBoFua8Rk2_j2WIIpoHDHBLGWNYK1C5-1eim0o1PJFA/exec';
+const URL_SCRIPT = 'https://script.google.com/macros/s/AKfycbwP7wPTFxym7l0pXcl9Zs0jGuoC4ZgAW64EZMEAYz7oq-M_CfLvZeeD_u71hrz3gZWQ8Q/exec';
 const LIMITE_BYTES_ARQUIVO = 25 * 1024 * 1024;
 const LIMITE_FOTOS_ENVIO = 15;
 const CHAVE_PRAZO_FOTOS = 'FOTOS_CAS_POT_PRE_VICE';
@@ -1058,6 +1069,13 @@ function efetuarLogoutLocal() {
     if (sfl) sfl.textContent = '';
     const cg = document.getElementById('contagemFotosGrupo');
     if (cg) cg.textContent = '0';
+
+    // Limpa os novos campos de nome ao sair
+    const nc = document.getElementById('fotoNomeCompleto');
+    if (nc) nc.value = '';
+    const na = document.getElementById('fotoNomeArtistico');
+    if (na) na.value = '';
+
     pararContadorFotos();
 
     document.getElementById('categoriaPasta').value = '';
@@ -2248,8 +2266,17 @@ function atualizarBotaoEnviarFotos() {
     const cfgOff = STATUS_ENVIO_GRUPOS[CHAVE_PRAZO_FOTOS] &&
         STATUS_ENVIO_GRUPOS[CHAVE_PRAZO_FOTOS].habilitado === false;
     if (prazoExpirado || cfgOff) { botao.disabled = true; return; }
+
+    // NOVO: exige nome completo e nome artístico preenchidos
+    const elNome = document.getElementById('fotoNomeCompleto');
+    const elArt  = document.getElementById('fotoNomeArtistico');
+    const nomeCompleto  = elNome ? elNome.value.trim() : '';
+    const nomeArtistico = elArt  ? elArt.value.trim()  : '';
+
     const valido = fotosSelecionadas.length > 0 &&
-        fotosSelecionadas.every(function (f) { return f.escola && f.cargo; });
+        fotosSelecionadas.every(function (f) { return f.escola && f.cargo; }) &&
+        !!nomeCompleto && !!nomeArtistico;
+
     botao.disabled = !valido;
 }
 
@@ -2257,7 +2284,15 @@ async function enviarFotos() {
     const status = document.getElementById('statusFotos');
     const botao = document.getElementById('btnEnviarFotos');
 
+    // NOVO: captura os dois campos obrigatórios
+    const nomeCompleto  = document.getElementById('fotoNomeCompleto').value.trim();
+    const nomeArtistico = document.getElementById('fotoNomeArtistico').value.trim();
+
     if (!fotosSelecionadas.length) return;
+    if (!nomeCompleto || !nomeArtistico) {
+        status.textContent = 'Informe o nome completo e o nome artístico antes de enviar.';
+        status.style.color = '#d93025'; return;
+    }
     if (!fotosSelecionadas.every(function (f) { return f.escola && f.cargo; })) {
         status.textContent = 'Todas as fotos precisam ter escola e cargo definidos.';
         status.style.color = '#d93025'; return;
@@ -2290,6 +2325,8 @@ async function enviarFotos() {
                 token: tokenSessao,
                 escola: item.escola,
                 cargo: item.cargo,
+                nomeCompleto: nomeCompleto,
+                nomeArtistico: nomeArtistico,
                 filenameOriginal: item.arquivo.name,
                 mimeType: item.arquivo.type || 'image/jpeg',
                 data: base64
@@ -2308,6 +2345,9 @@ async function enviarFotos() {
         fotosSelecionadas = [];
         renderizarFotosSelecionadas();
         carregarContagemFotosGrupo();
+        // Limpa os campos após envio bem-sucedido
+        document.getElementById('fotoNomeCompleto').value = '';
+        document.getElementById('fotoNomeArtistico').value = '';
     } else {
         status.innerHTML = '⚠️ ' + sucesso + ' enviada(s), ' + erros.length + ' com erro:<br>' + erros.join('<br>');
         status.style.color = '#d93025';
@@ -2341,6 +2381,12 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('fotosInput').addEventListener('change', adicionarFotosSelecionadas);
     document.getElementById('btnEnviarFotos').addEventListener('click', enviarFotos);
     document.getElementById('btnSairFotos').addEventListener('click', efetuarLogout);
+
+    // NOVO: revalida botão quando o usuário digita nome/artístico
+    const elNC = document.getElementById('fotoNomeCompleto');
+    const elNA = document.getElementById('fotoNomeArtistico');
+    if (elNC) elNC.addEventListener('input', atualizarBotaoEnviarFotos);
+    if (elNA) elNA.addEventListener('input', atualizarBotaoEnviarFotos);
 
     iniciarContadorPrazo();
 });
